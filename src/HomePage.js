@@ -99,7 +99,7 @@ function HomePage(props) {
 					gutterBottom
 					className={classes.headline}
 				>
-					{"あなたの体験から再定義する新しい広告のカタチ"}
+					{"誰もがインフルエンサーである時代へ"}
 				</Typography>
 			</div>
 			<div className={classes.buttons}>
@@ -107,7 +107,7 @@ function HomePage(props) {
 					component={buttonProps => (
 						<Link
 							variant="button"
-							to="/register"
+							to="/person/1"
 							{...buttonProps}
 						/>
 					)}
@@ -121,7 +121,7 @@ function HomePage(props) {
 					component={buttonProps => (
 						<Link
 							variant="button"
-							to="/login"
+							to="/person/1"
 							{...buttonProps}
 						/>
 					)}

@@ -28,17 +28,25 @@ const styles = theme => ({
 });
 
 function Link(props) {
-  const { classes, variant } = props;
-  return <NavLink className={classNames(classes.root, classes[variant])} {...props} />;
+  const { classes, variant, to, children } = props;
+	let component;
+	if (to.startsWith('http')) {
+		component = (
+				<a href={to} className={classNames(classes.root, classes[variant])} {...props} >{children}</a>
+			);
+	} else {
+		component = (
+				<NavLink className={classNames(classes.root, classes[variant])} {...props} >{children}</NavLink>
+		);
+	}
+	return component;
 }
 
 Link.defaultProps = {
   variant: 'default',
-  activeClassName: 'active',
 };
 
 Link.propTypes = {
-  activeClassName: PropTypes.string,
   className: PropTypes.string,
   to: PropTypes.string.isRequired,
   prefetch: PropTypes.bool,

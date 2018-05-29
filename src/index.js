@@ -12,6 +12,7 @@ import About from 'About';
 import Contact from 'Contact';
 import Header from 'modules/components/Header';
 import Footer from 'modules/components/Footer';
+import NotFound from 'NotFound';
 
 import { MuiThemeProvider, createMuiTheme } from '@material-ui/core/styles';
 import indigo from '@material-ui/core/colors/indigo';
@@ -33,6 +34,7 @@ class App extends React.Component {
 						<Route exact path='/review/:id' component={Review} />
 						<Route exact path='/vision' component={About} />
 						<Route exact path='/contact' component={Contact} />
+						<Route component={NotFound} />
 					</Switch>
 					<Footer />
 				</div>

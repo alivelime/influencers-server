@@ -4,7 +4,11 @@
   "private": true,
   "dependencies": {
     "@material-ui/core": "^1.0.0",
+    "@material-ui/icons": "^1.1.0",
+    "material-ui-rating": "^2.0.0-beta.2",
     "react": "^16.3.2",
+    "react-dnd": "^2.6.0",
+    "react-dnd-html5-backend": "^2.6.0",
     "react-dom": "^16.3.2",
     "react-router": "^4.2.0",
     "react-router-dom": "^4.2.2",

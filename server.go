@@ -26,18 +26,14 @@ import (
 	"google.golang.org/appengine"
 	"google.golang.org/appengine/datastore"
 	"google.golang.org/appengine/user"
-)
 
-type comment struct {
-	ID     int64  `json:"id"`
-	Author string `json:"author"`
-	Text   string `json:"text"`
-	Date   time.Time
-}
+	"github/alivelime/influs/api"
+)
 
 func init() {
 
-	http.HandleFunc("/api/comments", handleComments)
+	http.HandleFunc("/api/persons", api.HandlePersons)
+	http.HandleFunc("/api/recommends", api.HandleRecommends)
 	log.Println("Server started: http://localhost:")
 }
 
