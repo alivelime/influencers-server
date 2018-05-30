@@ -13,7 +13,6 @@ import AddFolderIcon from '@material-ui/icons/CreateNewFolder';
 import OpenFolderIcon from '@material-ui/icons/FolderOpen';
 import CreateIcon from '@material-ui/icons/Create';
 
-import ReviewForm from 'modules/components/ReviewForm';
 
 const styleSheet = theme => ({
 	root: {
@@ -22,6 +21,10 @@ const styleSheet = theme => ({
 	icon: {
 		width: '1.6em',
 		height: '1.6em',
+	},
+	content: {
+    paddingBottom: theme.spacing.unit * 2,
+    paddingTop: theme.spacing.unit * 2,
 	},
 });
 
@@ -45,8 +48,9 @@ class RecommendTree extends React.Component {
 
 		return (
 				<div className={classes.root}>
-					<ReviewForm branch={0}/>
-					<Typography variant="headline">リスト</Typography>
+					<div className={classes.content}>
+						<Typography variant="headline">リスト</Typography>
+					</div>
 					<List component='nav'>
 						<ListItem>
 							<TextField

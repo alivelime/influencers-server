@@ -5,12 +5,13 @@ handlers:
 - url: /api/.*
   script: _go_app
 
-- url: /
+- url: /(.*\.(html|css|js))
+  static_files: build/\1
+  upload: build/(.*\.(html|css|js))
+
+- url: /.*
   static_files: build/index.html
   upload: build/index.html
-
-- url: /
-  static_dir: build
 
 skip_files:
 - ^src/(.*/)?
