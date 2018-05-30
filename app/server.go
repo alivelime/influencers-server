@@ -18,7 +18,7 @@ import (
 
 	"github.com/gorilla/mux"
 
-	"api"
+	"github.com/alivelime/influs/api"
 )
 
 func init() {
