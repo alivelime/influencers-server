@@ -6,7 +6,6 @@ import (
 	"fmt"
 	"io"
 	"net/http"
-	"sort"
 	"strconv"
 
 	"github.com/gorilla/mux"
@@ -18,7 +17,7 @@ import (
 func getUserRecommendBranches(w http.ResponseWriter, r *http.Request) {
 	ctx := appengine.NewContext(r)
 
-	var recommendBranches []RecommendBranch
+	var recommendBranches map[int64]RecommendBranch
 	userId, err := strconv.ParseInt(mux.Vars(r)["userId"], 10, 64)
 	if err != nil {
 		http.Error(w, fmt.Sprintf("user id is invalid %s", err), http.StatusInternalServerError)
@@ -26,8 +25,8 @@ func getUserRecommendBranches(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// SELECT * FROM RecommendBranches WHERE UserID = 'userId' ORDER BY Priority
+	// do not use 'priority prop and sort' but use link list. because link list is better than priotiry sort.
 	{
-		// do not user Priority index for sort. avoiding to increase index size.
 		query := datastore.NewQuery("RecommendBranch").Filter("UserID =", userId)
 		count, err := query.Count(ctx)
 		if err != nil {
@@ -36,10 +35,10 @@ func getUserRecommendBranches(w http.ResponseWriter, r *http.Request) {
 		}
 
 		// do not use GetALL. Because it has 1000 limit.
-		recommendBranches = make([]RecommendBranch, count)
+		recommendBranches = make(map[int64]RecommendBranch, count)
 		itr := query.Run(ctx)
 
-		for i := 0; true; i++ {
+		for {
 			var recommendBranch RecommendBranch
 			key, err := itr.Next(&recommendBranch)
 			if err == datastore.Done {
@@ -51,14 +50,11 @@ func getUserRecommendBranches(w http.ResponseWriter, r *http.Request) {
 			}
 
 			recommendBranch.ID = key.IntID()
-			recommendBranches[i] = recommendBranch
+			recommendBranches[key.IntID()] = recommendBranch
+
+			// _ = datastore.Delete(ctx, key)
 		}
 	}
-
-	// sort by Priority.
-	sort.Slice(recommendBranches, func(i, j int) bool {
-		return recommendBranches[i].Priority < recommendBranches[j].Priority
-	})
 
 	res, err := json.Marshal(recommendBranches)
 	if err != nil {

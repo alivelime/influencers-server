@@ -2,17 +2,10 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { withStyles } from '@material-ui/core/styles';
 import List from '@material-ui/core/List';
-import ListItem from '@material-ui/core/ListItem';
-import ListItemSecondaryAction from '@material-ui/core/ListItemSecondaryAction';
-import TextField from '@material-ui/core/TextField';
 import Typography from '@material-ui/core/Typography';
 
-import IconButton from '@material-ui/core/IconButton';
-import DeleteIcon from '@material-ui/icons/Delete';
-import AddFolderIcon from '@material-ui/icons/CreateNewFolder';
-import OpenFolderIcon from '@material-ui/icons/FolderOpen';
-import CreateIcon from '@material-ui/icons/Create';
-
+import RecommendBranch from 'modules/components/RecommendBranch';
+import { getAPI } from 'modules/utils/DevUtils';
 
 const styleSheet = theme => ({
 	root: {
@@ -30,21 +23,24 @@ const styleSheet = theme => ({
 
 class RecommendTree extends React.Component {
 	state = {
-		newBranch: '',
+		data: [],
 	};
-	handleChange = () => event => {
-		this.setState({
-			newBranch: event.target.value,
+	componentDidMount() {
+    this.loadRecommendBranchesFromServer();
+	}
+	loadRecommendBranchesFromServer() {
+		getAPI(`/api/users/${this.props.userId}/recommend-branches`, null, (res) => {
+			this.setState({data: res});
 		});
 	}
-	handleSubmit = () => event => {
-		event.preventDefault();
-		this.setState({
-			newBranch: '',
-		});
-	}
+
 	render() {
 		const { classes } = this.props;
+		const recommendBranches = Object.keys(this.state.data).map( id => {
+			return (
+				<RecommendBranch key={id} data={this.state.data[id]} />
+			);
+		});
 
 		return (
 				<div className={classes.root}>
@@ -52,29 +48,7 @@ class RecommendTree extends React.Component {
 						<Typography variant="headline">リスト</Typography>
 					</div>
 					<List component='nav'>
-						<ListItem>
-							<TextField
-								id="branch"
-								placeholder="新しいリスト名"
-								fullWidth
-								value={this.state.newBranch}
-								onChange={this.handleChange()}
-							/>
-							<ListItemSecondaryAction>
-								<IconButton aria-label='add folder' >
-									<AddFolderIcon className={classes.icon} />
-								</IconButton>
-								<IconButton aria-label='add folder' >
-									<OpenFolderIcon className={classes.icon} />
-								</IconButton>
-								<IconButton aria-label='add folder' >
-									<CreateIcon className={classes.icon} />
-								</IconButton>
-								<IconButton aria-label='Delete'>
-									<DeleteIcon className={classes.icon} />
-								</IconButton>
-							</ListItemSecondaryAction>
-						</ListItem>
+						{recommendBranches}
 					</List>
 				</div>
 		);

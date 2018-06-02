@@ -84,20 +84,24 @@ func postUser(w http.ResponseWriter, r *http.Request, id int64) {
 	io.Copy(w, bytes.NewReader(res))
 }
 
-func HandleUser(w http.ResponseWriter, r *http.Request) {
+func HandleUsers(w http.ResponseWriter, r *http.Request) {
 	switch r.Method {
 	case "POST":
-		var id int64
-		strId, ok := mux.Vars(r)["id"]
-		if !ok {
-			id = 0
-		} else {
-			var err error
-			id, err = strconv.ParseInt(strId, 10, 64)
-			if err != nil {
-				http.Error(w, fmt.Sprintf("user id is invalid %s", err), http.StatusInternalServerError)
-				return
-			}
+		postUser(w, r, 0)
+
+	default:
+		http.Error(w, fmt.Sprintf("No impliment method %s", r.Method), http.StatusInternalServerError)
+	}
+}
+
+func HandleUser(w http.ResponseWriter, r *http.Request) {
+	switch r.Method {
+	case "PUT":
+		strId, _ := mux.Vars(r)["id"]
+		id, err := strconv.ParseInt(strId, 10, 64)
+		if err != nil {
+			http.Error(w, fmt.Sprintf("user id is invalid %s", err), http.StatusInternalServerError)
+			return
 		}
 		postUser(w, r, id)
 

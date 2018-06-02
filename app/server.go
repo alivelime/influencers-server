@@ -24,7 +24,9 @@ import (
 func init() {
 	r := mux.NewRouter()
 
+	r.HandleFunc("/api/users", api.HandleUsers)
 	r.HandleFunc("/api/users/{id}", api.HandleUser)
+	r.HandleFunc("/api/recommend-branches", api.HandleRecommendBranches)
 	r.HandleFunc("/api/recommend-branches/{id}", api.HandleRecommendBranch)
 	r.HandleFunc("/api/users/{userId}/recommend-branches", api.HandleUserRecommendBranches)
 	http.Handle("/", r)

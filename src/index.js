@@ -5,7 +5,7 @@ import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
 import HomePage from 'HomePage';
 import MyProfile from 'my/Profile';
 import MyAdmin from 'my/Admin';
-import Person from 'Person';
+import User from 'User';
 import Recommend from 'Recommend';
 import Review from 'Review';
 import About from 'About';
@@ -29,9 +29,9 @@ class App extends React.Component {
 						<Route exact path='/' component={HomePage} />
 						<Route exact path='/my/profile' component={MyProfile} />
 						<Route exact path='/my/admin' component={MyAdmin} />
-						<Route exact path='/person/:id' component={Person} />
-						<Route exact path='/recommend/:id' component={Recommend} />
-						<Route exact path='/review/:id' component={Review} />
+						<Route exact path='/users/:id' component={User} />
+						<Route exact path='/recommends/:id' component={Recommend} />
+						<Route exact path='/reviews/:id' component={Review} />
 						<Route exact path='/vision' component={About} />
 						<Route exact path='/contact' component={Contact} />
 						<Route component={NotFound} />

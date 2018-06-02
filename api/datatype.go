@@ -11,8 +11,8 @@ type User struct {
 	Memo           string    `json:"memo" datastore:",noindex"`
 	Link           string    `json:"link" datastore:",noindex"`
 	MediaType      string    `json:"mediaType" datastore:",noindex"`
-	Follow         []int64   `json:"floow" datastore:",noindex"`
-	Follower       []int64   `json:"floower" datastore:",noindex"`
+	Follow         []int64   `json:"foloow" datastore:",noindex"`
+	Follower       []int64   `json:"foloower" datastore:",noindex"`
 	Ignore         []int64   `json:"noneed" datastore:",noindex"`
 	Ignored        []int64   `json:"noneed" datastore:",noindex"`
 	Comunity       []int64   `json:"comunity" datastore:",noindex"`
@@ -35,7 +35,9 @@ type RecommendBranch struct {
 	UserID     int64   `json:"userId"`
 	ParentID   int64   `json:"parentId" datastore:",noindex"`
 	ChildrenID []int64 `json:"childId" datastore:",noindex"`
-	Priority   int64   `json:"priority" datastore:",oindex"`
+	NextID     int64   `json:"nextId" datastore:",oindex"`
+	PrevID     int64   `json:"prevId" datastore:",oindex"`
+	IsLinked   bool    `json:"-" datastore:"-"`
 	Name       string  `json:"name" datastore:",noindex"`
 	ReviewIDs  []int64 `json:"reviewIds" datastore:",noindex"`
 }
