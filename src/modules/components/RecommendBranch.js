@@ -13,7 +13,7 @@ import OpenFolderIcon from '@material-ui/icons/FolderOpen';
 import CreateIcon from '@material-ui/icons/ThumbUp';
 import DragIcon from '@material-ui/icons/SwapVert';
 
-import { postAPI, deleteAPI } from 'modules/utils/DevUtils';
+import { patchAPI } from 'modules/utils/DevUtils';
 
 const styleSheet = theme => ({
 	icon: {
@@ -26,22 +26,27 @@ const styleSheet = theme => ({
 });
 
 class RecommendBranch extends React.Component {
-	state = this.props.data;
+	state = Object.assign({changeFlag: false}, this.props.data);
 
-	addRecommendBranch = event => {
-	}
 	handleChange = event => {
 		this.setState({
+			changeFlag: true,
 			name: event.target.value,
 		});
 	};
 	handleSubmit = event => {
 		event.preventDefault();
-		postAPI(`/api/recommend-branches/${this.state.id}`, this.state, null);
+		if (this.state.changeFlag) {
+			patchAPI(`/api/recommend-branches/${this.state.id}`, {name: this.state.name}, null);
+			this.setState({changeFlag: false});
+		}
 	};
 
+	addRecommendBranch = event => {
+		this.props.addRecommendBranch(this.state.id);
+	}
 	deleteRecommendBranch = event => {
-		deleteAPI(`/api/recommend-branches/${this.state.id}`);
+		this.props.deleteRecommendBranch(this.state.id);
 	};
 
 	render() {
@@ -62,9 +67,9 @@ class RecommendBranch extends React.Component {
 				/>
 				<ListItemSecondaryAction>
 					<IconButton aria-label='カテゴリを追加' >
-						<AddFolderIcon className={classNames(classes.icon, classes.color)} />
+						<AddFolderIcon onClick={this.addRecommendBranch} className={classNames(classes.icon, classes.color)} />
 					</IconButton>
-					<IconButton aria-label='i子カテゴリを追加' >
+					<IconButton aria-label='子カテゴリを追加' >
 						<OpenFolderIcon className={classNames(classes.icon, classes.color)} />
 					</IconButton>
 					<IconButton aria-label='「いいよ」を作成' >

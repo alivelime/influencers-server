@@ -31,12 +31,17 @@ function requestAPI(method, path, data = null, callback = null) {
 		mode: 'cors',
 		cache: 'no-cache' })
 	.then((response) => {
+			if (!response.ok) {
+				return "{}";
+			}
 			return response.text();
 	})
 	.then((res) => {
-		res = JSONint642string(res);
-		if (typeof callback === "function") {
-			callback(res);
+		if (res.length > 0) {
+			res = JSONint642string(res);
+			if (typeof callback === "function") {
+				callback(res);
+			}
 		}
 	});
 }
