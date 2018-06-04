@@ -6,7 +6,7 @@ import Paper from '@material-ui/core/Paper';
 
 import RecommendTree from 'modules/components/RecommendTree';
 import ReviewForm from 'modules/components/ReviewForm';
-import { postAPI, getAPI, putAPI } from 'modules/utils/DevUtils';
+import { getAPI, putAPI } from 'modules/utils/DevUtils';
 
 const styleSheet = theme => ({
   root: {
@@ -40,23 +40,6 @@ class  User extends React.Component {
 			name: "テスト" + Date.now().toString(),
 		};
 		putAPI(`/api/users/${id}`, user, null);
-
-		postAPI('/api/recommend-branches', {
-			userId: id,
-			name: "とりあえず1",
-		}, (res) => {
-			postAPI('/api/recommend-branches', {
-				userId: id,
-				name: "二つ目",
-				prevId: res.id,
-			}, (res) => {
-				postAPI('/api/recommend-branches', {
-					userId: id,
-					name: "三つ目",
-					prevId: res.id,
-				});
-			});
-		});
 	};
 
 	loadUserFromServer() {

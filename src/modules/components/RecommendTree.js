@@ -5,7 +5,7 @@ import List from '@material-ui/core/List';
 import Typography from '@material-ui/core/Typography';
 
 import RecommendBranch from 'modules/components/RecommendBranch';
-import { getAPI, postAPI, deleteAPI } from 'modules/utils/DevUtils';
+import { getAPI, postAPI, deleteAPI, patchAPI } from 'modules/utils/DevUtils';
 
 const styleSheet = theme => ({
 	root: {
@@ -31,20 +31,31 @@ class RecommendTree extends React.Component {
 	loadRecommendBranchesFromServer() {
 		getAPI(`/api/users/${this.props.userId}/recommend-branches`, null, (res) => {
 			this.setState({data: res});
+			if (Object.keys(res).length === 0) {
+				this.addRecommendBranch("0");
+			}
 		});
 	}
 
 	addRecommendBranch = (id) => {
+		// if id = 0 then add first branch.
 		postAPI(`/api/recommend-branches`, {
 			name: "新しいリスト",
-			userId: this.state.data[id].userId,
+			userId: this.props.userId,
 			prevId: id,
-			nextId: this.state.data[id].nextId,
+			nextId: (id === "0" ? "0" : this.state.data[id].nextId),
 		}, res => {
 			let data = Object.assign({}, this.state.data);
-			data[id].nextId = res.id;
 			data[res.id] = res;
-			if (res.nextId !== "0") { data[res.nextId].prevId = res.id; }
+
+			// set nextId of prev branch.
+			if (id !== "0") {
+				data[id].nextId = res.id;
+			}
+			// set prevId of next branch.
+			if (res.nextId !== "0") {
+				data[res.nextId].prevId = res.id;
+			}
 
 			this.setState({data: data});
 		});
@@ -63,8 +74,12 @@ class RecommendTree extends React.Component {
 		}
 		delete data[id];
 
-		console.log(data);
 		this.setState({data: data});
+
+		// if data is empty then add new branch.
+		if (Object.keys(data).length === 0) {	
+				this.addRecommendBranch("0");
+		}
 	};
 
 
@@ -80,10 +95,15 @@ class RecommendTree extends React.Component {
 					break;
 				}
 			}
-			for (let id = first;
+
+			let outOfLinks = Object.assign({}, this.state.data);
+			let id, prevId;
+			for (id = first;
 					this.state.data.hasOwnProperty(id);
 					id = this.state.data[id].nextId)
 			{
+				prevId = id; // use out of link.
+				delete outOfLinks[id];
 				recommendBranches.push(
 					<RecommendBranch
 						key={id}
@@ -93,6 +113,46 @@ class RecommendTree extends React.Component {
 					/>
 				);
 			}
+
+			// if link is broken. concat last data.
+			if (Object.keys(outOfLinks).length > 0) {
+				let patchIds = [];
+				patchIds.push(prevId);
+
+				Object.keys(outOfLinks).forEach((id) => {
+					console.log("link list is broken. so fix it.");
+
+					let prev = this.state.data[prevId];
+					prev.nextId = id;
+
+					let recommendBranch = this.state.data[id];
+					recommendBranch.prevId = prevId;
+					recommendBranch.nextId = 0;
+
+					recommendBranches.push(
+						<RecommendBranch
+							key={id}
+							data={this.state.data[id]}
+							addRecommendBranch={this.addRecommendBranch}
+							deleteRecommendBranch={this.deleteRecommendBranch}
+						/>
+					);
+
+					patchIds.push(id);
+					prevId = id;
+				});
+				patchIds.forEach((id) => {
+					patchAPI(`/api/recommend-branches/${id}`, {
+						prevId: this.state.data[id].prevId,
+						nextId: this.state.data[id].nextId,
+					});
+				});
+			}
+
+		} else {
+			// if recommend branch is empty.
+			// but do not addRecommendBranch.
+			// Because data is empty when ComponentDidMount() called.
 		}
 
 		return (

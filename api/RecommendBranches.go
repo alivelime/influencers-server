@@ -86,8 +86,8 @@ func postRecommendBranch(w http.ResponseWriter, r *http.Request, id int64) {
 	w.Header().Set("Access-Control-Allow-Origin", "*")
 	io.Copy(w, bytes.NewReader(res))
 
-	if err := addLinkList(ctx, recommendBranch.PrevID, recommendBranch.NextID, recommendBranch.ID); err != "" {
-		http.Error(w, fmt.Sprintf("Unable to add link list: %s", err), http.StatusInternalServerError)
+	if err := addLinkList(ctx, recommendBranch.PrevID, recommendBranch.NextID, recommendBranch.ID); err != nil {
+		fmt.Printf("Unable to add link list: %s", err)
 		return
 	}
 }
@@ -109,7 +109,7 @@ func deleteRecommendBranch(w http.ResponseWriter, r *http.Request) {
 			http.Error(w, fmt.Sprintf("unable get delete datastore  %s", err), http.StatusNotFound)
 			return
 		}
-		if err := deleteLinkList(ctx, recommendBranch.PrevID, recommendBranch.NextID); err != "" {
+		if err := deleteLinkList(ctx, recommendBranch.PrevID, recommendBranch.NextID); err != nil {
 			http.Error(w, fmt.Sprintf("Unable to add link list: %s", err), http.StatusInternalServerError)
 			return
 		}
@@ -206,14 +206,14 @@ func HandleRecommendBranch(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func addLinkList(ctx context.Context, prevID int64, nextID int64, addID int64) string {
+func addLinkList(ctx context.Context, prevID int64, nextID int64, addID int64) error {
 	return connectLinkList(ctx, prevID, nextID, addID)
 }
 
-func deleteLinkList(ctx context.Context, prevID int64, nextID int64) string {
+func deleteLinkList(ctx context.Context, prevID int64, nextID int64) error {
 	return connectLinkList(ctx, prevID, nextID, 0)
 }
-func connectLinkList(ctx context.Context, prevID int64, nextID int64, id int64) string {
+func connectLinkList(ctx context.Context, prevID int64, nextID int64, id int64) (err error) {
 
 	// set list link.
 	if prevID != 0 {
@@ -221,8 +221,8 @@ func connectLinkList(ctx context.Context, prevID int64, nextID int64, id int64) 
 
 		// get
 		key := datastore.NewKey(ctx, "RecommendBranch", "", prevID, nil)
-		if err := datastore.Get(ctx, key, &prev); err != nil {
-			return fmt.Sprintf("unable get previd datastore  %s", err)
+		if err = datastore.Get(ctx, key, &prev); err != nil {
+			return
 		}
 
 		// patch
@@ -233,8 +233,8 @@ func connectLinkList(ctx context.Context, prevID int64, nextID int64, id int64) 
 		}
 
 		// put
-		if _, err := datastore.Put(ctx, key, &prev); err != nil {
-			return fmt.Sprintf("unable put prev datastore  %s", err)
+		if _, err = datastore.Put(ctx, key, &prev); err != nil {
+			return
 		}
 	}
 	if nextID != 0 {
@@ -242,8 +242,8 @@ func connectLinkList(ctx context.Context, prevID int64, nextID int64, id int64) 
 
 		// get
 		key := datastore.NewKey(ctx, "RecommendBranch", "", nextID, nil)
-		if err := datastore.Get(ctx, key, &next); err != nil {
-			return fmt.Sprintf("unable get next datastore  %s", err)
+		if err = datastore.Get(ctx, key, &next); err != nil {
+			return
 		}
 
 		// patch
@@ -254,9 +254,9 @@ func connectLinkList(ctx context.Context, prevID int64, nextID int64, id int64) 
 		}
 
 		// put
-		if _, err := datastore.Put(ctx, key, &next); err != nil {
-			return fmt.Sprintf("unable put prev datastore  %s", err)
+		if _, err = datastore.Put(ctx, key, &next); err != nil {
+			return
 		}
 	}
-	return ""
+	return
 }
