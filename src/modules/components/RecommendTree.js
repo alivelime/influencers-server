@@ -2,7 +2,6 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { withStyles } from '@material-ui/core/styles';
 import List from '@material-ui/core/List';
-import Typography from '@material-ui/core/Typography';
 
 import RecommendBranch from 'modules/components/RecommendBranch';
 import RecommendToolbox from 'modules/components/RecommendToolbox';
@@ -15,10 +14,6 @@ const styleSheet = theme => ({
 	icon: {
 		width: '1.6em',
 		height: '1.6em',
-	},
-	content: {
-    paddingBottom: theme.spacing.unit * 2,
-    paddingTop: theme.spacing.unit * 2,
 	},
 });
 
@@ -51,6 +46,51 @@ class RecommendTree extends React.Component {
 		state.switchRecommendToolbox = handler;
 	};
 
+	swapRecommendBranch = (id) => {
+		let data = Object.assign({}, this.state.data);
+
+		const B = id;
+		const A = this.state.data[B].prevId;
+		const C = this.state.data[B].nextId;
+
+		// id is bottom.
+		if (C === "0") {
+			return;
+		}
+		const D = this.state.data[C].nextId;
+		console.log(`${A} -> ${B} -> ${C} -> ${D}`);
+
+		// set prev id
+		if (A !== "0") {
+			data[A].nextId = C;
+			patchAPI(`/api/recommend-branches/${A}`, {
+				nextId: C,
+			});
+		}
+
+		data[B].prevId = C;
+		data[B].nextId = D;
+		patchAPI(`/api/recommend-branches/${B}`, {
+			prevId: C,
+			nextId: D,
+		});
+
+		data[C].prevId = A;
+		data[C].nextId = B;
+		patchAPI(`/api/recommend-branches/${C}`, {
+			prevId: A,
+			nextId: B,
+		});
+
+		if (D !== "0") {
+			data[D].prevId = B;
+			patchAPI(`/api/recommend-branches/${D}`, {
+				prevId: B,
+			});
+		}
+
+		this.setState({data: data});
+	}
 
 	addRecommendBranch = (id) => {
 		// if id = 0 then add first branch.
@@ -79,9 +119,11 @@ class RecommendTree extends React.Component {
 
 	deleteRecommendBranch = (ids) => {
 
-		ids.forEach(async id => {
-			deleteAPI(`/api/recommend-branches/${id}`);
-		});
+		(async () => {
+			for (let id of ids) {
+				await deleteAPI(`/api/recommend-branches/${id}`);
+			}
+	 })();
 
 		let data = Object.assign({}, this.state.data);
 		ids.forEach((id) => {
@@ -111,21 +153,37 @@ class RecommendTree extends React.Component {
 		// sort
 		let recommendBranches = [];
 		if (Object.keys(this.state.data).length > 0) {
-			let first = 0;
-			for (first in this.state.data) {
-				if (this.state.data[first].prevId === "0") {
-					break;
-				}
+			let patchIds = [];
+
+			const firsts = Object.keys(this.state.data).filter((id) => {
+				return this.state.data[id].prevId === "0";
+			});
+
+			// if prevId is "0" not found.
+			let first;
+			if (firsts.length >= 1) {
+				first = firsts[0];
+			} else {
+				console.log("could not find first elem.");
+				first = Object.keys(this.state.data)[0];
+
+				// fix prevId = "0"
+				let data = this.state.data[first];
+				data.prevId = "0";
+				patchIds.push(first);
 			}
 
 			let outOfLinks = Object.assign({}, this.state.data);
+
 			let id, prevId;
 			for (id = first;
 					this.state.data.hasOwnProperty(id);
 					id = this.state.data[id].nextId)
 			{
-				prevId = id; // use out of link.
+				// check out of link.
+				prevId = id;
 				delete outOfLinks[id];
+
 				recommendBranches.push(
 					<RecommendBranch
 						key={id}
@@ -133,11 +191,23 @@ class RecommendTree extends React.Component {
 						handleCheck={this.handleCheck}
 					/>
 				);
+				
+				// check if nextId is loop
+				const nextId = this.state.data[id].nextId;
+				if (this.state.data.hasOwnProperty(nextId) &&
+						!outOfLinks.hasOwnProperty(this.state.data[id].nextId)
+				) {
+					console.log("recommend branches is loop!");
+					// fix netxtId to zero.
+					let data = this.state.data[id];
+					data.nextId = "0";
+					patchIds.push(id);
+					break; // last data is outOfLinks
+				}
 			}
 
 			// if link is broken. concat last data.
 			if (Object.keys(outOfLinks).length > 0) {
-				let patchIds = [];
 				patchIds.push(prevId);
 
 				Object.keys(outOfLinks).forEach((id) => {
@@ -148,7 +218,7 @@ class RecommendTree extends React.Component {
 
 					let recommendBranch = this.state.data[id];
 					recommendBranch.prevId = prevId;
-					recommendBranch.nextId = 0;
+					recommendBranch.nextId = "0";
 
 					recommendBranches.push(
 						<RecommendBranch
@@ -161,13 +231,14 @@ class RecommendTree extends React.Component {
 					patchIds.push(id);
 					prevId = id;
 				});
-				patchIds.forEach((id) => {
-					patchAPI(`/api/recommend-branches/${id}`, {
-						prevId: this.state.data[id].prevId,
-						nextId: this.state.data[id].nextId,
-					});
-				});
 			}
+
+			patchIds.forEach((id) => {
+				patchAPI(`/api/recommend-branches/${id}`, {
+					prevId: this.state.data[id].prevId,
+					nextId: this.state.data[id].nextId,
+				});
+			});
 
 		} else {
 			// if recommend branch is empty.
@@ -178,10 +249,10 @@ class RecommendTree extends React.Component {
 		return (
 				<div className={classes.root}>
 					<div className={classes.content}>
-						<Typography variant="headline">リスト</Typography>
 					</div>
 					<RecommendToolbox
 						setHandleCheck={this.setHandleCheck}
+						swapRecommendBranch={this.swapRecommendBranch}
 						addRecommendBranch={this.addRecommendBranch}
 						deleteRecommendBranch={this.deleteRecommendBranch}
 					/>

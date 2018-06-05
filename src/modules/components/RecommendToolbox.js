@@ -4,12 +4,15 @@ import { withStyles } from '@material-ui/core/styles';
 import classNames from 'classnames';
 import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
+import Typography from '@material-ui/core/Typography';
 
 import IconButton from '@material-ui/core/IconButton';
 import DeleteIcon from '@material-ui/icons/Delete';
 import AddFolderIcon from '@material-ui/icons/CreateNewFolder';
 import OpenFolderIcon from '@material-ui/icons/FolderOpen';
 import CreateIcon from '@material-ui/icons/ThumbUp';
+import DragIcon from '@material-ui/icons/SwapVert';
+import SubdirectoryIcon from '@material-ui/icons/SubdirectoryArrowRight';
 
 const styleSheet = theme => ({
 	icon: {
@@ -49,6 +52,9 @@ class RecommendToolbox extends React.Component {
 	deleteRecommendBranch = event => {
 		this.props.deleteRecommendBranch(this.state.ids);
 	};
+	swapRecommendBranch = event => {
+		this.props.swapRecommendBranch(this.state.ids[0]);
+	};
 
 	handleCheck = (id) => {
 		let ids = this.state.ids;
@@ -64,40 +70,49 @@ class RecommendToolbox extends React.Component {
 	render() {
 		const { classes } = this.props;
 
-		if (this.state.ids.length > 0) {
-			return (
-				<AppBar
-					position="sticky"
-					color="default"
-				>
-					<Toolbar>
-						<IconButton aria-label='カテゴリを追加' >
-							<AddFolderIcon
-								onClick={this.addRecommendBranch}
-								className={classNames(classes.icon, (this.state.ids.length === 1 ? classes.enable : classes.disable))}
-							/>
-						</IconButton>
-						<IconButton aria-label='子カテゴリを追加' >
-							<OpenFolderIcon
-								className={classNames(classes.icon, (this.state.ids.length === 1 ? classes.enable : classes.disable))}
-							/>
-						</IconButton>
-						<IconButton aria-label='「いいよ」を作成' >
-							<CreateIcon
-								className={classNames(classes.icon, (this.state.ids.length === 1 ? classes.enableIiyo : classes.disable))}
-							/>
-						</IconButton>
-						<IconButton aria-label='削除'>
-							<DeleteIcon
-								onClick={this.deleteRecommendBranch}
-								className={classNames(classes.icon, (this.state.ids.length > 0 ? classes.enableDelete : classes.disable))}
-							/>
-						</IconButton>
-					</Toolbar>
-				</AppBar>
-			);
-		}
-		return null;
+		return (
+			<AppBar
+				position="sticky"
+				color="default"
+			>
+				<Toolbar>
+					<Typography variant="headline">リスト</Typography>
+					<IconButton aria-label='下に移動' >
+						<DragIcon
+							onClick={this.swapRecommendBranch}
+							className={classNames(classes.icon, (this.state.ids.length === 1 ? classes.enable : classes.disable))}
+						/>
+					</IconButton>
+					<IconButton aria-label='次のリストに移動' >
+						<SubdirectoryIcon
+							className={classNames(classes.icon, (this.state.ids.length === 1 ? classes.enable : classes.disable))}
+						/>
+					</IconButton>
+					<IconButton aria-label='カテゴリを追加' >
+						<AddFolderIcon
+							onClick={this.addRecommendBranch}
+							className={classNames(classes.icon, (this.state.ids.length === 1 ? classes.enable : classes.disable))}
+						/>
+					</IconButton>
+					<IconButton aria-label='子カテゴリを追加' >
+						<OpenFolderIcon
+							className={classNames(classes.icon, (this.state.ids.length === 1 ? classes.enable : classes.disable))}
+						/>
+					</IconButton>
+					<IconButton aria-label='「いいよ」を作成' >
+						<CreateIcon
+							className={classNames(classes.icon, (this.state.ids.length === 1 ? classes.enableIiyo : classes.disable))}
+						/>
+					</IconButton>
+					<IconButton aria-label='削除'>
+						<DeleteIcon
+							onClick={this.deleteRecommendBranch}
+							className={classNames(classes.icon, (this.state.ids.length > 0 ? classes.enableDelete : classes.disable))}
+						/>
+					</IconButton>
+				</Toolbar>
+			</AppBar>
+		);
 	}
 }
 
