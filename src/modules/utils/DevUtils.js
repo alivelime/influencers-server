@@ -1,30 +1,30 @@
 
 
 
-function getAPI(path, data = null, callback = null) {
-	requestAPI('GET', path, data, callback);
+function getAPI(path) {
+	return requestAPI('GET', path);
 }
 
-function postAPI(path, data, callback = null) {
-	requestAPI('POST', path, data, callback);
+function postAPI(path, data) {
+	return requestAPI('POST', path, data);
 }
 
-function putAPI(path, data, callback = null) {
-	requestAPI('PUT', path, data, callback);
+function putAPI(path, data) {
+	return requestAPI('PUT', path, data);
 }
 
-function patchAPI(path, data, callback = null) {
-	requestAPI('PATCH', path, data, callback);
+function patchAPI(path, data) {
+	return requestAPI('PATCH', path, data);
 }
 
 function deleteAPI(path) {
-	requestAPI('DELETE', path);
+	return requestAPI('DELETE', path);
 }
 
-function requestAPI(method, path, data = null, callback = null) {
+function requestAPI(method, path, data = null) {
 	let myHeaders = new Headers();
 	myHeaders.append('Content-Type', 'application/json');
-	fetch(path, {
+	return fetch(path, {
 		method: method,
 		headers: myHeaders,
 		body: (data ? JSONstring2int64(data) : undefined),
@@ -37,12 +37,13 @@ function requestAPI(method, path, data = null, callback = null) {
 			return response.text();
 	})
 	.then((res) => {
-		if (res.length > 0) {
-			res = JSONint642string(res);
-			if (typeof callback === "function") {
-				callback(res);
+		return new Promise((resolve, reject) => {
+			if (res.length > 0) {
+				resolve(JSONint642string(res));
+			} else {
+				resolve({});
 			}
-		}
+		});
 	});
 }
 

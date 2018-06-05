@@ -1,32 +1,22 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { withStyles } from '@material-ui/core/styles';
-import classNames from 'classnames';
 import ListItem from '@material-ui/core/ListItem';
-import ListItemSecondaryAction from '@material-ui/core/ListItemSecondaryAction';
+import Checkbox from '@material-ui/core/Checkbox';
 import TextField from '@material-ui/core/TextField';
-
-import IconButton from '@material-ui/core/IconButton';
-import DeleteIcon from '@material-ui/icons/Delete';
-import AddFolderIcon from '@material-ui/icons/CreateNewFolder';
-import OpenFolderIcon from '@material-ui/icons/FolderOpen';
-import CreateIcon from '@material-ui/icons/ThumbUp';
-import DragIcon from '@material-ui/icons/SwapVert';
 
 import { patchAPI } from 'modules/utils/DevUtils';
 
 const styleSheet = theme => ({
-	icon: {
-		width: '1.6em',
-		height: '1.6em',
+	checked: {
+		backgroundColor: theme.palette.secondary[100],
 	},
-	color: {
-		color: theme.palette.secondary[100],
+	unchecked: {
 	},
 });
 
 class RecommendBranch extends React.Component {
-	state = Object.assign({changeFlag: false}, this.props.data);
+	state = Object.assign({changeFlag: false, checked: false}, this.props.data);
 
 	handleChange = event => {
 		this.setState({
@@ -37,48 +27,43 @@ class RecommendBranch extends React.Component {
 	handleSubmit = event => {
 		event.preventDefault();
 		if (this.state.changeFlag) {
-			patchAPI(`/api/recommend-branches/${this.state.id}`, {name: this.state.name}, null);
+			patchAPI(`/api/recommend-branches/${this.state.id}`, {name: this.state.name});
 			this.setState({changeFlag: false});
 		}
 	};
+	handleCheck = event => {
+		
+		const checked = !this.state.checked;
+		if (checked) {
+			this.props.handleCheck(this.state.id);
+		} else {
+			this.props.handleCheck(false);
+		}
 
-	addRecommendBranch = event => {
-		this.props.addRecommendBranch(this.state.id);
+		this.setState({checked: checked});
 	}
-	deleteRecommendBranch = event => {
-		this.props.deleteRecommendBranch(this.state.id);
-	};
 
 	render() {
 		const { classes } = this.props;
 
 		return (
-			<ListItem>
-				<IconButton aria-label='add folder' >
-					<DragIcon color="secondary" className={classes.icon} />
-				</IconButton>
+			<ListItem
+				className={this.state.checked ? classes.checked : classes.unchecked}
+			>
+				<Checkbox
+					checked={this.state.checked}
+					onClick={this.handleCheck}
+					tabIndex={-1}
+					disableRipple
+				/>
 				<TextField
 					id={this.state.id}
-					placeholder="カテゴリ名"
+					placeholder="リスト名"
 					fullWidth
 					value={this.state.name}
 					onChange={this.handleChange}
 					onBlur={this.handleSubmit}
 				/>
-				<ListItemSecondaryAction>
-					<IconButton aria-label='カテゴリを追加' >
-						<AddFolderIcon onClick={this.addRecommendBranch} className={classNames(classes.icon, classes.color)} />
-					</IconButton>
-					<IconButton aria-label='子カテゴリを追加' >
-						<OpenFolderIcon className={classNames(classes.icon, classes.color)} />
-					</IconButton>
-					<IconButton aria-label='「いいよ」を作成' >
-						<CreateIcon color="secondary" className={classes.icon} />
-					</IconButton>
-					<IconButton aria-label='削除'>
-						<DeleteIcon onClick={this.deleteRecommendBranch} color="error" className={classes.icon} />
-					</IconButton>
-				</ListItemSecondaryAction>
 			</ListItem>
 		);
 	}

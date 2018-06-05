@@ -5,6 +5,7 @@ import List from '@material-ui/core/List';
 import Typography from '@material-ui/core/Typography';
 
 import RecommendBranch from 'modules/components/RecommendBranch';
+import RecommendToolbox from 'modules/components/RecommendToolbox';
 import { getAPI, postAPI, deleteAPI, patchAPI } from 'modules/utils/DevUtils';
 
 const styleSheet = theme => ({
@@ -24,18 +25,32 @@ const styleSheet = theme => ({
 class RecommendTree extends React.Component {
 	state = {
 		data: [],
+		switchRecommendToolbox: () => {
+			console.log("please replace this function.");
+		},
 	};
 	componentDidMount() {
     this.loadRecommendBranchesFromServer();
 	}
 	loadRecommendBranchesFromServer() {
-		getAPI(`/api/users/${this.props.userId}/recommend-branches`, null, (res) => {
+		getAPI(`/api/users/${this.props.userId}/recommend-branches`)
+		.then((res) => {
 			this.setState({data: res});
 			if (Object.keys(res).length === 0) {
 				this.addRecommendBranch("0");
 			}
 		});
 	}
+
+	handleCheck = (id) => {
+		this.state.switchRecommendToolbox(id);
+	};
+	setHandleCheck = (handler) => {
+		// do not setState(). avoiding render().
+		let state = this.state;
+		state.switchRecommendToolbox = handler;
+	};
+
 
 	addRecommendBranch = (id) => {
 		// if id = 0 then add first branch.
@@ -44,7 +59,8 @@ class RecommendTree extends React.Component {
 			userId: this.props.userId,
 			prevId: id,
 			nextId: (id === "0" ? "0" : this.state.data[id].nextId),
-		}, res => {
+		})
+		.then( res => {
 			let data = Object.assign({}, this.state.data);
 			data[res.id] = res;
 
@@ -60,19 +76,25 @@ class RecommendTree extends React.Component {
 			this.setState({data: data});
 		});
 	};
-	deleteRecommendBranch = (id) => {
-		deleteAPI(`/api/recommend-branches/${id}`);
+
+	deleteRecommendBranch = (ids) => {
+
+		ids.forEach(async id => {
+			deleteAPI(`/api/recommend-branches/${id}`);
+		});
 
 		let data = Object.assign({}, this.state.data);
-		const prev = data[data[id].prevId];
-		if (prev) {
-			prev.nextId = data[id].nextId;
-		}
-		const next = data[data[id].nextId];
-		if (next) {
-			next.prevId = data[id].prevId;
-		}
-		delete data[id];
+		ids.forEach((id) => {
+			const prev = data[data[id].prevId];
+			if (prev) {
+				prev.nextId = data[id].nextId;
+			}
+			const next = data[data[id].nextId];
+			if (next) {
+				next.prevId = data[id].prevId;
+			}
+			delete data[id];
+		});
 
 		this.setState({data: data});
 
@@ -82,8 +104,8 @@ class RecommendTree extends React.Component {
 		}
 	};
 
-
 	render() {
+		console.log("render recommend tree");
 		const { classes } = this.props;
 
 		// sort
@@ -108,8 +130,7 @@ class RecommendTree extends React.Component {
 					<RecommendBranch
 						key={id}
 						data={this.state.data[id]}
-						addRecommendBranch={this.addRecommendBranch}
-						deleteRecommendBranch={this.deleteRecommendBranch}
+						handleCheck={this.handleCheck}
 					/>
 				);
 			}
@@ -133,8 +154,7 @@ class RecommendTree extends React.Component {
 						<RecommendBranch
 							key={id}
 							data={this.state.data[id]}
-							addRecommendBranch={this.addRecommendBranch}
-							deleteRecommendBranch={this.deleteRecommendBranch}
+							handleCheck={this.handleCheck}
 						/>
 					);
 
@@ -160,6 +180,11 @@ class RecommendTree extends React.Component {
 					<div className={classes.content}>
 						<Typography variant="headline">リスト</Typography>
 					</div>
+					<RecommendToolbox
+						setHandleCheck={this.setHandleCheck}
+						addRecommendBranch={this.addRecommendBranch}
+						deleteRecommendBranch={this.deleteRecommendBranch}
+					/>
 					<List component='nav'>
 						{recommendBranches}
 					</List>

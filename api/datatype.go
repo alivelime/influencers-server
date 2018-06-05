@@ -37,7 +37,6 @@ type RecommendBranch struct {
 	ChildrenID []int64 `json:"childId" datastore:",noindex"`
 	NextID     int64   `json:"nextId" datastore:",oindex"`
 	PrevID     int64   `json:"prevId" datastore:",oindex"`
-	IsLinked   bool    `json:"-" datastore:"-"`
 	Name       string  `json:"name" datastore:",noindex"`
 	ReviewIDs  []int64 `json:"reviewIds" datastore:",noindex"`
 }

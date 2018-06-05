@@ -39,13 +39,14 @@ class  User extends React.Component {
 		const user = {
 			name: "テスト" + Date.now().toString(),
 		};
-		putAPI(`/api/users/${id}`, user, null);
+		putAPI(`/api/users/${id}`, user);
 	};
 
 	loadUserFromServer() {
 	  const { id } = this.props.match.params
 
-		getAPI(`/api/users/${id}`, null, (res) => {
+		getAPI(`/api/users/${id}`, null)
+		.then((res) => {
 			this.setState({name: res.name});
 		});
 	}
