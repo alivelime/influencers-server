@@ -107,7 +107,7 @@ function HomePage(props) {
 					component={buttonProps => (
 						<Link
 							variant="button"
-							to="/person/1"
+							to="/users/1"
 							{...buttonProps}
 						/>
 					)}
@@ -121,7 +121,7 @@ function HomePage(props) {
 					component={buttonProps => (
 						<Link
 							variant="button"
-							to="/person/1"
+							to="/users/1"
 							{...buttonProps}
 						/>
 					)}

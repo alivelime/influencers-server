@@ -43,7 +43,7 @@ function Footer(props) {
 		<div className={classes.hero}>
     <footer className={classes.root}>
 			<Typography variant="title">
-				あなたの「イイね」で繋がろう! インフルず
+				「これいいよ!」で繋がろう! インフルず
 			</Typography>
       <Typography variant="subheading" component="div">
         <Grid container>

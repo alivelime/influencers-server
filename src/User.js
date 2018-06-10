@@ -70,7 +70,7 @@ class  User extends React.Component {
 					</Paper>
 				</div>
 				<div className={classes.content}>
-					<ReviewForm branch={0}/>
+					<ReviewForm recommendBranch={{id: "0", name: "なし"}}/>
 				</div>
 				<div className={classes.content}>
 					<RecommendTree userId={id} />

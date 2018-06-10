@@ -31,14 +31,14 @@ type Affiliate struct {
 }
 
 type RecommendBranch struct {
-	ID         int64   `json:"id" datastore:"-"`
-	UserID     int64   `json:"userId"`
-	ParentID   int64   `json:"parentId" datastore:",noindex"`
-	ChildrenID []int64 `json:"childId" datastore:",noindex"`
-	NextID     int64   `json:"nextId" datastore:",oindex"`
-	PrevID     int64   `json:"prevId" datastore:",oindex"`
-	Name       string  `json:"name" datastore:",noindex"`
-	ReviewIDs  []int64 `json:"reviewIds" datastore:",noindex"`
+	ID          int64   `json:"id" datastore:"-"`
+	UserID      int64   `json:"userId"`
+	ParentID    int64   `json:"parentId" datastore:",noindex"`
+	ChildrenIDs []int64 `json:"childrenIds" datastore:",noindex"`
+	NextID      int64   `json:"nextId" datastore:",oindex"`
+	PrevID      int64   `json:"prevId" datastore:",oindex"`
+	Name        string  `json:"name" datastore:",noindex"`
+	ReviewIDs   []int64 `json:"reviewIds" datastore:",noindex"`
 }
 
 type Review struct {
@@ -50,8 +50,8 @@ type Review struct {
 	IineIDs     []int64   `json:"referenceId" datasotre:"-,noindex"`
 	Evidence    string    `json:"evidence"`
 	Memo        string    `json:"memo" datastore:",noindex"`
-	Importance  int       `json:"importance" datastore:",noindex"`
-	Familiarity int       `json:"familiarity" datastore:",noindex"`
+	ForMe       int       `json:"forMe" datastore:",noindex"`
+	ForYou      int       `json:"forYou" datastore:",noindex"`
 	CreatedAt   time.Time `datastore:",noindex"`
 }
 

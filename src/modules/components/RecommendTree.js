@@ -18,6 +18,10 @@ const styleSheet = theme => ({
 });
 
 class RecommendTree extends React.Component {
+	/*
+	 * this.state.data is one level list.
+	 * do not make complex as nested object.
+	 */
 	state = {
 		data: [],
 		switchRecommendToolbox: () => {
@@ -30,15 +34,16 @@ class RecommendTree extends React.Component {
 	loadRecommendBranchesFromServer() {
 		getAPI(`/api/users/${this.props.userId}/recommend-branches`)
 		.then((res) => {
-			this.setState({data: res});
-			if (Object.keys(res).length === 0) {
+			if (Object.keys(res).length > 0) {
+				this.setState({data: res});
+			} else {
 				this.addRecommendBranch("0");
 			}
 		});
 	}
 
-	handleCheck = (id) => {
-		this.state.switchRecommendToolbox(id);
+	handleCheck = (id, on) => {
+		this.state.switchRecommendToolbox(id, on);
 	};
 	setHandleCheck = (handler) => {
 		// do not setState(). avoiding render().
@@ -46,7 +51,13 @@ class RecommendTree extends React.Component {
 		state.switchRecommendToolbox = handler;
 	};
 
-	swapRecommendBranch = (id) => {
+	moveUpRecommendBranch = (id) => {
+		const prevId = this.state.data[id].prevId;
+		if (prevId !== "0") {
+			this.moveDownRecommendBranch(prevId);
+		}
+	}
+	moveDownRecommendBranch = (id) => {
 		let data = Object.assign({}, this.state.data);
 
 		const B = id;
@@ -58,7 +69,6 @@ class RecommendTree extends React.Component {
 			return;
 		}
 		const D = this.state.data[C].nextId;
-		console.log(`${A} -> ${B} -> ${C} -> ${D}`);
 
 		// set prev id
 		if (A !== "0") {
@@ -117,6 +127,29 @@ class RecommendTree extends React.Component {
 		});
 	};
 
+	addSubRecommendBranch = async (id) => {
+		// insert sub last branch.
+		const target = Object.keys(this.state.data).find((id) => {
+			return (this.state.data[id].parentId === id && this.state.data[id].nextId === "0");
+		});
+
+		const res = await postAPI(`/api/recommend-branches`, {
+			name: "新しいリスト",
+			userId: this.props.userId,
+			parentId: id,
+			prevId: (target !== undefined ? "0" : target),
+			nextId: "0",
+		})
+
+		let data = Object.assign({}, this.state.data);
+		data[res.id] = res;
+		if (target !== undefined) {
+			data[target].nextId = res.id;
+		}
+
+		this.setState({data: data});
+	}
+
 	deleteRecommendBranch = (ids) => {
 
 		(async () => {
@@ -146,16 +179,18 @@ class RecommendTree extends React.Component {
 		}
 	};
 
-	render() {
-		console.log("render recommend tree");
-		const { classes } = this.props;
-
-		// sort
+	// get 1 level list. and fix broken list.
+	getRecommendList = (parentId) => {
 		let recommendBranches = [];
-		if (Object.keys(this.state.data).length > 0) {
+
+		// find parent id.
+		const list = Object.keys(this.state.data).filter((id) => {
+			return this.state.data[id].parentId === parentId;
+		});
+		if (list.length > 0) {
 			let patchIds = [];
 
-			const firsts = Object.keys(this.state.data).filter((id) => {
+			const firsts = list.filter((id) => {
 				return this.state.data[id].prevId === "0";
 			});
 
@@ -165,7 +200,7 @@ class RecommendTree extends React.Component {
 				first = firsts[0];
 			} else {
 				console.log("could not find first elem.");
-				first = Object.keys(this.state.data)[0];
+				first = list[0];
 
 				// fix prevId = "0"
 				let data = this.state.data[first];
@@ -173,29 +208,24 @@ class RecommendTree extends React.Component {
 				patchIds.push(first);
 			}
 
-			let outOfLinks = Object.assign({}, this.state.data);
+			let outOfLinks = {};
+			list.forEach(id => outOfLinks[id] = null);
 
 			let id, prevId;
 			for (id = first;
-					this.state.data.hasOwnProperty(id);
+					list.indexOf(id) >= 0;
 					id = this.state.data[id].nextId)
 			{
 				// check out of link.
 				prevId = id;
 				delete outOfLinks[id];
 
-				recommendBranches.push(
-					<RecommendBranch
-						key={id}
-						data={this.state.data[id]}
-						handleCheck={this.handleCheck}
-					/>
-				);
+				recommendBranches.push(this.state.data[id]);
 				
 				// check if nextId is loop
 				const nextId = this.state.data[id].nextId;
-				if (this.state.data.hasOwnProperty(nextId) &&
-						!outOfLinks.hasOwnProperty(this.state.data[id].nextId)
+				if (list.indexOf(nextId) >= 0 &&
+						!outOfLinks.hasOwnProperty(nextId)
 				) {
 					console.log("recommend branches is loop!");
 					// fix netxtId to zero.
@@ -211,7 +241,7 @@ class RecommendTree extends React.Component {
 				patchIds.push(prevId);
 
 				Object.keys(outOfLinks).forEach((id) => {
-					console.log("link list is broken. so fix it.");
+					console.log(`link list is broken. so fix it. ${parentId}`);
 
 					let prev = this.state.data[prevId];
 					prev.nextId = id;
@@ -219,14 +249,7 @@ class RecommendTree extends React.Component {
 					let recommendBranch = this.state.data[id];
 					recommendBranch.prevId = prevId;
 					recommendBranch.nextId = "0";
-
-					recommendBranches.push(
-						<RecommendBranch
-							key={id}
-							data={this.state.data[id]}
-							handleCheck={this.handleCheck}
-						/>
-					);
+					recommendBranches.push(recommendBranch);
 
 					patchIds.push(id);
 					prevId = id;
@@ -246,20 +269,55 @@ class RecommendTree extends React.Component {
 			// Because data is empty when ComponentDidMount() called.
 		}
 
-		return (
-				<div className={classes.root}>
-					<div className={classes.content}>
-					</div>
-					<RecommendToolbox
-						setHandleCheck={this.setHandleCheck}
-						swapRecommendBranch={this.swapRecommendBranch}
-						addRecommendBranch={this.addRecommendBranch}
-						deleteRecommendBranch={this.deleteRecommendBranch}
+		return recommendBranches;
+	};
+
+	getRecommendLeaves = (parentId) => {
+		return [];
+	};
+
+	render() {
+		console.log("render recommend tree");
+		const { classes } = this.props;
+
+		// get first level list.
+		const recommendBranches = this.getRecommendList("0").map((recommendBranch) => {
+			return (
+					<RecommendBranch
+						key={recommendBranch.id}
+						data={recommendBranch}
+						getRecommendList={this.getRecommendList}
+						handleCheck={this.handleCheck}
+						level={0}
 					/>
-					<List component='nav'>
-						{recommendBranches}
-					</List>
+				);
+		});
+
+		const recommendLeaves = this.getRecommendLeaves("0").map((recommendLeaf) => {
+			return (
+					<div></div>
+			);
+		});
+
+		return (
+			<div className={classes.root}>
+				<div className={classes.content}>
 				</div>
+				<RecommendToolbox
+					setHandleCheck={this.setHandleCheck}
+					moveDownRecommendBranch={this.moveDownRecommendBranch}
+					moveUpRecommendBranch={this.moveUpRecommendBranch}
+					moveRecommendBranches={this.moveRecommendBranches}
+					addRecommendBranch={this.addRecommendBranch}
+					addSubRecommendBranch={this.addSubRecommendBranch}
+					deleteRecommendBranch={this.deleteRecommendBranch}
+					deleteAllRecommendBranch={this.deleteAllRecommendBranch}
+				/>
+				<List component='nav'>
+					{recommendBranches}
+					{recommendLeaves}
+				</List>
+			</div>
 		);
 	}
 }

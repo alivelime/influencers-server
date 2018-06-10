@@ -5,14 +5,16 @@ import classNames from 'classnames';
 import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
 import Typography from '@material-ui/core/Typography';
+import Tooltip from '@material-ui/core/Tooltip';
 
 import IconButton from '@material-ui/core/IconButton';
-import DeleteIcon from '@material-ui/icons/Delete';
+import ArrowUpwardIcon from '@material-ui/icons/ArrowUpward';
+import ArrowDownwardIcon from '@material-ui/icons/ArrowDownward';
+import SwapHorizIcon from '@material-ui/icons/SwapHoriz';
 import AddFolderIcon from '@material-ui/icons/CreateNewFolder';
-import OpenFolderIcon from '@material-ui/icons/FolderOpen';
-import CreateIcon from '@material-ui/icons/ThumbUp';
-import DragIcon from '@material-ui/icons/SwapVert';
 import SubdirectoryIcon from '@material-ui/icons/SubdirectoryArrowRight';
+import IiyoIcon from '@material-ui/icons/ThumbUp';
+import DeleteIcon from '@material-ui/icons/Delete';
 
 const styleSheet = theme => ({
 	icon: {
@@ -49,17 +51,31 @@ class RecommendToolbox extends React.Component {
 			this.props.addRecommendBranch(this.state.ids[0]);
 		}
 	}
+	addSubRecommendBranch = event => {
+		if (this.state.ids.length === 1) {
+			this.props.addSubRecommendBranch(this.state.ids[0]);
+		}
+	}
 	deleteRecommendBranch = event => {
 		this.props.deleteRecommendBranch(this.state.ids);
 	};
-	swapRecommendBranch = event => {
-		this.props.swapRecommendBranch(this.state.ids[0]);
+	deleteAllRecommendBranch = event => {
+		this.props.deleteAllRecommendBranch(this.state.ids);
 	};
+	moveUpRecommendBranch = event => {
+		this.props.moveUpRecommendBranch(this.state.ids[0]);
+	};
+	moveDownRecommendBranch = event => {
+		this.props.moveDownRecommendBranch(this.state.ids[0]);
+	};
+	moveRecommendBranches = event => {
+		this.props.moveRecommendBranches(this.state.ids);
+	}
 
-	handleCheck = (id) => {
+	handleCheck = (id, on) => {
 		let ids = this.state.ids;
 
-		if (id) {
+		if (on) {
 			ids.push(id);
 		} else {
 			ids.splice(ids.indexOf(id), 1);
@@ -77,39 +93,69 @@ class RecommendToolbox extends React.Component {
 			>
 				<Toolbar>
 					<Typography variant="headline">リスト</Typography>
-					<IconButton aria-label='下に移動' >
-						<DragIcon
-							onClick={this.swapRecommendBranch}
-							className={classNames(classes.icon, (this.state.ids.length === 1 ? classes.enable : classes.disable))}
-						/>
-					</IconButton>
-					<IconButton aria-label='次のリストに移動' >
-						<SubdirectoryIcon
-							className={classNames(classes.icon, (this.state.ids.length === 1 ? classes.enable : classes.disable))}
-						/>
-					</IconButton>
-					<IconButton aria-label='カテゴリを追加' >
-						<AddFolderIcon
-							onClick={this.addRecommendBranch}
-							className={classNames(classes.icon, (this.state.ids.length === 1 ? classes.enable : classes.disable))}
-						/>
-					</IconButton>
-					<IconButton aria-label='子カテゴリを追加' >
-						<OpenFolderIcon
-							className={classNames(classes.icon, (this.state.ids.length === 1 ? classes.enable : classes.disable))}
-						/>
-					</IconButton>
-					<IconButton aria-label='「いいよ」を作成' >
-						<CreateIcon
-							className={classNames(classes.icon, (this.state.ids.length === 1 ? classes.enableIiyo : classes.disable))}
-						/>
-					</IconButton>
-					<IconButton aria-label='削除'>
-						<DeleteIcon
-							onClick={this.deleteRecommendBranch}
-							className={classNames(classes.icon, (this.state.ids.length > 0 ? classes.enableDelete : classes.disable))}
-						/>
-					</IconButton>
+					<Tooltip id="tooltip-top-start" title="上に移動">
+						<IconButton>
+							<ArrowUpwardIcon
+								onClick={this.moveUpRecommendBranch}
+								className={classNames(classes.icon, (this.state.ids.length === 1 ? classes.enable : classes.disable))}
+							/>
+						</IconButton>
+					</Tooltip>
+					<Tooltip id="tooltip-top-start" title="下に移動">
+						<IconButton>
+							<ArrowDownwardIcon
+								onClick={this.moveDownRecommendBranch}
+								className={classNames(classes.icon, (this.state.ids.length === 1 ? classes.enable : classes.disable))}
+							/>
+						</IconButton>
+					</Tooltip>
+					<Tooltip id="tooltip-top-start" title="移動(移動したいリストをいくつか選択し、移動先を最後に選択してこのボタンを押します)">
+						<IconButton>
+							<SwapHorizIcon
+								onClick={this.moveRecommendBranches}
+								className={classNames(classes.icon, (this.state.ids.length >= 1 ? classes.enable : classes.disable))}
+							/>
+						</IconButton>
+					</Tooltip>
+					<Tooltip id="tooltip-top-start" title="カテゴリを追加">
+						<IconButton>
+							<AddFolderIcon
+								onClick={this.addRecommendBranch}
+								className={classNames(classes.icon, (this.state.ids.length === 1 ? classes.enable : classes.disable))}
+							/>
+						</IconButton>
+					</Tooltip>
+					<Tooltip id="tooltip-top-start" title="サブリストを追加">
+						<IconButton>
+							<SubdirectoryIcon
+								onClick={this.addSubRecommendBranch}
+								className={classNames(classes.icon, (this.state.ids.length === 1 ? classes.enable : classes.disable))}
+							/>
+						</IconButton>
+					</Tooltip>
+					<Tooltip id="tooltip-top-start" title="「いいよ」を作成">
+						<IconButton>
+							<IiyoIcon
+								className={classNames(classes.icon, (this.state.ids.length === 1 ? classes.enableIiyo : classes.disable))}
+							/>
+						</IconButton>
+					</Tooltip>
+					<Tooltip id="tooltip-top-start" title="削除(子要素は親リストにマージされます)">
+						<IconButton>
+							<DeleteIcon
+								onClick={this.deleteRecommendBranch}
+								className={classNames(classes.icon, (this.state.ids.length > 0 ? classes.enableDelete : classes.disable))}
+							/>
+						</IconButton>
+					</Tooltip>
+					<Tooltip id="tooltip-top-start" title="削除(サブリストは全て削除し、レポートは親リストにマージされます)">
+						<IconButton>
+							<DeleteIcon
+								onClick={this.deleteAllRecommendBranch}
+								className={classNames(classes.icon, (this.state.ids.length > 0 ? classes.enableDelete : classes.disable))}
+							/>
+						</IconButton>
+					</Tooltip>
 				</Toolbar>
 			</AppBar>
 		);
