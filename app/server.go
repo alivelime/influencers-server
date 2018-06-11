@@ -29,6 +29,10 @@ func init() {
 	r.HandleFunc("/api/recommend-branches", api.HandleRecommendBranches)
 	r.HandleFunc("/api/recommend-branches/{id}", api.HandleRecommendBranch)
 	r.HandleFunc("/api/users/{userId}/recommend-branches", api.HandleUserRecommendBranches)
+	r.HandleFunc("/api/recommends", api.HandleRecommends)
+	r.HandleFunc("/api/recommends/{id}", api.HandleRecommend)
+	r.HandleFunc("/api/reviews", api.HandleReviews)
+	r.HandleFunc("/api/reviews/{id}", api.HandleReview)
 	http.Handle("/", r)
 
 	log.Println("Server started: http://localhost:")

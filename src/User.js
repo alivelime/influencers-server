@@ -16,7 +16,7 @@ const styleSheet = theme => ({
 	content: {
     paddingBottom: theme.spacing.unit * 2,
     paddingTop: theme.spacing.unit * 2,
-    maxWidth: theme.spacing.unit * 110,
+    maxWidth: theme.spacing.unit * 160,
     margin: 'auto',
 	},
 	header: {
@@ -70,7 +70,12 @@ class  User extends React.Component {
 					</Paper>
 				</div>
 				<div className={classes.content}>
-					<ReviewForm recommendBranch={{id: "0", name: "なし"}}/>
+					<ReviewForm
+						recommendBranch={{id: "0", name: "なし"}}
+						userId={id}
+						iineId={0}
+						submitCallback={()=>{}}
+					/>
 				</div>
 				<div className={classes.content}>
 					<RecommendTree userId={id} />

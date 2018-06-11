@@ -18,7 +18,8 @@ const amazonURLs = [
 // /半角英数10桁[/?] であればアマゾンのリンクだよね?
 const pattern = /^https:\/\/www\.amazon\.co\.jp\/.*\/([0-9a-zA-Z]{10})([/?][\s\S]*)?$/;
 function isAmazonJP(url) {
-	return (pattern.test(url));
+	const matches = url.match(pattern);
+	return (matches ? matches[1] : false);
 }
 
 function makeAmazonJPSimple(url) {

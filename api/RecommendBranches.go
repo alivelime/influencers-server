@@ -153,12 +153,13 @@ func patchRecommendBranch(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// put
-	_, err = datastore.Put(ctx, key, &recommendBranch)
+	k, err := datastore.Put(ctx, key, &recommendBranch)
 	if err != nil {
 		http.Error(w, fmt.Sprintf("unable put datastore  %s", err), http.StatusInternalServerError)
 		return
 	}
 
+	recommendBranch.ID = k.IntID()
 	res, err := json.Marshal(recommendBranch)
 	if err != nil {
 		http.Error(w, fmt.Sprintf("Unable to marshal comments to json: %s", err), http.StatusInternalServerError)
