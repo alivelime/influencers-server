@@ -1,5 +1,10 @@
+import { isURL } from 'modules/utils/Validation';
 
 function getOGPData(url) {
+	if (!isURL(url)) {
+		return {title: '', image: '', description: ''};
+	}
+
 	// cannot get meta data from browser for CORS...
 	
 	// getAPI(`/api/recommends/${url}/ogp`);

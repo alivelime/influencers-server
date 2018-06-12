@@ -5,7 +5,6 @@ import Typography from '@material-ui/core/Typography';
 import Paper from '@material-ui/core/Paper';
 
 import RecommendTree from 'modules/components/RecommendTree';
-import ReviewForm from 'modules/components/ReviewForm';
 import { getAPI, putAPI } from 'modules/utils/DevUtils';
 
 const styleSheet = theme => ({
@@ -70,12 +69,6 @@ class  User extends React.Component {
 					</Paper>
 				</div>
 				<div className={classes.content}>
-					<ReviewForm
-						recommendBranch={{id: "0", name: "なし"}}
-						userId={id}
-						iineId={0}
-						submitCallback={()=>{}}
-					/>
 				</div>
 				<div className={classes.content}>
 					<RecommendTree userId={id} />

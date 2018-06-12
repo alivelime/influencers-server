@@ -11,6 +11,8 @@ import IconButton from '@material-ui/core/IconButton';
 import ExpandLess from '@material-ui/icons/ExpandLess';
 import ExpandMore from '@material-ui/icons/ExpandMore';
 
+import Recommend from 'modules/components/Recommend';
+import Review from 'modules/components/Review';
 import { patchAPI } from 'modules/utils/DevUtils';
 
 const styleSheet = theme => ({
@@ -80,6 +82,14 @@ class RecommendBranch extends React.Component {
 			);
 		});
 
+		const reviews = Object.keys(this.props.reviews).map((id) => {
+			return (
+				<ListItem style={{paddingLeft: (this.props.level * 2)+ 'em'}}>
+					<Review data={this.props.reviews[id]} />
+				</ListItem>
+			);
+		});
+
 		return (
 			<div style={{paddingLeft: (this.props.level * 2)+ 'em'}}>
 				<ListItem
@@ -91,14 +101,24 @@ class RecommendBranch extends React.Component {
 						tabIndex={-1}
 						disableRipple
 					/>
-					<TextField
-						id={this.state.id}
-						placeholder="リスト名"
-						fullWidth
-						value={this.state.name}
-						onChange={this.handleChange}
-						onBlur={this.handleSubmit}
-					/>
+					{(() => {
+						if (this.state.recommend === undefined) {
+							return (
+								<TextField
+									id={this.state.id}
+									placeholder="リスト名"
+									fullWidth
+									value={this.state.name}
+									onChange={this.handleChange}
+									onBlur={this.handleSubmit}
+								/>
+							);
+						} esle {
+							return (
+								<Recommend data={this.props.recommend} />
+							);
+						}
+					})()}
 					{(() => {
 						if (children.length > 0) {
 							return (

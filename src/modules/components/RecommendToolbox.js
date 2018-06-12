@@ -4,7 +4,6 @@ import { withStyles } from '@material-ui/core/styles';
 import classNames from 'classnames';
 import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
-import Typography from '@material-ui/core/Typography';
 import Tooltip from '@material-ui/core/Tooltip';
 
 import IconButton from '@material-ui/core/IconButton';
@@ -92,7 +91,6 @@ class RecommendToolbox extends React.Component {
 				color="default"
 			>
 				<Toolbar>
-					<Typography variant="headline">リスト</Typography>
 					<Tooltip id="tooltip-top-start" title="上に移動">
 						<IconButton>
 							<ArrowUpwardIcon

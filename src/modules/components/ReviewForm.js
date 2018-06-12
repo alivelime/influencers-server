@@ -11,9 +11,6 @@ import ListItemText from '@material-ui/core/ListItemText';
 import ListItemSecondaryAction from '@material-ui/core/ListItemSecondaryAction';
 
 import Button from '@material-ui/core/Button';
-import Card from '@material-ui/core/Card';
-import CardContent from '@material-ui/core/CardContent';
-import CardMedia from '@material-ui/core/CardMedia';
 import FormControl from '@material-ui/core/FormControl';
 import InputLabel from '@material-ui/core/InputLabel';
 import Select from '@material-ui/core/Select';
@@ -22,9 +19,10 @@ import TextField from '@material-ui/core/TextField';
 import IconButton from '@material-ui/core/IconButton';
 import BackspaceIcon from '@material-ui/icons/Backspace';
 
+import Recommend from 'modules/components/Recommend';
 import { postAPI } from 'modules/utils/DevUtils';
 import { isAmazonJP, makeAmazonJPSimple } from 'modules/utils/AmazonURL';
-import { getOGPData } from 'modules/utils/OGP';
+import { isURL } from 'modules/utils/Validation';
 
 const styleSheet = theme => ({
 	root: {
@@ -41,34 +39,35 @@ const styleSheet = theme => ({
 		margin: theme.spacing.unit,
 		minWidth: '8vw',
 	},
-	image: {
-		width: 160,
-	},
-	card: {
-		display: 'flex',
-	},
 	content: {
 	},
 });
 
 class ReviewForm extends React.Component {
-	state = {
-		kind: 'mono',
-		url: '',
-		urlError: false,
-		urlHelper: '',
-		evidence: '',
-		urlTitle: '',
-		urlImage: '',
-		urlDescription: '',
-		evidenceError: '',
-		memo: '',
-		forMe: 1,
-		forYou: 1,
-		date: (new Date()).getFullYear() + '-'
-				+ ("0"+((new Date()).getMonth()+1)).slice(-2) + '-'
-				+ ("0"+(new Date()).getDate()).slice(-2),
-	};
+	constructor(props) {
+		super(props);
+
+		this.state = this.initState();
+	}
+	initState() {
+		return {
+			kind: 'mono',
+			error: false,
+			errorMessage: '',
+			url: '',
+			urlError: false,
+			urlHelper: '',
+			evidence: '',
+			evidenceError: '',
+			memo: '',
+			forMe: 1,
+			forYou: 1,
+			date: (new Date()).getFullYear() + '-'
+					+ ("0"+((new Date()).getMonth()+1)).slice(-2) + '-'
+					+ ("0"+(new Date()).getDate()).slice(-2),
+			recommendBranch: this.props.recommendBranch,
+		};
+	}
 
 	handleSubmit = async event => {
 		event.preventDefault();
@@ -77,15 +76,18 @@ class ReviewForm extends React.Component {
 		}
 		
 		try {
-			const { title } = getOGPData(this.state.url);
 			await postAPI(`/api/recommends`, {
-				URL: this.state.url,
-				name: title,
+				url: this.state.url,
 				kind: this.state.kind,
 			});
+			await postAPI(`/api/recommends`, {
+				url: this.state.evidence,
+				kind: "evidence",
+			});
+			const recommendBranch = await this.props.addSubRecommendBranch(this.state.recommendBranch.id);
 			const res = await postAPI(`/api/reviews`, {
 				userId: this.props.userId,
-				recommendBranchId: this.props.recommendBranch.Id,
+				recommendBranchId: recommendBranch.id,
 				recommendId: this.state.url,
 				iineId: this.props.iineId,
 				evidence: this.state.evidence,
@@ -97,6 +99,7 @@ class ReviewForm extends React.Component {
 			if (Object.keys(res).length === 0) {
 				this.setState({urlError: true, urlHelper: '登録に失敗しました'});
 			} else {
+				this.setState(this.initState());
 				this.props.submitCallback(true);
 			}
 			return;
@@ -108,7 +111,7 @@ class ReviewForm extends React.Component {
 		this.setState({ [event.target.name]: event.target.value });
 	};
 	validationURL = (value) => {
-		if (/^https?:\/\//.test(value)) {
+		if (isURL(value)) {
 			return '';
 		} else {
 			return 'URLを入力してください(必須)';
@@ -118,7 +121,7 @@ class ReviewForm extends React.Component {
 		const value = event.target.value;
 		let url = value;
 		let urlError = false;
-		let urlHelper = '', ogp;
+		let urlHelper = '';
 		const error = this.validationURL(value);
 		if (error.length > 0) {
 			urlError = true;
@@ -128,20 +131,16 @@ class ReviewForm extends React.Component {
 			if (isAmazonJP(value)) {
 				url = makeAmazonJPSimple(value);
 				urlHelper = "AmazonURLです。アフィリタグは自動的に挿入されます。";
-				ogp = getOGPData(value);
 			}
 		}
 		this.setState({
 			url: url,
 			urlError: urlError,
 			urlHelper: urlHelper,
-			urlTitle: ogp.title,
-			urlImage: ogp.image,
-			urlDescription: ogp.description,
 		});
 	};
 	validationEvidence = (value) => {
-		if (value.length === 0 || /^https?:\/\//.test(value)) {
+		if (value.length === 0 || isURL(value)) {
 			return '';
 		} else {
 			return 'URLを入力してください';
@@ -161,14 +160,14 @@ class ReviewForm extends React.Component {
 	};
 
 	render() {
-		const { classes, recommendBranch } = this.props;
+		const { classes } = this.props;
 
 		return (
 			<Paper>
 				<Typography className={classes.title} variant="headline">これいいよ!</Typography>
 				<List component='nav'>
 					<ListItem>
-						<ListItemText primary={`親リスト: ${recommendBranch.name}`} />
+						<ListItemText primary={`親リスト: ${this.state.recommendBranch.name}`} />
 					</ListItem>
 					<ListItem>
 						{(() => {
@@ -223,23 +222,9 @@ class ReviewForm extends React.Component {
 							);
 						}
 					})()}
-					{(() => {
-						if (this.state.urlTitle) {
-							return (
-								<Card className={classes.card}>
-									<CardMedia
-										className={classes.image}
-										image={this.state.urlImage}
-										title={this.state.urlTitle}
-									/>
-									<CardContent className={classes.content}>
-										<Typography variant="title">{this.state.urlTitle}</Typography>
-										<Typography variant="body1">{this.state.urlDescription}</Typography>
-									</CardContent>
-								</Card>
-							);
-						}
-					})()}
+					<ListItem>
+						<Recommend url={this.state.url} />
+					</ListItem>
 					<ListItem>
 						<TextField
 							id="evidence"
@@ -255,6 +240,9 @@ class ReviewForm extends React.Component {
 								<BackspaceIcon className={classes.icon} />
 							</IconButton>
 						</ListItemSecondaryAction>
+					</ListItem>
+					<ListItem>
+						<Recommend url={this.state.evidence} />
 					</ListItem>
 					<ListItem>
 						<TextField
