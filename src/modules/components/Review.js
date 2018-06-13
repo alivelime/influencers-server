@@ -17,29 +17,24 @@ const styleSheet = theme => ({
 	},
 	card: {
 		display: 'flex',
-		padding: theme.spacing.unit * 2,
-		width: '100%',
+		paddingLeft: theme.spacing.unit * 3,
+		width: "100%",
 	},
 });
 
-class Recommend extends React.Component {
+class Review extends React.Component {
 
 	render() {
 		const { classes } = this.props;
 
 		let ogp = {title: '', image: '', description: ''}
 
-		if (this.props.url && isURL(this.props.url)) {
-			ogp = getOGPData(this.props.url);
-		} else if (this.props.data) {
-			if ("title" in this.props.data && this.props.data.title.length > 0) {
-				ogp = this.props.data;
-			} else {
-				// if title is null, get title and images.
-				ogp = getOGPData(this.props.data.url);
-			}
+		if (this.props.ogp) {
+			ogp = this.props.ogp;
 		} else {
-			return null;
+			if (isURL(this.props.data.evidence)) {
+				ogp = getOGPData(this.props.data.evidence);
+			}
 		}
 
 		return (
@@ -51,16 +46,22 @@ class Recommend extends React.Component {
 				/>
 				<CardContent className={classes.content}>
 					<Typography variant="title">{ogp.title}</Typography>
-					<Typography variant="body1">{ogp.description}</Typography>
+					<Typography variant="body1">{this.props.data.memo}</Typography>
+					<Typography variant="body2">
+						お気に入り度 : {this.props.data.forMe}
+						オススメ度 : {this.props.data.forYou}
+						日付 : {this.props.data.createdAt}
+					</Typography>
 				</CardContent>
 			</Card>
 		);
 	}
 }
 
-Recommend.propTypes = {
+Review.propTypes = {
   classes: PropTypes.object.isRequired,
 };
 
-export default withStyles(styleSheet)(Recommend);
+export default withStyles(styleSheet)(Review);
+
 

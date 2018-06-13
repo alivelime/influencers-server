@@ -32,11 +32,11 @@ class RecommendTree extends React.Component {
 		},
 	};
 	componentDidMount() {
-    this.loadRecommendBranchesFromServer();
+    this.loadDataFromServer();
 	}
-	async loadRecommendBranchesFromServer() {
-		let recommendBrances, reviews;
-		await Promiss.all([
+	async loadDataFromServer() {
+		let recommendBranches, reviews, recommends;
+		await Promise.all([
 			(async () => {
 				recommendBranches = await getAPI(`/api/users/${this.props.userId}/recommend-branches`);
 			})(),
@@ -140,16 +140,16 @@ class RecommendTree extends React.Component {
 		});
 	};
 
-	addSubRecommendBranch = async (id) => {
+	addSubRecommendBranch = async (parentId) => {
 		// insert sub last branch.
 		const last = Object.keys(this.state.recommendBranches).find((id) => {
-			return (this.state.recommendBranches[id].parentId === id && this.state.recommendBranches[id].nextId === "0");
+			return (this.state.recommendBranches[id].parentId === parentId && this.state.recommendBranches[id].nextId === "0");
 		});
 
 		const res = await postAPI(`/api/recommend-branches`, {
 			name: "新しいリスト",
 			userId: this.props.userId,
-			parentId: id,
+			parentId: parentId,
 			prevId: last || "0",
 			nextId: "0",
 		})
@@ -194,8 +194,24 @@ class RecommendTree extends React.Component {
 		}
 	};
 
+	searchRecommendBranch = (url) => {
+		return Object.keys(this.state.reviews).filter((id) => {
+			return this.state.reviews[id].recommendId === url;
+		})
+		.map((id) => {
+			return this.state.reviews[id].recommendBranchId;
+		});
+	};
+	getParentRecommendBranchName = (id) => {
+		return (id === "0" ? "トップ" :
+						(this.state.recommendBranches[id].parentId === "0"
+							? `トップ(${id})`
+							: this.state.recommendBranches[this.state.recommendBranches[id].parentId].name
+						));
+	};
+
 	// get 1 level list. and fix broken list.
-	getRecommendList = (parentId) => {
+	getRecommendBranchesList = (parentId) => {
 		let recommendBranches = [];
 
 		// find parent id.
@@ -288,39 +304,56 @@ class RecommendTree extends React.Component {
 	};
 
 	getReviewList(recommendBranchId) {
-		return Object.keys(this.state.reviews).find((id) => {
+		return Object.keys(this.state.reviews).filter((id) => {
 			return this.state.reviews[id].recommendBranchId === recommendBranchId;
-		});
+		})
+		.map(id => this.state.reviews[id]);
 	}
+
+	getChildRecommendBranches = (parentId, level, parentChecked) => {
+		return this.getRecommendBranchesList(parentId).map((recommendBranch) => {
+			const reviews = this.getReviewList(recommendBranch.id);
+			const recommend = (reviews.length > 0 ? this.state.recommends[reviews[0].recommendId] : null);
+			return (
+					<RecommendBranch
+						key={recommendBranch.id}
+						data={recommendBranch}
+						recommend={recommend}
+						reviews={reviews}
+						getChildren={this.getChildRecommendBranches}
+						handleCheck={this.handleCheck}
+						level={level}
+						parentChecked={parentChecked}
+					/>
+				);
+		});
+	};
+	reviewCallback = (review, recommend) => {
+		this.setState({
+			reviews: Object.assign({[review.id]: review}, this.state.reviews),
+			recommends: Object.assign( {[recommend.url]: recommend}, this.state.recommends),
+		});
+	};
 
 	render() {
 		console.log("render recommend tree");
 		const { classes } = this.props;
 
 		// get first level list.
-		const recommendBranches = this.getRecommendList("0").map((recommendBranch) => {
-			const reviews = this.getReviewList(recommendBranch.id).map((id) => {return this.state.reviews[id];});
-			return (
-					<RecommendBranch
-						key={recommendBranch.id}
-						data={recommendBranch}
-						reviews={reviews}
-						getRecommendList={this.getRecommendList}
-						handleCheck={this.handleCheck}
-						level={0}
-					/>
-				);
-		});
-
+		const recommendBranches = this.getChildRecommendBranches("0", 0, false);
 		return (
 			<div className={classes.root}>
 				<div className={classes.content}>
 					<ReviewForm
-						recommendBranch={{id: "0", name: "自動選択"}}
+						recommendBranch={{id: "0", name: "自動選択 or トップ"}}
 						userId={this.props.userId}
 						iineId={0}
 						addSubRecommendBranch={this.addSubRecommendBranch}
-						submitCallback={()=>{}}
+						deleteRecommendBranch={this.deleteRecommendBranch}
+						searchRecommendBranch={this.searchRecommendBranch}
+						searchParent
+						getParentRecommendBranchName={this.getParentRecommendBranchName}
+						submitCallback={this.reviewCallback}
 					/>
 				</div>
 				<RecommendToolbox

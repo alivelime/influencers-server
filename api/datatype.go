@@ -94,6 +94,6 @@ type Recommend struct {
 	URL         string `json:"url" datastore:"-"`
 	Title       string `json:"title" datastore:",noindex"`
 	Image       string `json:"image" datastore:",noindex"`
-	Description string `json:"title" datastore:",noindex"`
+	Description string `json:"description" datastore:",noindex"`
 	Kind        string `json:"kind" datastore:",noindex"` // mono, service, information
 }

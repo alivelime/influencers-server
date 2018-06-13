@@ -50,11 +50,25 @@ class ReviewForm extends React.Component {
 		this.state = this.initState();
 	}
 	initState() {
+
+		// searchRecommendBranch(url)[0] > this.props.recommendBranchId > "0" ...
+		let recommendBranchId = "0";
+		if (this.props.url) {
+			const recommendBranchIds = this.props.searchRecommendBranch(this.props.url);
+			if (recommendBranchIds.length > 0) {
+				recommendBranchId = recommendBranchIds[0];
+			}
+		} else {
+			if (this.props.recommendBranchId) {
+				recommendBranchId = this.props.recommendBranchId;
+			}
+		}
+
 		return {
-			kind: 'mono',
+			kind: this.props.kind || 'mono',
 			error: false,
 			errorMessage: '',
-			url: '',
+			url: this.props.url || '',
 			urlError: false,
 			urlHelper: '',
 			evidence: '',
@@ -65,7 +79,7 @@ class ReviewForm extends React.Component {
 			date: (new Date()).getFullYear() + '-'
 					+ ("0"+((new Date()).getMonth()+1)).slice(-2) + '-'
 					+ ("0"+(new Date()).getDate()).slice(-2),
-			recommendBranch: this.props.recommendBranch,
+			recommendBranchId: recommendBranchId,
 		};
 	}
 
@@ -75,37 +89,57 @@ class ReviewForm extends React.Component {
 			return;
 		}
 		
+		const recommend = {
+			url: this.state.url,
+			kind: this.state.kind,
+		};
+
+		let res;
 		try {
-			await postAPI(`/api/recommends`, {
-				url: this.state.url,
-				kind: this.state.kind,
-			});
-			await postAPI(`/api/recommends`, {
-				url: this.state.evidence,
-				kind: "evidence",
-			});
-			const recommendBranch = await this.props.addSubRecommendBranch(this.state.recommendBranch.id);
-			const res = await postAPI(`/api/reviews`, {
+			postAPI(`/api/recommends`, recommend);
+			if (this.state.evidence.length > 0) {
+				const evidence = {
+					url: this.state.evidence,
+					kind: "information",
+				};
+					postAPI(`/api/recommends`, evidence);
+			}
+
+			// if recommend branch does not have same review. add sub recommend branch.
+			let addFlag = false;
+			if (this.props.searchRecommendBranch(this.state.url).indexOf(this.state.recommendBranchId) === -1) {
+				addFlag = true;
+			}
+			const recommendBranchId = (addFlag 
+				 ? await this.props.addSubRecommendBranch(this.state.recommendBranchId)
+				 : this.state.recommendBranchId);
+
+			res = await postAPI(`/api/reviews`, {
 				userId: this.props.userId,
-				recommendBranchId: recommendBranch.id,
+				recommendBranchId: recommendBranchId,
 				recommendId: this.state.url,
 				iineId: this.props.iineId,
 				evidence: this.state.evidence,
-				memo: this.state.memo,
+				memo: String(this.state.memo),
 				forMe: this.state.forMe,
 				forYou: this.state.forYou,
 			});
 
 			if (Object.keys(res).length === 0) {
 				this.setState({urlError: true, urlHelper: '登録に失敗しました'});
-			} else {
-				this.setState(this.initState());
-				this.props.submitCallback(true);
+				if (addFlag) {
+					this.props.deleteRecommendBranch([recommendBranchId]);
+				}
+				return;
 			}
-			return;
+
 		} catch (err) {
 			console.log(err);
+			return;
 		}
+
+		this.setState(this.initState());
+		this.props.submitCallback(res, recommend);
 	};
 	handleChange = event => {
 		this.setState({ [event.target.name]: event.target.value });
@@ -133,10 +167,23 @@ class ReviewForm extends React.Component {
 				urlHelper = "AmazonURLです。アフィリタグは自動的に挿入されます。";
 			}
 		}
+
+		// search all review. whether having same review or not.
+		let recommendBranchId = this.state.recommendBranchId;
+		if (this.props.searchParent) {
+			const recommendBranchIds = this.props.searchRecommendBranch(url);
+			if (recommendBranchIds.length > 0) {
+				recommendBranchId = recommendBranchIds[0];
+			} else {
+				recommendBranchId = "0";
+			}
+		}
+
 		this.setState({
 			url: url,
 			urlError: urlError,
 			urlHelper: urlHelper,
+			recommendBranchId: recommendBranchId,
 		});
 	};
 	validationEvidence = (value) => {
@@ -164,10 +211,10 @@ class ReviewForm extends React.Component {
 
 		return (
 			<Paper>
-				<Typography className={classes.title} variant="headline">これいいよ!</Typography>
+				<Typography className={classes.title} variant="headline">オススメ教えて?</Typography>
 				<List component='nav'>
 					<ListItem>
-						<ListItemText primary={`親リスト: ${this.state.recommendBranch.name}`} />
+						<ListItemText primary={`親リスト: ${this.props.getParentRecommendBranchName(this.state.recommendBranchId)}`} />
 					</ListItem>
 					<ListItem>
 						{(() => {
@@ -314,7 +361,7 @@ class ReviewForm extends React.Component {
 									size="large"
 									color="primary"
 									disabled={this.isInvalid()}
-								>登録</Button>
+								>これいいよ!</Button>
 							</Grid>
 						</Grid>
 					</ListItem>

@@ -29,6 +29,10 @@ const styleSheet = theme => ({
 		width: '1.6em',
 		height: '1.6em',
 	},
+	nopadding:{
+		paddingTop: theme.spacing.unit * 0.5,
+		paddingBottom: theme.spacing.unit * 0.5,
+	},
 });
 
 class RecommendBranch extends React.Component {
@@ -69,40 +73,35 @@ class RecommendBranch extends React.Component {
 	render() {
 		const { classes } = this.props;
 
-		const children = this.props.getRecommendList(this.props.data.id).map((child) => {
+		const children = this.props.getChildren(this.props.data.id, this.props.level + 1, this.state.checked);
+		const reviews = this.props.reviews.map((review) => {
+				console.log(review);
 			return (
-				<RecommendBranch
-					classes={classes}
-					key={child.id}
-					data={child}
-					getRecommendList={this.props.getRecommendList}
-					handleCheck={this.props.handleCheck}
-					level={this.props.level + 1}
-				/>
-			);
-		});
-
-		const reviews = Object.keys(this.props.reviews).map((id) => {
-			return (
-				<ListItem style={{paddingLeft: (this.props.level * 2)+ 'em'}}>
-					<Review data={this.props.reviews[id]} />
+				<ListItem key={review.id} className={classes.nopadding} style={{paddingLeft: ((this.props.level + 1.5) * 2)+ 'em'}}>
+					<Review data={review} />
 				</ListItem>
 			);
 		});
 
 		return (
-			<div style={{paddingLeft: (this.props.level * 2)+ 'em'}}>
+			<div style={{paddingLeft: ((this.props.level + (this.props.parentChecked ? 2 : 0)) * 2)+ 'em'}}>
 				<ListItem
 					className={classNames(classes.root, (this.state.checked ? classes.checked : classes.unchecked))}
 				>
-					<Checkbox
-						checked={this.state.checked}
-						onClick={this.handleCheck}
-						tabIndex={-1}
-						disableRipple
-					/>
 					{(() => {
-						if (this.state.recommend === undefined) {
+						if (!this.props.parentChecked) {
+							return (
+								<Checkbox
+									checked={this.state.checked}
+									onClick={this.handleCheck}
+									tabIndex={-1}
+									disableRipple
+								/>
+							);
+						}
+					})()}
+					{(() => {
+						if (!this.props.recommend) {
 							return (
 								<TextField
 									id={this.state.id}
@@ -113,14 +112,14 @@ class RecommendBranch extends React.Component {
 									onBlur={this.handleSubmit}
 								/>
 							);
-						} esle {
+						} else {
 							return (
 								<Recommend data={this.props.recommend} />
 							);
 						}
 					})()}
 					{(() => {
-						if (children.length > 0) {
+						if (children.length > 0 || reviews.length > 0) {
 							return (
 									<IconButton onClick={this.handleCollapse}>
 										{this.state.open ? <ExpandLess className={classes.icon}/> : <ExpandMore className={classes.icon}/>}
@@ -130,11 +129,16 @@ class RecommendBranch extends React.Component {
 					})()}
 				</ListItem>
 				{(() => {
-					if (children.length > 0) {
+					if (children.length > 0 || reviews.length > 0) {
 						return (
 							<Collapse in={this.state.open} tomeout="auto">
-								<List component="div" disablePadding>
+								<List
+									component="div"
+									disablePadding
+									className={(this.state.checked ? classes.checked : classes.unchecked)}
+								>
 									{children}
+									{reviews}
 								</List>
 							</Collapse>
 						);
