@@ -6,7 +6,7 @@ import List from '@material-ui/core/List';
 import ReviewForm from 'modules/components/ReviewForm';
 import RecommendBranch from 'modules/components/RecommendBranch';
 import RecommendToolbox from 'modules/components/RecommendToolbox';
-import { getAPI, postAPI, deleteAPI, patchAPI } from 'modules/utils/DevUtils';
+import { getAPI, postAPI, deleteAPI, patchAPI } from 'modules/utils/Request';
 
 const styleSheet = theme => ({
 	root: {
@@ -49,6 +49,9 @@ class RecommendTree extends React.Component {
 		]);
 
 		if (Object.keys(recommendBranches).length > 0) {
+			Object.keys(reviews).forEach((id) => {
+				reviews[id]["meta"] = recommends[reviews[id].evidence];
+			});
 			this.setState({recommendBranches: recommendBranches, reviews: reviews, recommends: recommends});
 		} else {
 			this.addRecommendBranch("0");
@@ -328,7 +331,19 @@ class RecommendTree extends React.Component {
 				);
 		});
 	};
-	reviewCallback = (review, recommend) => {
+	updateRecommend = (recommend) => {
+		this.setState({
+			recommends: Object.assign( {[recommend.url]: recommend}, this.state.recommends),
+		});
+	};
+	updateEvidence = (review, evidence) => {
+		review["meta"] = evidence;
+		this.setState({
+			reviews: Object.assign({[review.id]: review}, this.state.reviews),
+		});
+	};
+	addReview = (review, recommend) => {
+		recommend.title = recommend.url;
 		this.setState({
 			reviews: Object.assign({[review.id]: review}, this.state.reviews),
 			recommends: Object.assign( {[recommend.url]: recommend}, this.state.recommends),
@@ -353,7 +368,9 @@ class RecommendTree extends React.Component {
 						searchRecommendBranch={this.searchRecommendBranch}
 						searchParent
 						getParentRecommendBranchName={this.getParentRecommendBranchName}
-						submitCallback={this.reviewCallback}
+						updateRecommend={this.updateRecommend}
+						updateEvidence={this.updateEvidence}
+						addReview={this.addReview}
 					/>
 				</div>
 				<RecommendToolbox

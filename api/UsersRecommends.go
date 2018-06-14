@@ -33,6 +33,9 @@ func getUserRecommends(w http.ResponseWriter, r *http.Request) {
 		recommendIds := map[string]bool{} // recommendIds["url"]
 		for _, v := range reviews {
 			recommendIds[v.RecommendID] = true
+			if len(v.Evidence) > 0 {
+				recommendIds[v.Evidence] = true
+			}
 		}
 
 		keys := make([]*datastore.Key, len(recommendIds))

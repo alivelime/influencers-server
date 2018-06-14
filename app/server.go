@@ -35,6 +35,7 @@ func init() {
 	r.HandleFunc("/api/recommends/{id}", api.HandleRecommend)
 	r.HandleFunc("/api/reviews", api.HandleReviews)
 	r.HandleFunc("/api/reviews/{id}", api.HandleReview)
+	r.HandleFunc("/api/meta/{id}", api.HandleMeta)
 	http.Handle("/", r)
 
 	log.Println("Server started: http://localhost:")

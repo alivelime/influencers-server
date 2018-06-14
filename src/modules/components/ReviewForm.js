@@ -20,9 +20,10 @@ import IconButton from '@material-ui/core/IconButton';
 import BackspaceIcon from '@material-ui/icons/Backspace';
 
 import Recommend from 'modules/components/Recommend';
-import { postAPI } from 'modules/utils/DevUtils';
+import { postAPI } from 'modules/utils/Request';
 import { isAmazonJP, makeAmazonJPSimple } from 'modules/utils/AmazonURL';
 import { isURL } from 'modules/utils/Validation';
+import { getMetaData } from 'modules/utils/Meta';
 
 const styleSheet = theme => ({
 	root: {
@@ -80,6 +81,8 @@ class ReviewForm extends React.Component {
 					+ ("0"+((new Date()).getMonth()+1)).slice(-2) + '-'
 					+ ("0"+(new Date()).getDate()).slice(-2),
 			recommendBranchId: recommendBranchId,
+			urlData: {},
+			evidenceData: {},
 		};
 	}
 
@@ -96,14 +99,10 @@ class ReviewForm extends React.Component {
 
 		let res;
 		try {
-			postAPI(`/api/recommends`, recommend);
-			if (this.state.evidence.length > 0) {
-				const evidence = {
-					url: this.state.evidence,
-					kind: "information",
-				};
-					postAPI(`/api/recommends`, evidence);
-			}
+			postAPI(`/api/recommends`, recommend)
+			.then((res) => {
+				this.props.updateRecommend(res);
+			});
 
 			// if recommend branch does not have same review. add sub recommend branch.
 			let addFlag = false;
@@ -111,7 +110,7 @@ class ReviewForm extends React.Component {
 				addFlag = true;
 			}
 			const recommendBranchId = (addFlag 
-				 ? await this.props.addSubRecommendBranch(this.state.recommendBranchId)
+				 ? (await this.props.addSubRecommendBranch(this.state.recommendBranchId)).id
 				 : this.state.recommendBranchId);
 
 			res = await postAPI(`/api/reviews`, {
@@ -133,13 +132,23 @@ class ReviewForm extends React.Component {
 				return;
 			}
 
+			if (this.state.evidence.length > 0) {
+				const evidence = {
+					url: this.state.evidence,
+					kind: "information",
+				};
+				postAPI(`/api/recommends`, evidence)
+				.then((r) => {
+					this.props.updateEvidence(res, r);
+				});
+			}
 		} catch (err) {
 			console.log(err);
 			return;
 		}
 
 		this.setState(this.initState());
-		this.props.submitCallback(res, recommend);
+		this.props.addReview(res, recommend);
 	};
 	handleChange = event => {
 		this.setState({ [event.target.name]: event.target.value });
@@ -166,6 +175,9 @@ class ReviewForm extends React.Component {
 				url = makeAmazonJPSimple(value);
 				urlHelper = "AmazonURLです。アフィリタグは自動的に挿入されます。";
 			}
+
+			// get preview
+			getMetaData(url).then((res) => this.setState({urlData: res}));
 		}
 
 		// search all review. whether having same review or not.
@@ -183,6 +195,7 @@ class ReviewForm extends React.Component {
 			url: url,
 			urlError: urlError,
 			urlHelper: urlHelper,
+			urlData: {},
 			recommendBranchId: recommendBranchId,
 		});
 	};
@@ -195,7 +208,13 @@ class ReviewForm extends React.Component {
 	}
 	handleChangeEvidence = event => {
 		const value = event.target.value;
-		this.setState({evidence: value, evidenceError: this.validationEvidence(value)});
+		getMetaData(value).then((res) => this.setState({evidenceData: res}));
+
+		this.setState({
+			evidence: value,
+			evidenceError: this.validationEvidence(value),
+			evidenceData: {},
+		});
 	};
 	isInvalid = () => {
 		return (this.state.url.length === 0 || this.state.urlError || this.state.evidenceErrorr);
@@ -270,7 +289,7 @@ class ReviewForm extends React.Component {
 						}
 					})()}
 					<ListItem>
-						<Recommend url={this.state.url} />
+						<Recommend data={this.state.urlData} />
 					</ListItem>
 					<ListItem>
 						<TextField
@@ -289,7 +308,7 @@ class ReviewForm extends React.Component {
 						</ListItemSecondaryAction>
 					</ListItem>
 					<ListItem>
-						<Recommend url={this.state.evidence} />
+						<Recommend data={this.state.evidenceData} />
 					</ListItem>
 					<ListItem>
 						<TextField

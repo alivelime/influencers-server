@@ -13,7 +13,7 @@ import ExpandMore from '@material-ui/icons/ExpandMore';
 
 import Recommend from 'modules/components/Recommend';
 import Review from 'modules/components/Review';
-import { patchAPI } from 'modules/utils/DevUtils';
+import { patchAPI } from 'modules/utils/Request';
 
 const styleSheet = theme => ({
 	root: {
@@ -75,7 +75,6 @@ class RecommendBranch extends React.Component {
 
 		const children = this.props.getChildren(this.props.data.id, this.props.level + 1, this.state.checked);
 		const reviews = this.props.reviews.map((review) => {
-				console.log(review);
 			return (
 				<ListItem key={review.id} className={classes.nopadding} style={{paddingLeft: ((this.props.level + 1.5) * 2)+ 'em'}}>
 					<Review data={review} />
@@ -114,7 +113,7 @@ class RecommendBranch extends React.Component {
 							);
 						} else {
 							return (
-								<Recommend data={this.props.recommend} />
+								<Recommend data={this.props.recommend} enableLink />
 							);
 						}
 					})()}

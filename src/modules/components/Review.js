@@ -7,9 +7,6 @@ import Card from '@material-ui/core/Card';
 import CardContent from '@material-ui/core/CardContent';
 import CardMedia from '@material-ui/core/CardMedia';
 
-import { getOGPData } from 'modules/utils/OGP';
-import { isURL } from 'modules/utils/Validation';
-
 const styleSheet = theme => ({
 	image: {
 		minWidth: 80,
@@ -27,25 +24,21 @@ class Review extends React.Component {
 	render() {
 		const { classes } = this.props;
 
-		let ogp = {title: '', image: '', description: ''}
+		let meta = {url: '', title: '', image: '', description: ''}
 
-		if (this.props.ogp) {
-			ogp = this.props.ogp;
-		} else {
-			if (isURL(this.props.data.evidence)) {
-				ogp = getOGPData(this.props.data.evidence);
-			}
+		if (this.props.data.meta) {
+			meta = this.props.data.meta;
 		}
 
 		return (
 			<Card className={classes.card}>
 				<CardMedia
 					className={classes.image}
-					image={ogp.image}
-					title={ogp.title}
+					image={meta.image}
+					title={meta.title}
 				/>
 				<CardContent className={classes.content}>
-					<Typography variant="title">{ogp.title}</Typography>
+					<Typography variant="title">{meta.title}</Typography>
 					<Typography variant="body1">{this.props.data.memo}</Typography>
 					<Typography variant="body2">
 						お気に入り度 : {this.props.data.forMe}

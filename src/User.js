@@ -5,7 +5,7 @@ import Typography from '@material-ui/core/Typography';
 import Paper from '@material-ui/core/Paper';
 
 import RecommendTree from 'modules/components/RecommendTree';
-import { getAPI, putAPI } from 'modules/utils/DevUtils';
+import { getAPI, putAPI } from 'modules/utils/Request';
 
 const styleSheet = theme => ({
   root: {

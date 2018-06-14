@@ -7,9 +7,6 @@ import Card from '@material-ui/core/Card';
 import CardContent from '@material-ui/core/CardContent';
 import CardMedia from '@material-ui/core/CardMedia';
 
-import { getOGPData } from 'modules/utils/OGP';
-import { isURL } from 'modules/utils/Validation';
-
 const styleSheet = theme => ({
 	image: {
 		minWidth: 80,
@@ -27,34 +24,41 @@ class Recommend extends React.Component {
 	render() {
 		const { classes } = this.props;
 
-		let ogp = {title: '', image: '', description: ''}
-
-		if (this.props.url && isURL(this.props.url)) {
-			ogp = getOGPData(this.props.url);
-		} else if (this.props.data) {
-			if ("title" in this.props.data && this.props.data.title.length > 0) {
-				ogp = this.props.data;
-			} else {
-				// if title is null, get title and images.
-				ogp = getOGPData(this.props.data.url);
-			}
-		} else {
+		if (!this.props.data.title || this.props.data.title.length === 0) {
 			return null;
 		}
 
-		return (
-			<Card className={classes.card}>
-				<CardMedia
-					className={classes.image}
-					image={ogp.image}
-					title={ogp.title}
-				/>
-				<CardContent className={classes.content}>
-					<Typography variant="title">{ogp.title}</Typography>
-					<Typography variant="body1">{ogp.description}</Typography>
-				</CardContent>
-			</Card>
-		);
+		if (this.props.enableLink) {
+			return (
+				<Card className={classes.card}>
+						<CardMedia
+							className={classes.image}
+							image={this.props.data.image}
+							title={this.props.data.title}
+						/>
+					<a href={this.props.data.url}>
+						<CardContent className={classes.content}>
+							<Typography variant="title">{this.props.data.title}</Typography>
+							<Typography variant="body1">{this.props.data.description}</Typography>
+						</CardContent>
+					</a>
+				</Card>
+			);
+		} else {
+			return (
+				<Card className={classes.card}>
+					<CardMedia
+						className={classes.image}
+						image={this.props.data.image}
+						title={this.props.data.title}
+					/>
+					<CardContent className={classes.content}>
+						<Typography variant="title">{this.props.data.title}</Typography>
+						<Typography variant="body1">{this.props.data.description}</Typography>
+					</CardContent>
+				</Card>
+			);
+		}
 	}
 }
 
