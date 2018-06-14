@@ -2,11 +2,11 @@ package api
 
 import (
 	"bytes"
+	"encoding/base64"
 	"encoding/json"
 	"fmt"
 	"io"
 	"net/http"
-	urlm "net/url"
 
 	"github.com/gorilla/mux"
 
@@ -21,8 +21,13 @@ func getMeta(w http.ResponseWriter, r *http.Request) {
 	var data meta.Meta
 	ctx := appengine.NewContext(r)
 
-	url := mux.Vars(r)["id"]
-	url, _ = urlm.QueryUnescape(url)
+	b, err := base64.StdEncoding.DecodeString(mux.Vars(r)["id"])
+	if err != nil {
+		http.Error(w, fmt.Sprintf("Unable to decode base64 url : %s", err), http.StatusInternalServerError)
+		return
+	}
+	url := string(b)
+
 	key := datastore.NewKey(ctx, "Recommend", url, 0, nil)
 	var recommend Recommend
 	recommend.URL = url

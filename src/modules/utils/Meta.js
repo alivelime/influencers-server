@@ -7,7 +7,7 @@ async function getMetaData(url) {
 	}
 
 	// cannot get meta data from browser for CORS...
-	return await getAPI(`/api/meta/${encodeURIComponent(url)}`);
+	return await getAPI(`/api/meta/${btoa(unescape(encodeURIComponent(url)))}`);
 }
 
 export { getMetaData }
