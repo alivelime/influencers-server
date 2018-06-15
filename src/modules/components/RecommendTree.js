@@ -311,6 +311,7 @@ class RecommendTree extends React.Component {
 			return this.state.reviews[id].recommendBranchId === recommendBranchId;
 		})
 		.map(id => this.state.reviews[id])
+		.sort((a, b) => { return b.createdAt - a.createdAt});
 	}
 
 	getChildRecommendBranches = (parentId, level, parentChecked) => {
