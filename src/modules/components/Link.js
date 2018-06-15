@@ -32,11 +32,19 @@ function Link(props) {
 	let component;
 	if (to.startsWith('http')) {
 		component = (
-				<a href={to} className={classNames(classes.root, classes[variant])} {...props} >{children}</a>
+				<a href={to}
+					 className={classNames(classes.root, classes[variant])}
+					 target="new"
+					 rel="noopener noreferrer"
+				 {...props} >{children}</a>
 			);
-	} else {
+	} else if(to.length > 0) {
 		component = (
 				<NavLink className={classNames(classes.root, classes[variant])} {...props} >{children}</NavLink>
+		);
+	} else {
+		component = (
+				<div>{children}</div>
 		);
 	}
 	return component;

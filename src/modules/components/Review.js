@@ -7,6 +7,8 @@ import Card from '@material-ui/core/Card';
 import CardContent from '@material-ui/core/CardContent';
 import CardMedia from '@material-ui/core/CardMedia';
 
+import Link from 'modules/components/Link';
+
 const styleSheet = theme => ({
 	image: {
 		minWidth: 80,
@@ -38,8 +40,10 @@ class Review extends React.Component {
 					title={meta.title}
 				/>
 				<CardContent className={classes.content}>
-					<Typography variant="title">{meta.title}</Typography>
-					<Typography variant="body1">{this.props.data.memo}</Typography>
+					<Link to={this.props.data.evidence} target="new" rel="noopener noreferrer">
+						<Typography variant="title">{this.props.data.memo}</Typography>
+						<Typography variant="body1">{meta.title}</Typography>
+					</Link>
 					<Typography variant="body2">
 						お気に入り度 : {this.props.data.forMe}
 						オススメ度 : {this.props.data.forYou}

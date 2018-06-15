@@ -7,6 +7,8 @@ import Card from '@material-ui/core/Card';
 import CardContent from '@material-ui/core/CardContent';
 import CardMedia from '@material-ui/core/CardMedia';
 
+import Link from 'modules/components/Link';
+
 const styleSheet = theme => ({
 	image: {
 		minWidth: 80,
@@ -31,17 +33,17 @@ class Recommend extends React.Component {
 		if (this.props.enableLink) {
 			return (
 				<Card className={classes.card}>
-						<CardMedia
-							className={classes.image}
-							image={this.props.data.image}
-							title={this.props.data.title}
-						/>
-					<a href={this.props.data.url}>
+					<CardMedia
+						className={classes.image}
+						image={this.props.data.image}
+						title={this.props.data.title}
+					/>
+					<Link to={this.props.data.url}>
 						<CardContent className={classes.content}>
 							<Typography variant="title">{this.props.data.title}</Typography>
 							<Typography variant="body1">{this.props.data.description}</Typography>
 						</CardContent>
-					</a>
+					</Link>
 				</Card>
 			);
 		} else {
