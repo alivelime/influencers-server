@@ -310,7 +310,7 @@ class RecommendTree extends React.Component {
 		return Object.keys(this.state.reviews).filter((id) => {
 			return this.state.reviews[id].recommendBranchId === recommendBranchId;
 		})
-		.map(id => this.state.reviews[id]);
+		.map(id => this.state.reviews[id])
 	}
 
 	getChildRecommendBranches = (parentId, level, parentChecked) => {

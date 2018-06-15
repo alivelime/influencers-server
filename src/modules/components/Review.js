@@ -43,7 +43,7 @@ class Review extends React.Component {
 					<Typography variant="body2">
 						お気に入り度 : {this.props.data.forMe}
 						オススメ度 : {this.props.data.forYou}
-						日付 : {this.props.data.createdAt}
+						日付 : {this.props.data.createdAt.toLocaleDateString()}
 					</Typography>
 				</CardContent>
 			</Card>

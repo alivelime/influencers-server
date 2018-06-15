@@ -55,7 +55,15 @@ function JSONstring2int64(data) {
 function JSONint642string(data) {
 	const str = data.replace(/:([0-9]+)([,}])/g, ':"$1"$2')
 	console.log(str);
-	return JSON.parse(str);
+	return JSON.parse(str, (key, val) => {
+		// parse date
+		if (typeof(val) === "string" &&
+				val.match(/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d+Z$/)){
+		console.log("date matched!!!!");
+				return new Date(Date.parse(val));
+		}
+		return val;
+	});
 }
 
 export { getAPI, postAPI, deleteAPI, putAPI, patchAPI }
