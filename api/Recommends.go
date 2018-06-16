@@ -68,7 +68,7 @@ func postRecommend(w http.ResponseWriter, r *http.Request) {
 	url := recommend.URL
 	key := datastore.NewKey(ctx, "Recommend", url, 0, nil)
 
-	data, _ := site.GetMeta(url)
+	data, _ := site.GetMeta(url, w, r)
 	recommend.Title = data.Title
 	recommend.Image = data.Image
 	recommend.Description = data.Description

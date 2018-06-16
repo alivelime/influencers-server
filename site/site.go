@@ -2,6 +2,7 @@ package site
 
 import (
 	// "github.com/PuerkitoBio/goquery"
+	"net/http"
 
 	"github.com/alivelime/influs/meta"
 	"github.com/alivelime/influs/site/amazon"
@@ -9,7 +10,7 @@ import (
 	"github.com/alivelime/influs/site/niconico"
 )
 
-func GetMeta(url string) (meta.Meta, error) {
+func GetMeta(url string, w http.ResponseWriter, r *http.Request) (meta.Meta, error) {
 
 	if amazon.Has(url) {
 		return amazon.GetMeta(url)
@@ -17,5 +18,5 @@ func GetMeta(url string) (meta.Meta, error) {
 		return niconico.GetMeta(url)
 	}
 
-	return general.GetMeta(url)
+	return general.GetMeta(url, w, r)
 }
