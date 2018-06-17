@@ -1,7 +1,14 @@
 package amazon
 
 import (
+	"encoding/xml"
+	"net/http"
+	"os"
 	"regexp"
+
+	"github.com/DDRBoxman/go-amazon-product-api"
+	"google.golang.org/appengine"
+	"google.golang.org/appengine/urlfetch"
 
 	"github.com/alivelime/influs/meta"
 )
@@ -15,18 +22,41 @@ func Has(url string) bool {
 func GetASIN(url string) (string, bool) {
 	ret := pattern.FindStringSubmatch(url)
 	if len(ret) > 0 {
-		return ret[0], true
+		return ret[1], true
 	} else {
 		return "", false
 	}
 }
 
-func GetMeta(url string) (meta.Meta, error) {
+func GetMeta(url string, w http.ResponseWriter, r *http.Request) (meta.Meta, error) {
 	var data meta.Meta
-	data.URL = url
-	data.Title = "京セラ セラミック ロールシャープナー ファインプレミアシリーズ RS-20-FP"
-	data.Image = "https://images-na.ssl-images-amazon.com/images/I/71dUCjXG%2BvL._AC_UL115_.jpg"
-	data.Description = "サイズ：197ｘ58ｘ70mm材質：本体樹脂/グラスファイバー強化ポリアミド　ガイドスロット樹脂/ポリアミド　砥石部/ファインセラミックス耐熱温度：80度（樹脂部）"
+	ctx := appengine.NewContext(r)
+
+	var api amazonproduct.AmazonProductAPI
+	api.AccessKey = os.Getenv("AWS_ACCESS_KEY_ID")
+	api.SecretKey = os.Getenv("AWS_SECRET_ACCESS_KEY")
+	api.Host = "webservices.amazon.co.jp"
+	api.AssociateTag = os.Getenv("AWS_ASSOCIATE_TAG")
+	api.Client = urlfetch.Client(ctx)
+
+	asin, _ := GetASIN(url)
+	result, err := api.ItemLookup(asin)
+	if err != nil {
+		return data, err
+	}
+
+	//Parse result
+	aws := new(amazonproduct.ItemLookupResponse)
+	err = xml.Unmarshal([]byte(result), aws)
+	if err != nil {
+		return data, err
+	}
+	item := aws.Items.Item
+
+	data.URL = item.URL
+	data.Title = item.ItemAttributes.Title
+	data.Image = item.SmallImage.URL
+	data.Description = item.ItemAttributes.Author + " " + item.ItemAttributes.ProductGroup
 
 	return data, nil
 }
