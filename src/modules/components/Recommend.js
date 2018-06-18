@@ -12,7 +12,8 @@ import Link from 'modules/components/Link';
 const styleSheet = theme => ({
 	image: {
 		minWidth: 80,
-		maxHeight: 240,
+		maxHeight: 80,
+		objectFit: 'cover',
 	},
 	card: {
 		display: 'flex',
@@ -30,6 +31,10 @@ class Recommend extends React.Component {
 			return null;
 		}
 
+		const description = this.props.data.description.split("\n").map(str => {
+			return (<p>{str}</p>)
+		});
+
 		if (this.props.enableLink) {
 			return (
 				<Card className={classes.card}>
@@ -38,12 +43,12 @@ class Recommend extends React.Component {
 						image={this.props.data.image}
 						title={this.props.data.title}
 					/>
-					<Link to={this.props.data.url}>
-						<CardContent className={classes.content}>
+					<CardContent className={classes.content}>
+						<Link to={this.props.data.url}>
 							<Typography variant="title">{this.props.data.title}</Typography>
-							<Typography variant="body1">{this.props.data.description}</Typography>
-						</CardContent>
-					</Link>
+						</Link>
+						<Typography variant="body1">{description}</Typography>
+					</CardContent>
 				</Card>
 			);
 		} else {
@@ -56,7 +61,7 @@ class Recommend extends React.Component {
 					/>
 					<CardContent className={classes.content}>
 						<Typography variant="title">{this.props.data.title}</Typography>
-						<Typography variant="body1">{this.props.data.description}</Typography>
+						<Typography variant="body1">{description}</Typography>
 					</CardContent>
 				</Card>
 			);

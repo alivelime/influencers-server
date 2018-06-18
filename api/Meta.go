@@ -33,7 +33,10 @@ func getMeta(w http.ResponseWriter, r *http.Request) {
 	recommend.URL = url
 
 	if err := datastore.Get(ctx, key, &recommend); err != nil {
-		data, _ = site.GetMeta(url, w, r)
+		if data, err = site.GetMeta(url, w, r); err != nil {
+			http.Error(w, fmt.Sprintf("Cannot Fetch API: %s", err), http.StatusInternalServerError)
+			return
+		}
 	} else {
 		data.Title = "(cached)" + recommend.Title
 		data.Image = recommend.Image

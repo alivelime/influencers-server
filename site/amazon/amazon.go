@@ -53,7 +53,7 @@ func GetMeta(url string, w http.ResponseWriter, r *http.Request) (meta.Meta, err
 	}
 	item := aws.Items.Item
 
-	data.URL = item.URL
+	data.URL = item.DetailPageURL
 	data.Title = item.ItemAttributes.Title
 	data.Image = item.SmallImage.URL
 	data.Description = item.ItemAttributes.Author + " " + item.ItemAttributes.ProductGroup

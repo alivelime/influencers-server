@@ -15,7 +15,7 @@ func GetMeta(url string, w http.ResponseWriter, r *http.Request) (meta.Meta, err
 	if amazon.Has(url) {
 		return amazon.GetMeta(url, w, r)
 	} else if niconico.Has(url) {
-		return niconico.GetMeta(url)
+		return niconico.GetMeta(url, w, r)
 	}
 
 	return general.GetMeta(url, w, r)
