@@ -10,6 +10,7 @@ import (
 	"google.golang.org/appengine"
 	"google.golang.org/appengine/urlfetch"
 
+	"github.com/alivelime/influs/affiliate"
 	"github.com/alivelime/influs/meta"
 )
 
@@ -19,16 +20,49 @@ func Has(url string) bool {
 	return pattern.MatchString(url)
 }
 
-func GetASIN(url string) (string, bool) {
+func GetASIN(url string) string {
 	ret := pattern.FindStringSubmatch(url)
 	if len(ret) > 0 {
-		return ret[1], true
+		return ret[1]
 	} else {
-		return "", false
+		return ""
 	}
 }
 
-func GetMeta(url string, w http.ResponseWriter, r *http.Request) (meta.Meta, error) {
+func MakeSimpleURL(url string, asin string) string {
+	return "https://www.amazon.co.jp/dp/" + asin
+}
+
+type Amazon struct {
+	url          string
+	name         string
+	asin         string
+	affiliateTag string
+}
+
+func NewAmazon(url string, tag affiliate.Tag) (p *Amazon) {
+	p = &Amazon{}
+	p.name = "amazon"
+	p.asin = GetASIN(url)
+	p.url = MakeSimpleURL(url, p.asin)
+	p.affiliateTag = tag.Amazon
+
+	return p
+}
+
+func (p *Amazon) GetName() string {
+	return p.name
+}
+
+func (p *Amazon) GetSimpleURL() string {
+	return p.url
+}
+
+func (p *Amazon) GetAffiliateLink() string {
+	return "http://www.amazon.co.jp/exec/obidos/ASIN/" + p.asin + "/" + p.affiliateTag + "/ref=nosim/"
+}
+
+func (p *Amazon) GetMeta(w http.ResponseWriter, r *http.Request) (meta.Meta, error) {
 	var data meta.Meta
 	ctx := appengine.NewContext(r)
 
@@ -39,8 +73,7 @@ func GetMeta(url string, w http.ResponseWriter, r *http.Request) (meta.Meta, err
 	api.AssociateTag = os.Getenv("AWS_ASSOCIATE_TAG")
 	api.Client = urlfetch.Client(ctx)
 
-	asin, _ := GetASIN(url)
-	result, err := api.ItemLookup(asin)
+	result, err := api.ItemLookup(p.asin)
 	if err != nil {
 		return data, err
 	}
@@ -53,14 +86,10 @@ func GetMeta(url string, w http.ResponseWriter, r *http.Request) (meta.Meta, err
 	}
 	item := aws.Items.Item
 
-	data.URL = item.DetailPageURL
+	data.URL = p.url
 	data.Title = item.ItemAttributes.Title
 	data.Image = item.SmallImage.URL
 	data.Description = item.ItemAttributes.Author + " " + item.ItemAttributes.ProductGroup
 
 	return data, nil
-}
-
-func MakeSimpleURL(url string) string {
-	return ""
 }

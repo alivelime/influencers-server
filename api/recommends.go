@@ -14,6 +14,7 @@ import (
 	"google.golang.org/appengine"
 	"google.golang.org/appengine/datastore"
 
+	"github.com/alivelime/influs/affiliate"
 	"github.com/alivelime/influs/site"
 )
 
@@ -27,7 +28,8 @@ func getRecommend(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, fmt.Sprintf("Unable to decode base64 url : %s", err), http.StatusInternalServerError)
 		return
 	}
-	url := string(b)
+	web := site.Factory(string(b), affiliate.GetUserTag(0, w, r))
+	url := web.GetSimpleURL()
 
 	key := datastore.NewKey(ctx, "Recommend", url, 0, nil)
 	recommend.URL = url
@@ -36,6 +38,8 @@ func getRecommend(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, fmt.Sprintf("unable datastore  %s", err), http.StatusNotFound)
 		return
 	}
+
+	recommend.Link = web.GetAffiliateLink()
 
 	res, err := json.Marshal(recommend)
 	if err != nil {
@@ -65,10 +69,13 @@ func postRecommend(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	url := recommend.URL
+	web := site.Factory(recommend.URL, affiliate.GetUserTag(0, w, r))
+	url := web.GetSimpleURL()
 	key := datastore.NewKey(ctx, "Recommend", url, 0, nil)
 
-	data, _ := site.GetMeta(url, w, r)
+	data, _ := web.GetMeta(w, r)
+	recommend.URL = url
+	recommend.Link = web.GetAffiliateLink()
 	recommend.Title = data.Title
 	recommend.Image = data.Image
 	recommend.Description = data.Description

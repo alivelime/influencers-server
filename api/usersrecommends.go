@@ -12,6 +12,9 @@ import (
 
 	"google.golang.org/appengine"
 	"google.golang.org/appengine/datastore"
+
+	"github.com/alivelime/influs/affiliate"
+	"github.com/alivelime/influs/site"
 )
 
 func getUserRecommends(w http.ResponseWriter, r *http.Request) {
@@ -23,6 +26,8 @@ func getUserRecommends(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, fmt.Sprintf("user id is invalid %s", err), http.StatusInternalServerError)
 		return
 	}
+
+	affiliateTag := affiliate.GetUserTag(userId, w, r)
 
 	// SELECT * FROM Recommens INNER JOIN Reviews ON recommendId WHERE UserId = 'userId' GROUP BY recommendId
 	recommends := map[string]Recommend{}
@@ -76,7 +81,9 @@ func getUserRecommends(w http.ResponseWriter, r *http.Request) {
 		// id を入れる
 		for k, v := range keys {
 			if tempRecommends[k].Kind != "" {
+				web := site.Factory(v.StringID(), affiliateTag)
 				tempRecommends[k].URL = v.StringID()
+				tempRecommends[k].Link = web.GetAffiliateLink()
 				recommends[v.StringID()] = tempRecommends[k]
 			}
 		}

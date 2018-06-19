@@ -44,7 +44,7 @@ class Recommend extends React.Component {
 						title={this.props.data.title}
 					/>
 					<CardContent className={classes.content}>
-						<Link to={this.props.data.url}>
+						<Link to={this.props.data.link}>
 							<Typography variant="title">{this.props.data.title}</Typography>
 						</Link>
 						<Typography variant="body1">{description}</Typography>

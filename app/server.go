@@ -32,10 +32,10 @@ func init() {
 	r.HandleFunc("/api/users/{userId}/recommends", api.HandleUserRecommends)
 	r.HandleFunc("/api/users/{userId}/reviews", api.HandleUserReviews)
 	r.HandleFunc("/api/recommends", api.HandleRecommends)
-	r.HandleFunc("/api/recommends/{id}", api.HandleRecommend)
+	r.HandleFunc("/api/recommends/{id:.+}", api.HandleRecommend)
 	r.HandleFunc("/api/reviews", api.HandleReviews)
 	r.HandleFunc("/api/reviews/{id}", api.HandleReview)
-	r.HandleFunc("/api/meta/{id}", api.HandleMeta)
+	r.HandleFunc("/api/meta/{id:.+}", api.HandleMeta)
 	http.Handle("/", r)
 
 	log.Println("Server started: http://localhost:")

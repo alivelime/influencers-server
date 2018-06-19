@@ -13,6 +13,7 @@ import (
 	"google.golang.org/appengine"
 	"google.golang.org/appengine/datastore"
 
+	"github.com/alivelime/influs/affiliate"
 	"github.com/alivelime/influs/meta"
 	"github.com/alivelime/influs/site"
 )
@@ -26,14 +27,14 @@ func getMeta(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, fmt.Sprintf("Unable to decode base64 url : %s", err), http.StatusInternalServerError)
 		return
 	}
-	url := string(b)
+	web := site.Factory(string(b), affiliate.GetUserTag(0, w, r))
+	url := web.GetSimpleURL()
 
-	key := datastore.NewKey(ctx, "Recommend", url, 0, nil)
 	var recommend Recommend
-	recommend.URL = url
-
+	key := datastore.NewKey(ctx, "Recommend", url, 0, nil)
 	if err := datastore.Get(ctx, key, &recommend); err != nil {
-		if data, err = site.GetMeta(url, w, r); err != nil {
+		// no cache. get meta data.
+		if data, err = web.GetMeta(w, r); err != nil {
 			http.Error(w, fmt.Sprintf("Cannot Fetch API: %s", err), http.StatusInternalServerError)
 			return
 		}
@@ -42,6 +43,9 @@ func getMeta(w http.ResponseWriter, r *http.Request) {
 		data.Image = recommend.Image
 		data.Description = recommend.Description
 	}
+
+	data.URL = url
+	data.Site = web.GetName()
 
 	res, err := json.Marshal(data)
 	if err != nil {

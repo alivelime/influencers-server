@@ -21,7 +21,6 @@ import BackspaceIcon from '@material-ui/icons/Backspace';
 
 import Recommend from 'modules/components/Recommend';
 import { postAPI } from 'modules/utils/Request';
-import { isAmazonJP, makeAmazonJPSimple } from 'modules/utils/AmazonURL';
 import { isURL } from 'modules/utils/Validation';
 import { getMetaData } from 'modules/utils/Meta';
 
@@ -95,6 +94,7 @@ class ReviewForm extends React.Component {
 		const recommend = {
 			url: this.state.url,
 			kind: this.state.kind,
+			Description: "",
 		};
 
 		let res;
@@ -171,13 +171,15 @@ class ReviewForm extends React.Component {
 			urlHelper = error;
 		} else {
 			urlError = false;
-			if (isAmazonJP(value)) {
-				url = makeAmazonJPSimple(value);
-				urlHelper = "AmazonURLです。アフィリタグは自動的に挿入されます。";
-			}
 
 			// get preview
-			getMetaData(url).then((res) => this.setState({urlData: res}));
+			const message = {
+				"amazon": "AmazonURLです。アフィリタグは自動的に挿入されます。",
+				"iherb": "iHerbへのリンクです。アフィリタグは自動的に挿入されます。",
+				"niconico": "ニコニコ動画のリンクです。生放送のリンクはデータ取得できません。",
+				"general": "",
+			};
+			getMetaData(url).then((res) => this.setState({urlData: res, url: res.url, urlHelper: message[res.site]}));
 		}
 
 		// search all review. whether having same review or not.

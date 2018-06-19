@@ -25,25 +25,51 @@ func Has(url string) bool {
 	return pattern.MatchString(url)
 }
 
-func GetID(url string) (string, bool) {
+func GetID(url string) string {
 	ret := pattern.FindStringSubmatch(url)
 	if len(ret) > 0 {
-		return ret[1], true
+		return ret[1]
 	} else {
-		return "", false
+		return ""
 	}
 }
 
-func GetMeta(url string, w http.ResponseWriter, r *http.Request) (meta.Meta, error) {
+func MakeSimpleURL(url string, id string) string {
+	return "http://www.nicovideo.jp/watch/" + id
+}
+
+type Niconico struct {
+	url  string
+	name string
+	id   string
+}
+
+func NewNiconico(url string) (p *Niconico) {
+	p = &Niconico{}
+	p.name = "niconico"
+	p.id = GetID(url)
+	p.url = MakeSimpleURL(url, p.id)
+
+	return p
+}
+
+func (p *Niconico) GetName() string {
+	return p.name
+}
+
+func (p *Niconico) GetSimpleURL() string {
+	return p.url
+}
+
+func (p *Niconico) GetAffiliateLink() string {
+	return p.url
+}
+
+func (p *Niconico) GetMeta(w http.ResponseWriter, r *http.Request) (meta.Meta, error) {
 	var data meta.Meta
 	ctx := appengine.NewContext(r)
 
-	id, ok := GetID(url)
-	if !ok {
-		return data, nil
-	}
-
-	req, _ := http.NewRequest("GET", endpoint+id, nil)
+	req, _ := http.NewRequest("GET", endpoint+p.id, nil)
 	client := urlfetch.Client(ctx)
 	res, err := client.Do(req)
 	if err != nil {
