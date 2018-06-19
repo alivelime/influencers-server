@@ -33,7 +33,7 @@ class Recommend extends React.Component {
 
 		const description = this.props.data.description.split("\n").map(str => {
 			return (<p>{str}</p>)
-		});
+		})[0];
 
 		if (this.props.enableLink) {
 			return (

@@ -38,7 +38,7 @@ const styleSheet = theme => ({
 	},
 	formControl: {
 		margin: theme.spacing.unit,
-		minWidth: '8vw',
+		width: '80%',
 	},
 	content: {
 	},
@@ -327,7 +327,7 @@ class ReviewForm extends React.Component {
 					</ListItem>
 					<ListItem>
 						<Grid container>
-							<Grid item xs={12} sm={3}> 
+							<Grid item wrap="nowrap" xs={6} sm={3}> 
 								<FormControl className={classes.formControl}>
 									<InputLabel htmlFor='forMe'>お気に入り度</InputLabel>
 									<Select
@@ -344,7 +344,7 @@ class ReviewForm extends React.Component {
 									</Select>
 								</FormControl>
 							</Grid>
-							<Grid item xs={12} sm={3}> 
+							<Grid item wrap="nowrap" xs={6} sm={3}> 
 								<FormControl className={classes.formControl}>
 									<InputLabel htmlFor='forYou'>オススメ度</InputLabel>
 									<Select
@@ -361,7 +361,7 @@ class ReviewForm extends React.Component {
 									</Select>
 								</FormControl>
 							</Grid>
-							<Grid item xs={12} sm={3}> 
+							<Grid item wrap="nowrap" xs={6} sm={3}> 
 								<FormControl className={classes.formControl}>
 								<TextField
 									id="date"
@@ -373,7 +373,7 @@ class ReviewForm extends React.Component {
 								/>
 								</FormControl>
 							</Grid>
-							<Grid item xs={12} sm={3}> 
+							<Grid item xs={6} sm={3}> 
 								<Button
 									onClick={this.handleSubmit}
 									variant="raised"

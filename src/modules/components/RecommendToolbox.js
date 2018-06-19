@@ -12,7 +12,6 @@ import ArrowDownwardIcon from '@material-ui/icons/ArrowDownward';
 import SwapHorizIcon from '@material-ui/icons/SwapHoriz';
 import AddFolderIcon from '@material-ui/icons/CreateNewFolder';
 import SubdirectoryIcon from '@material-ui/icons/SubdirectoryArrowRight';
-import IiyoIcon from '@material-ui/icons/ThumbUp';
 import DeleteIcon from '@material-ui/icons/Delete';
 
 const styleSheet = theme => ({
@@ -115,7 +114,7 @@ class RecommendToolbox extends React.Component {
 							/>
 						</IconButton>
 					</Tooltip>
-					<Tooltip id="tooltip-top-start" title="カテゴリを追加">
+					<Tooltip id="tooltip-top-start" title="リストを追加">
 						<IconButton>
 							<AddFolderIcon
 								onClick={this.addRecommendBranch}
@@ -131,22 +130,7 @@ class RecommendToolbox extends React.Component {
 							/>
 						</IconButton>
 					</Tooltip>
-					<Tooltip id="tooltip-top-start" title="「いいよ」を作成">
-						<IconButton>
-							<IiyoIcon
-								className={classNames(classes.icon, (this.state.ids.length === 1 ? classes.enableIiyo : classes.disable))}
-							/>
-						</IconButton>
-					</Tooltip>
-					<Tooltip id="tooltip-top-start" title="削除(子要素は親リストにマージされます)">
-						<IconButton>
-							<DeleteIcon
-								onClick={this.deleteRecommendBranch}
-								className={classNames(classes.icon, (this.state.ids.length > 0 ? classes.enableDelete : classes.disable))}
-							/>
-						</IconButton>
-					</Tooltip>
-					<Tooltip id="tooltip-top-start" title="削除(サブリストは全て削除し、レポートは親リストにマージされます)">
+					<Tooltip id="tooltip-top-start" title="削除(子要素は全て削除されます)">
 						<IconButton>
 							<DeleteIcon
 								onClick={this.deleteAllRecommendBranch}
