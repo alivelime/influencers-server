@@ -56,6 +56,8 @@ func Get(url string, w http.ResponseWriter, r *http.Request) (Meta, error) {
 			data.Description, _ = s.Attr("content")
 		case "og:image":
 			data.Image, _ = s.Attr("content")
+		case "og:images":
+			data.Image, _ = s.Attr("content")
 		}
 	})
 

@@ -19,6 +19,11 @@ const styleSheet = theme => ({
 		display: 'flex',
 		padding: theme.spacing.unit * 2,
 		width: '100%',
+		backgroundColor: 'inherit',
+	},
+	content: {
+		padding: 0,
+		paddingLeft: theme.spacing.unit * 2,
 	},
 });
 

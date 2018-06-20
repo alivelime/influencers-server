@@ -18,6 +18,7 @@ const styleSheet = theme => ({
 		display: 'flex',
 		paddingLeft: theme.spacing.unit * 3,
 		width: "100%",
+		backgroundColor: 'inherit',
 	},
 });
 

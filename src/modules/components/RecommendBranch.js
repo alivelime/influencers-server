@@ -17,8 +17,7 @@ import { patchAPI } from 'modules/utils/Request';
 
 const styleSheet = theme => ({
 	root: {
-		paddingLeft: 0,
-		paddingRight: 0,
+		padding:0,
 	},
 	checked: {
 		backgroundColor: theme.palette.secondary[100],
