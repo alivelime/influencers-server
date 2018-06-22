@@ -46,28 +46,28 @@ class RecommendToolbox extends React.Component {
 
 	addRecommendBranch = event => {
 		if (this.state.ids.length === 1) {
-			this.props.addRecommendBranch(this.state.ids[0]);
+			this.props.data.addRecommendBranch(this.state.ids[0]);
 		}
 	}
 	addSubRecommendBranch = event => {
 		if (this.state.ids.length === 1) {
-			this.props.addSubRecommendBranch(this.state.ids[0]);
+			this.props.data.addSubRecommendBranch(this.state.ids[0]);
 		}
 	}
 	deleteRecommendBranch = event => {
-		this.props.deleteRecommendBranch(this.state.ids);
+		this.props.data.deleteRecommendBranch(this.state.ids);
 	};
 	deleteAllRecommendBranch = event => {
-		this.props.deleteAllRecommendBranch(this.state.ids);
+		this.props.data.deleteAllRecommendBranch(this.state.ids);
 	};
 	moveUpRecommendBranch = event => {
-		this.props.moveUpRecommendBranch(this.state.ids[0]);
+		this.props.data.moveUpRecommendBranch(this.state.ids[0]);
 	};
 	moveDownRecommendBranch = event => {
-		this.props.moveDownRecommendBranch(this.state.ids[0]);
+		this.props.data.moveDownRecommendBranch(this.state.ids[0]);
 	};
 	moveRecommendBranches = event => {
-		this.props.moveRecommendBranches(this.state.ids);
+		this.props.data.moveRecommendBranches(this.state.ids);
 	}
 
 	handleCheck = (id, on) => {

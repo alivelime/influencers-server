@@ -36,9 +36,12 @@ class Recommend extends React.Component {
 			return null;
 		}
 
-		const description = this.props.data.description.split("\n").map(str => {
-			return (<p>{str}</p>)
-		})[0];
+		let description = null;
+		if (this.props.data.description) {
+			description = this.props.data.description.split("\n").map(str => {
+				return (<span>{str}</span>)
+			})[0];
+		}
 
 		if (this.props.enableLink) {
 			return (

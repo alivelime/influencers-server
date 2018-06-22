@@ -54,7 +54,7 @@ class ReviewForm extends React.Component {
 		// searchRecommendBranch(url)[0] > this.props.recommendBranchId > "0" ...
 		let recommendBranchId = "0";
 		if (this.props.url) {
-			const recommendBranchIds = this.props.searchRecommendBranch(this.props.url);
+			const recommendBranchIds = this.props.data.searchRecommendBranch(this.props.url);
 			if (recommendBranchIds.length > 0) {
 				recommendBranchId = recommendBranchIds[0];
 			}
@@ -101,16 +101,16 @@ class ReviewForm extends React.Component {
 		try {
 			postAPI(`/api/recommends`, recommend)
 			.then((res) => {
-				this.props.updateRecommend(res);
+				this.props.data.updateRecommend(res);
 			});
 
 			// if recommend branch does not have same review. add sub recommend branch.
 			let addFlag = false;
-			if (this.props.searchRecommendBranch(this.state.url).indexOf(this.state.recommendBranchId) === -1) {
+			if (this.props.data.searchRecommendBranch(this.state.url).indexOf(this.state.recommendBranchId) === -1) {
 				addFlag = true;
 			}
 			const recommendBranchId = (addFlag 
-				 ? (await this.props.addSubRecommendBranch(this.state.recommendBranchId)).id
+				 ? (await this.props.data.addSubRecommendBranch(this.state.recommendBranchId)).id
 				 : this.state.recommendBranchId);
 
 			res = await postAPI(`/api/reviews`, {
@@ -127,7 +127,7 @@ class ReviewForm extends React.Component {
 			if (Object.keys(res).length === 0) {
 				this.setState({urlError: true, urlHelper: '登録に失敗しました'});
 				if (addFlag) {
-					this.props.deleteRecommendBranch([recommendBranchId]);
+					this.props.data.deleteRecommendBranch([recommendBranchId]);
 				}
 				return;
 			}
@@ -139,7 +139,7 @@ class ReviewForm extends React.Component {
 				};
 				postAPI(`/api/recommends`, evidence)
 				.then((r) => {
-					this.props.updateEvidence(res, r);
+					this.props.data.updateEvidence(res, r);
 				});
 			}
 		} catch (err) {
@@ -148,7 +148,7 @@ class ReviewForm extends React.Component {
 		}
 
 		this.setState(this.initState());
-		this.props.addReview(res, recommend);
+		this.props.data.addReview(res, recommend);
 	};
 	handleChange = event => {
 		this.setState({ [event.target.name]: event.target.value });
@@ -185,7 +185,7 @@ class ReviewForm extends React.Component {
 		// search all review. whether having same review or not.
 		let recommendBranchId = this.state.recommendBranchId;
 		if (this.props.searchParent) {
-			const recommendBranchIds = this.props.searchRecommendBranch(url);
+			const recommendBranchIds = this.props.data.searchRecommendBranch(url);
 			if (recommendBranchIds.length > 0) {
 				recommendBranchId = recommendBranchIds[0];
 			} else {
@@ -235,7 +235,7 @@ class ReviewForm extends React.Component {
 				<Typography className={classes.title} variant="headline">オススメ教えて?</Typography>
 				<List component='nav'>
 					<ListItem>
-						<ListItemText primary={`親リスト: ${this.props.getParentRecommendBranchName(this.state.recommendBranchId)}`} />
+						<ListItemText primary={`親リスト: ${this.props.data.getParentRecommendBranchName(this.state.recommendBranchId)}`} />
 					</ListItem>
 					<ListItem>
 						{(() => {
@@ -328,8 +328,8 @@ class ReviewForm extends React.Component {
 						</ListItemSecondaryAction>
 					</ListItem>
 					<ListItem>
-						<Grid container>
-							<Grid item wrap="nowrap" xs={6} sm={3}> 
+						<Grid container wrap="nowrap">
+							<Grid item xs={6} sm={3}> 
 								<FormControl className={classes.formControl}>
 									<InputLabel htmlFor='forMe'>お気に入り度</InputLabel>
 									<Select
@@ -346,7 +346,7 @@ class ReviewForm extends React.Component {
 									</Select>
 								</FormControl>
 							</Grid>
-							<Grid item wrap="nowrap" xs={6} sm={3}> 
+							<Grid item xs={6} sm={3}> 
 								<FormControl className={classes.formControl}>
 									<InputLabel htmlFor='forYou'>オススメ度</InputLabel>
 									<Select
@@ -363,7 +363,7 @@ class ReviewForm extends React.Component {
 									</Select>
 								</FormControl>
 							</Grid>
-							<Grid item wrap="nowrap" xs={6} sm={3}> 
+							<Grid item xs={6} sm={3}> 
 								<FormControl className={classes.formControl}>
 								<TextField
 									id="date"
