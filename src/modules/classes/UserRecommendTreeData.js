@@ -1,16 +1,17 @@
 
 import { getAPI, postAPI, deleteAPI, patchAPI } from 'modules/utils/Request';
 
-export default class UserRecommendsReviews {
+
+export default class UserRecommendTreeData {
 
 	userId = 0;
-	updateState = () => {};
+	updateState;
 	recommendBranches = [];
 	reviews = {};
 	recommends = {};
 
-	constructor(updateFunc) {
-		this.updateState = updateFunc;
+	constructor(updater) {
+		this.updateState = updater;
 	}
 
 	async loadDataFromServer(userId) {
@@ -154,6 +155,7 @@ export default class UserRecommendsReviews {
 	deleteRecommendBranch = (ids) => {
 
 		(async () => {
+		  // do not use forEach for calling api in order.
 			for (let id of ids) {
 				await deleteAPI(`/api/recommend-branches/${id}`);
 			}
@@ -189,7 +191,7 @@ export default class UserRecommendsReviews {
 		this.updateState({reviews: this.reviews});
 	};
 
-	searchRecommendBranch = (url) => {
+	searchRecommendBranchIds = (url) => {
 		return Object.keys(this.reviews).filter((id) => {
 			return this.reviews[id].recommendId === url;
 		})
@@ -197,13 +199,28 @@ export default class UserRecommendsReviews {
 			return this.reviews[id].recommendBranchId;
 		});
 	};
-	getParentRecommendBranchName = (id) => {
-		return (id === "0" ? "トップ(自動選択)" :
-						(this.recommendBranches[id].parentId === "0"
-							? `トップ(${id})`
-							: this.recommendBranches[this.recommendBranches[id].parentId].name
-						));
+	getRecommendBranch = (id) => {
+		return this.recommendBranches[id];
 	};
+	recommendBranchIsRecommend = (id, url) => {
+		if (id === "0") return false;
+
+		const reviewIds = Object.keys(this.reviews).filter((reviewId) => {
+			return this.reviews[reviewId].recommendBranchId === id;
+		});
+
+		if (reviewIds.length === 0) return false;
+
+		if (url) {
+			return this.reviews[reviewIds[0]].recommendId === url;
+		} else {
+			return true;
+		}
+	}
+	changeRecommendBranch = (id, name) => {
+		patchAPI(`/api/recommend-branches/${id}`, {name: name});
+		this.recommendBranches[id].name = name;
+	}
 
 	// get 1 level list. and fix broken list.
 	getRecommendBranchesList = (parentId) => {

@@ -59,7 +59,6 @@ function JSONint642string(data) {
 		// parse date
 		if (typeof(val) === "string" &&
 				val.match(/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d+Z$/)){
-		console.log("date matched!!!!");
 				return new Date(Date.parse(val));
 		}
 		return val;

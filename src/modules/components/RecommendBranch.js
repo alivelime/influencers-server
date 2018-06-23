@@ -13,7 +13,6 @@ import ExpandMore from '@material-ui/icons/ExpandMore';
 
 import Recommend from 'modules/components/Recommend';
 import Review from 'modules/components/Review';
-import { patchAPI } from 'modules/utils/Request';
 
 const styleSheet = theme => ({
 	root: {
@@ -38,8 +37,8 @@ class RecommendBranch extends React.Component {
 	state = Object.assign({
 		changeFlag: false,
 		checked: false,
-		open: true,
-	}, this.props.data);
+		open: this.props.open,
+	}, this.props.recommendBranch);
 
 	handleCollapse = () => {
 		this.setState({open: !this.state.open});
@@ -53,26 +52,35 @@ class RecommendBranch extends React.Component {
 	handleSubmit = event => {
 		event.preventDefault();
 		if (this.state.changeFlag) {
-			patchAPI(`/api/recommend-branches/${this.state.id}`, {name: this.state.name});
+			this.props.data.changeRecommendBranch(this.state.id, this.state.name);
 			this.setState({changeFlag: false});
 		}
 	};
+	uncheck = () => {
+		this.setState({checked: false});
+	}
 	handleCheck = event => {
 		
 		const checked = !this.state.checked;
-		if (checked) {
-			this.props.handleCheck(this.state.id, true);
+		if (this.props.recommend) {
+			this.props.checker.checkRecommend(this.state.id, this.props.recommend.url, checked, this.uncheck);
 		} else {
-			this.props.handleCheck(this.state.id, false);
+			this.props.checker.checkRecommendBranch(this.state.id, checked, this.uncheck );
 		}
 
 		this.setState({checked: checked});
+	}
+	componentWillUnmount() {
+		if (this.state.checked) {
+			this.props.checker.checkRecommend(this.state.id, '', false);
+			this.props.checker.checkRecommendBranch(this.state.id, false);
+		}
 	}
 
 	render() {
 		const { classes } = this.props;
 
-		const children = this.props.getChildren(this.props.data.id, this.props.level + 1, this.state.checked);
+		const children = this.props.getChildren(this.props.recommendBranch.id, this.props.level + 1, this.state.checked);
 		const reviews = this.props.reviews.map((review) => {
 			return (
 				<ListItem key={review.id} className={classes.nopadding} style={{paddingLeft: ((this.props.level + 1.5) * 2)+ 'em'}}>

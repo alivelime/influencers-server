@@ -6,7 +6,8 @@ import List from '@material-ui/core/List';
 import ReviewForm from 'modules/components/ReviewForm';
 import RecommendBranch from 'modules/components/RecommendBranch';
 import RecommendToolbox from 'modules/components/RecommendToolbox';
-import UserRecommendsReviews from 'modules/classes/UserRecommendsReviews';
+import UserRecommendTreeData from 'modules/classes/UserRecommendTreeData';
+import UserRecommendTreeChecker from 'modules/classes/UserRecommendTreeChecker';
 
 const styleSheet = theme => ({
 	root: {
@@ -27,23 +28,12 @@ class RecommendTree extends React.Component {
 		recommendBranches: [],
 		reviews: {},
 		recommends: {},
-		data: new UserRecommendsReviews((data) => {this.setState(data);}),
-		switchRecommendToolbox: () => {
-			console.log("please replace this function.");
-		},
+		data: new UserRecommendTreeData((data) => {this.setState(data);}),
+		checker: new UserRecommendTreeChecker(),
 	};
-	componentDidMount() {
+	componentWillMount() {
     this.state.data.loadDataFromServer(this.props.userId)
 	}
-
-	handleCheck = (id, on) => {
-		this.state.switchRecommendToolbox(id, on);
-	};
-	setHandleCheck = (handler) => {
-		// do not setState(). avoiding render().
-		let state = this.state;
-		state.switchRecommendToolbox = handler;
-	};
 
 	getChildRecommendBranches = (parentId, level, parentChecked) => {
 		return this.state.data.getRecommendBranchesList(parentId).map((recommendBranch) => {
@@ -52,13 +42,15 @@ class RecommendTree extends React.Component {
 			return (
 					<RecommendBranch
 						key={recommendBranch.id}
-						data={recommendBranch}
+						data={this.state.data}
+						checker={this.state.checker}
+						recommendBranch={recommendBranch}
 						recommend={recommend}
 						reviews={reviews}
 						getChildren={this.getChildRecommendBranches}
-						handleCheck={this.handleCheck}
 						level={level}
 						parentChecked={parentChecked}
+						open
 					/>
 				);
 		});
@@ -78,12 +70,13 @@ class RecommendTree extends React.Component {
 						userId={this.props.userId}
 						iineId={0}
 						data={this.state.data}
+						checker={this.state.checker}
 						searchParent
 					/>
 				</div>
 				<RecommendToolbox
-					setHandleCheck={this.setHandleCheck}
 					data={this.state.data}
+					checker={this.state.checker}
 				/>
 				<List component='nav'>
 					{recommendBranches}

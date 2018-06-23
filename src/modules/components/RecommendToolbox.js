@@ -37,48 +37,54 @@ class RecommendToolbox extends React.Component {
 
 	constructor(props) {
 		super(props);
-		this.props.setHandleCheck(this.handleCheck);
+		this.props.checker.addRecommendHandler('RecommendToolbox', this.checkRecommend);
+		this.props.checker.addRecommendBranchHandler('RecommendToolbox', this.checkRecommendBranch);
+	}
+	componentWillUnmount() {
+		this.props.checker.removeRecommendHandler('RecommendToolbox');
+		this.props.checker.removeRecommendBranchHandler('RecommendToolbox');
 	}
 
 	state = {
-		ids: [],
+		recommendBranchCount: 0,
+		recommendCount: 0,
 	}
 
 	addRecommendBranch = event => {
-		if (this.state.ids.length === 1) {
-			this.props.data.addRecommendBranch(this.state.ids[0]);
+		if (this.state.recommendBranchCount === 1) {
+			this.props.data.addRecommendBranch(this.props.checker.getRecommendBranchIds()[0]);
 		}
 	}
 	addSubRecommendBranch = event => {
-		if (this.state.ids.length === 1) {
-			this.props.data.addSubRecommendBranch(this.state.ids[0]);
+		if (this.state.recommendBranchCount === 1) {
+			this.props.data.addSubRecommendBranch(this.props.checker.getRecommendBranchIds()[0]);
 		}
 	}
 	deleteRecommendBranch = event => {
 		this.props.data.deleteRecommendBranch(this.state.ids);
 	};
-	deleteAllRecommendBranch = event => {
-		this.props.data.deleteAllRecommendBranch(this.state.ids);
-	};
 	moveUpRecommendBranch = event => {
-		this.props.data.moveUpRecommendBranch(this.state.ids[0]);
+		if (this.state.recommendBranchCount === 1) {
+			this.props.data.moveUpRecommendBranch(this.props.checker.getRecommendBranchIds()[0]);
+		}
 	};
 	moveDownRecommendBranch = event => {
-		this.props.data.moveDownRecommendBranch(this.state.ids[0]);
+		if (this.state.recommendBranchCount === 1) {
+			this.props.data.moveDownRecommendBranch(this.props.checker.getRecommendBranchIds()[0]);
+		}
 	};
 	moveRecommendBranches = event => {
-		this.props.data.moveRecommendBranches(this.state.ids);
 	}
 
-	handleCheck = (id, on) => {
-		let ids = this.state.ids;
-
-		if (on) {
-			ids.push(id);
-		} else {
-			ids.splice(ids.indexOf(id), 1);
-		}
-		this.setState({ids: ids});
+	checkRecommend = (url, id, value) => {
+		this.setState({
+			recommendCount: this.props.checker.getRecommendIds().length,
+		});
+	};
+	checkRecommendBranch = (id, on) => {
+		this.setState({
+			recommendBranchCount: this.props.checker.getRecommendBranchIds().length,
+		});
 	};
 
 	render() {
@@ -94,7 +100,9 @@ class RecommendToolbox extends React.Component {
 						<IconButton>
 							<ArrowUpwardIcon
 								onClick={this.moveUpRecommendBranch}
-								className={classNames(classes.icon, (this.state.ids.length === 1 ? classes.enable : classes.disable))}
+								className={classNames(classes.icon, (this.state.recommendBranchCount === 1
+											? classes.enable
+											: classes.disable))}
 							/>
 						</IconButton>
 					</Tooltip>
@@ -102,15 +110,22 @@ class RecommendToolbox extends React.Component {
 						<IconButton>
 							<ArrowDownwardIcon
 								onClick={this.moveDownRecommendBranch}
-								className={classNames(classes.icon, (this.state.ids.length === 1 ? classes.enable : classes.disable))}
+								className={classNames(classes.icon, (this.state.recommendBranchCount === 1 
+											? classes.enable 
+											: classes.disable))}
 							/>
 						</IconButton>
 					</Tooltip>
-					<Tooltip id="tooltip-top-start" title="移動(移動したいリストをいくつか選択し、移動先を最後に選択してこのボタンを押します)">
+					<Tooltip
+						id="tooltip-top-start"
+						title="移動(移動したいリストをいくつか選択し、移動先を最後に選択してこのボタンを押します)"
+					>
 						<IconButton>
 							<SwapHorizIcon
 								onClick={this.moveRecommendBranches}
-								className={classNames(classes.icon, (this.state.ids.length >= 1 ? classes.enable : classes.disable))}
+								className={classNames(classes.icon, (this.state.checkRecommendBranchCount >= 1 
+											? classes.enable 
+											: classes.disable))}
 							/>
 						</IconButton>
 					</Tooltip>
@@ -118,7 +133,9 @@ class RecommendToolbox extends React.Component {
 						<IconButton>
 							<AddFolderIcon
 								onClick={this.addRecommendBranch}
-								className={classNames(classes.icon, (this.state.ids.length === 1 ? classes.enable : classes.disable))}
+								className={classNames(classes.icon, (this.state.recommendBranchCount === 1 
+											? classes.enable 
+											: classes.disable))}
 							/>
 						</IconButton>
 					</Tooltip>
@@ -126,7 +143,9 @@ class RecommendToolbox extends React.Component {
 						<IconButton>
 							<SubdirectoryIcon
 								onClick={this.addSubRecommendBranch}
-								className={classNames(classes.icon, (this.state.ids.length === 1 ? classes.enable : classes.disable))}
+								className={classNames(classes.icon, (this.state.recommendBranchCount === 1 
+											? classes.enable 
+											: classes.disable))}
 							/>
 						</IconButton>
 					</Tooltip>
@@ -134,7 +153,9 @@ class RecommendToolbox extends React.Component {
 						<IconButton>
 							<DeleteIcon
 								onClick={this.deleteAllRecommendBranch}
-								className={classNames(classes.icon, (this.state.ids.length > 0 ? classes.enableDelete : classes.disable))}
+								className={classNames(classes.icon, (this.state.recommendBranchCount > 0 
+											? classes.enableDelete 
+											: classes.disable))}
 							/>
 						</IconButton>
 					</Tooltip>

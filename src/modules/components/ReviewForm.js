@@ -48,13 +48,15 @@ class ReviewForm extends React.Component {
 		super(props);
 
 		this.state = this.initState();
+		this.props.checker.addRecommendHandler('ReviewForm', this.checkRecommend);
+		this.props.checker.addRecommendBranchHandler('ReviewForm', this.checkRecommendBranch);
 	}
 	initState() {
 
 		// searchRecommendBranch(url)[0] > this.props.recommendBranchId > "0" ...
 		let recommendBranchId = "0";
 		if (this.props.url) {
-			const recommendBranchIds = this.props.data.searchRecommendBranch(this.props.url);
+			const recommendBranchIds = this.props.data.searchRecommendBranchIds(this.props.url);
 			if (recommendBranchIds.length > 0) {
 				recommendBranchId = recommendBranchIds[0];
 			}
@@ -74,8 +76,8 @@ class ReviewForm extends React.Component {
 			evidence: '',
 			evidenceError: '',
 			memo: '',
-			forMe: 1,
-			forYou: 1,
+			forMe: 3,
+			forYou: 3,
 			date: (new Date()).getFullYear() + '-'
 					+ ("0"+((new Date()).getMonth()+1)).slice(-2) + '-'
 					+ ("0"+(new Date()).getDate()).slice(-2),
@@ -85,6 +87,27 @@ class ReviewForm extends React.Component {
 		};
 	}
 
+	componentWillUnmount() {
+		this.props.checker.removeRecommendHandler('ReviewForm');
+		this.props.checker.removeRecommendBranchHandler('ReviewForm');
+	}
+
+	checkRecommend = (id, url, value) => {
+		if (value === true) {
+			this.setState({
+				recommendBranchId: id,
+				url: url,
+			});
+		}
+	};
+	checkRecommendBranch = (id, value) => {
+		if (value === true) {
+			this.setState({
+				recommendBranchId: id,
+			});
+		}
+	};
+
 	handleSubmit = async event => {
 		event.preventDefault();
 		if (this.isInvalid()) {
@@ -93,6 +116,7 @@ class ReviewForm extends React.Component {
 		
 		const recommend = {
 			url: this.state.url,
+			link: this.state.url,
 			kind: this.state.kind,
 			Description: "",
 		};
@@ -106,7 +130,7 @@ class ReviewForm extends React.Component {
 
 			// if recommend branch does not have same review. add sub recommend branch.
 			let addFlag = false;
-			if (this.props.data.searchRecommendBranch(this.state.url).indexOf(this.state.recommendBranchId) === -1) {
+			if (!this.props.data.recommendBranchIsRecommend(this.state.recommendBranchId, this.state.url)) {
 				addFlag = true;
 			}
 			const recommendBranchId = (addFlag 
@@ -149,6 +173,7 @@ class ReviewForm extends React.Component {
 
 		this.setState(this.initState());
 		this.props.data.addReview(res, recommend);
+		this.props.checker.uncheckAll();
 	};
 	handleChange = event => {
 		this.setState({ [event.target.name]: event.target.value });
@@ -185,7 +210,7 @@ class ReviewForm extends React.Component {
 		// search all review. whether having same review or not.
 		let recommendBranchId = this.state.recommendBranchId;
 		if (this.props.searchParent) {
-			const recommendBranchIds = this.props.data.searchRecommendBranch(url);
+			const recommendBranchIds = this.props.data.searchRecommendBranchIds(url);
 			if (recommendBranchIds.length > 0) {
 				recommendBranchId = recommendBranchIds[0];
 			} else {
@@ -227,6 +252,19 @@ class ReviewForm extends React.Component {
 		};
 	};
 
+	getParentRecommendBranchName = () => {
+		const id = this.state.recommendBranchId;
+		if (id === "0") return "トップ(自動選択)";
+
+		const recommendBranch = this.props.data.getRecommendBranch(id);
+		return !this.props.data.recommendBranchIsRecommend(id)
+			? recommendBranch.name
+			: (recommendBranch.parentId === "0"
+					? `トップ(${id})`
+					: this.props.data.getRecommendBranch(recommendBranch.parentId).name	
+				);
+	};
+
 	render() {
 		const { classes } = this.props;
 
@@ -235,7 +273,7 @@ class ReviewForm extends React.Component {
 				<Typography className={classes.title} variant="headline">オススメ教えて?</Typography>
 				<List component='nav'>
 					<ListItem>
-						<ListItemText primary={`親リスト: ${this.props.data.getParentRecommendBranchName(this.state.recommendBranchId)}`} />
+						<ListItemText primary={`親リスト: ${this.getParentRecommendBranchName()}`} />
 					</ListItem>
 					<ListItem>
 						{(() => {
@@ -338,11 +376,11 @@ class ReviewForm extends React.Component {
 										onChange={this.handleChange}
 										inputProps={{name:"forMe"}}
 									>
-										<MenuItem value={1}>1</MenuItem>
-										<MenuItem value={2}>2</MenuItem>
-										<MenuItem value={3}>3</MenuItem>
-										<MenuItem value={4}>4</MenuItem>
 										<MenuItem value={5}>5</MenuItem>
+										<MenuItem value={4}>4</MenuItem>
+										<MenuItem value={3}>3</MenuItem>
+										<MenuItem value={2}>2</MenuItem>
+										<MenuItem value={1}>1</MenuItem>
 									</Select>
 								</FormControl>
 							</Grid>
@@ -355,11 +393,11 @@ class ReviewForm extends React.Component {
 										onChange={this.handleChange}
 										inputProps={{name:"forYou"}}
 									>
-										<MenuItem value={1}>1</MenuItem>
-										<MenuItem value={2}>2</MenuItem>
-										<MenuItem value={3}>3</MenuItem>
-										<MenuItem value={4}>4</MenuItem>
 										<MenuItem value={5}>5</MenuItem>
+										<MenuItem value={4}>4</MenuItem>
+										<MenuItem value={3}>3</MenuItem>
+										<MenuItem value={2}>2</MenuItem>
+										<MenuItem value={1}>1</MenuItem>
 									</Select>
 								</FormControl>
 							</Grid>
