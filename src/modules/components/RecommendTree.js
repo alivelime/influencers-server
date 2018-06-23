@@ -35,7 +35,7 @@ class RecommendTree extends React.Component {
     this.state.data.loadDataFromServer(this.props.userId)
 	}
 
-	getChildRecommendBranches = (parentId, level, parentChecked) => {
+	getChildRecommendBranches = (parentId, parentChecked) => {
 		return this.state.data.getRecommendBranchesList(parentId).map((recommendBranch) => {
 			const reviews = this.state.data.getReviewList(recommendBranch.id);
 			const recommend = (reviews.length > 0 ? this.state.recommends[reviews[0].recommendId] : null);
@@ -48,7 +48,6 @@ class RecommendTree extends React.Component {
 						recommend={recommend}
 						reviews={reviews}
 						getChildren={this.getChildRecommendBranches}
-						level={level}
 						parentChecked={parentChecked}
 						open
 					/>

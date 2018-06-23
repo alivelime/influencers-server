@@ -27,9 +27,13 @@ const styleSheet = theme => ({
 		width: '1.6em',
 		height: '1.6em',
 	},
-	nopadding:{
+	container:{
+		paddingLeft: '2em',
 		paddingTop: theme.spacing.unit * 0.5,
 		paddingBottom: theme.spacing.unit * 0.5,
+	},
+	review:{
+		paddingLeft: '3em',
 	},
 });
 
@@ -80,32 +84,27 @@ class RecommendBranch extends React.Component {
 	render() {
 		const { classes } = this.props;
 
-		const children = this.props.getChildren(this.props.recommendBranch.id, this.props.level + 1, this.state.checked);
+		const children = this.props.getChildren(this.props.recommendBranch.id, this.state.checked);
 		const reviews = this.props.reviews.map((review) => {
 			return (
-				<ListItem key={review.id} className={classes.nopadding} style={{paddingLeft: ((this.props.level + 1.5) * 2)+ 'em'}}>
+				<ListItem key={review.id} className={classes.review} >
 					<Review data={review} />
 				</ListItem>
 			);
 		});
 
 		return (
-			<div style={{paddingLeft: ((this.props.level + (this.props.parentChecked ? 2 : 0)) * 2)+ 'em'}}>
+			<div className={classes.container}>
 				<ListItem
 					className={classNames(classes.root, (this.state.checked ? classes.checked : classes.unchecked))}
 				>
-					{(() => {
-						if (!this.props.parentChecked) {
-							return (
-								<Checkbox
-									checked={this.state.checked}
-									onClick={this.handleCheck}
-									tabIndex={-1}
-									disableRipple
-								/>
-							);
-						}
-					})()}
+					<Checkbox
+						checked={this.state.checked}
+						onClick={this.handleCheck}
+						tabIndex={-1}
+						disabled={this.props.parentChecked}
+						disableRipple
+					/>
 					{(() => {
 						if (!this.props.recommend) {
 							return (

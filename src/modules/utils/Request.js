@@ -54,7 +54,6 @@ function JSONstring2int64(data) {
 // quote with "". ex "key":1234, => "key":"1234"
 function JSONint642string(data) {
 	const str = data.replace(/:([0-9]+)([,}])/g, ':"$1"$2')
-	console.log(str);
 	return JSON.parse(str, (key, val) => {
 		// parse date
 		if (typeof(val) === "string" &&
