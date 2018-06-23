@@ -95,6 +95,53 @@ export default class UserRecommendTreeData {
 		this.recommendBranches = recommendBranches;
 		this.updateState({recommendBranches: this.recommendBranches});
 	};
+	moveRecommendBranches = (recommendBranchIds, recommendIds) => {
+		// move to last recommendBranches
+		const to = recommendBranchIds.pop();
+
+		let patchIds = [];
+		let last = Object.keys(this.recommendBranches).find((id) => {
+			return this.recommendBranches[id].parentId === to && this.recommendBranches[id].nextId === "0";
+		});
+		if (last) {
+			patchIds.push(last);
+		}
+
+		recommendBranchIds.concat(recommendIds).forEach((id) => {
+			if (last in this.recommendBranches) {
+				this.recommendBranches[last].nextId = id;
+			}
+			
+			// remove from old branch.
+			Object.keys(this.recommendBranches).forEach((k) => {
+				if (this.recommendBranches[k].nextId === id) {
+					this.recommendBranches[k].nextId = this.recommendBranches[id].nextId;
+					patchIds.push(k);
+				} else if (this.recommendBranches[k].prevId === id) {
+					this.recommendBranches[k].prevId = this.recommendBranches[id].prevId;
+					patchIds.push(k);
+				}
+			});
+
+			// set new data.
+			this.recommendBranches[id].parentId = to;
+			this.recommendBranches[id].prevId = (last ? last : "0");
+			this.recommendBranches[id].nextId = "0"; // set next loop.
+
+			patchIds.push(id);
+			last = id;
+		});
+
+		patchIds.forEach((id) => {
+			patchAPI(`/api/recommend-branches/${id}`,{
+				parentId: this.recommendBranches[id].parentId,
+				nextId: this.recommendBranches[id].nextId,
+				prevId: this.recommendBranches[id].prevId,
+			});
+		});
+
+		this.updateState({recommendBranches: this.recommendBranches});
+	}
 
 	addRecommendBranch = async (id) => {
 		// if id = 0 then add first branch.

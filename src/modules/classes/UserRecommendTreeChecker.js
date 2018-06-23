@@ -1,8 +1,9 @@
 
 export default class UserRecommendTreeChecker {
 
-	recommendBranches = {};
-	recommends = {};
+	// selected ids. do not use Object, because of cannot keep checked order.
+	recommendBranchIds = [];
+	recommendIds = [];
 
 	recommendHandlers = {};
 	recommendBranchHandlers = {};
@@ -24,10 +25,10 @@ export default class UserRecommendTreeChecker {
 
 	checkRecommend(id, url, value, unchecker) {
 		if (value === true) {
-			this.recommends[id] = url;
+			this.recommendIds.push(id);
 			this.uncheckers[id] = unchecker;
 		} else {
-			delete this.recommends[id];
+			this.recommendIds.splice(this.recommendIds.indexOf(id), 1);
 			delete this.uncheckers[id];
 		}
 
@@ -37,10 +38,10 @@ export default class UserRecommendTreeChecker {
 	}
 	checkRecommendBranch(id, value, unchecker) {
 		if (value === true) {
-			this.recommendBranches[id] = true;
+			this.recommendBranchIds.push(id);
 			this.uncheckers[id] = unchecker;
 		} else {
-			delete this.recommendBranches[id];
+			this.recommendBranchIds.splice(this.recommendBranchIds.indexOf(id), 1);
 			delete this.uncheckers[id];
 		}
 
@@ -50,10 +51,10 @@ export default class UserRecommendTreeChecker {
 	}
 
 	getRecommendBranchIds() {
-		return Object.keys(this.recommendBranches);
+		return this.recommendBranchIds;
 	}
 	getRecommendIds() {
-		return Object.keys(this.recommends);
+		return this.recommendIds;
 	}
 
 	uncheckAll() {

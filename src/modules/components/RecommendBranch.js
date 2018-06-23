@@ -84,7 +84,7 @@ class RecommendBranch extends React.Component {
 	render() {
 		const { classes } = this.props;
 
-		const children = this.props.getChildren(this.props.recommendBranch.id, this.state.checked);
+		const children = this.props.getChildren(this.props.recommendBranch.id, this.state.checked || this.props.parentChecked);
 		const reviews = this.props.reviews.map((review) => {
 			return (
 				<ListItem key={review.id} className={classes.review} >

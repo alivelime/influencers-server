@@ -60,7 +60,7 @@ class RecommendTree extends React.Component {
 		const { classes } = this.props;
 
 		// get first level list.
-		const recommendBranches = this.getChildRecommendBranches("0", 0, false);
+		const recommendBranches = this.getChildRecommendBranches("0", false);
 		return (
 			<div className={classes.root}>
 				<div className={classes.content}>
