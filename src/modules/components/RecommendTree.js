@@ -28,7 +28,7 @@ class RecommendTree extends React.Component {
 		recommendBranches: [],
 		reviews: {},
 		recommends: {},
-		data: new UserRecommendTreeData((data) => {this.setState(data);}),
+		data: new UserRecommendTreeData((data) => {console.log("recommend tree update."); this.setState(data);}),
 		checker: new UserRecommendTreeChecker(),
 	};
 	componentWillMount() {
@@ -82,6 +82,15 @@ class RecommendTree extends React.Component {
 				</List>
 			</div>
 		);
+	}
+
+	shouldComponentUpdate(nextProp, nextState) {
+		if (nextState !== this.state) return true;
+
+		if (nextProp.id === this.props.id) {
+			return false;
+		}
+		return true;
 	}
 }
 

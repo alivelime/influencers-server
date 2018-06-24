@@ -97,6 +97,12 @@ class ReviewForm extends React.Component {
 			this.setState({
 				recommendBranchId: id,
 				url: url,
+				urlError: false,
+				urlHelper: '',
+			});
+		} else {
+			this.setState({
+				recommendBranchId: "0",
 			});
 		}
 	};
@@ -104,6 +110,10 @@ class ReviewForm extends React.Component {
 		if (value === true) {
 			this.setState({
 				recommendBranchId: id,
+			});
+		} else {
+			this.setState({
+				recommendBranchId: "0",
 			});
 		}
 	};
@@ -209,7 +219,9 @@ class ReviewForm extends React.Component {
 
 		// search all review. whether having same review or not.
 		let recommendBranchId = this.state.recommendBranchId;
-		if (this.props.searchParent) {
+		if ((this.props.searchParent && recommendBranchId === "0") ||
+				this.props.data.recommendBranchIsRecommend(recommendBranchId)
+			) {
 			const recommendBranchIds = this.props.data.searchRecommendBranchIds(url);
 			if (recommendBranchIds.length > 0) {
 				recommendBranchId = recommendBranchIds[0];
