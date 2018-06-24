@@ -99,40 +99,45 @@ export default class UserRecommendTreeData {
 		// move to last recommendBranches
 		const to = recommendBranchIds.pop();
 
-		let patchIds = [];
+		let patchIds = {};
 		let last = Object.keys(this.recommendBranches).find((id) => {
 			return this.recommendBranches[id].parentId === to && this.recommendBranches[id].nextId === "0";
 		});
-		if (last) {
-			patchIds.push(last);
-		}
 
 		recommendBranchIds.concat(recommendIds).forEach((id) => {
+			if (last === id) { console.log("skip " + id + " is last."); return;}
+
 			if (last in this.recommendBranches) {
 				this.recommendBranches[last].nextId = id;
+				patchIds[last] = true;
 			}
 			
 			// remove from old branch.
-			Object.keys(this.recommendBranches).forEach((k) => {
-				if (this.recommendBranches[k].nextId === id) {
-					this.recommendBranches[k].nextId = this.recommendBranches[id].nextId;
-					patchIds.push(k);
-				} else if (this.recommendBranches[k].prevId === id) {
-					this.recommendBranches[k].prevId = this.recommendBranches[id].prevId;
-					patchIds.push(k);
-				}
-			});
+			const prevId = this.recommendBranches[id].prevId;
+			if (prevId in this.recommendBranches) {
+				this.recommendBranches[prevId].nextId = this.recommendBranches[id].nextId;
+				patchIds[prevId] = true;
+			}
+			const nextId = this.recommendBranches[id].nextId;
+			if (nextId in this.recommendBranches) {
+				this.recommendBranches[nextId].prevId = this.recommendBranches[id].prevId;
+				patchIds[nextId] = true;
+			}
 
 			// set new data.
 			this.recommendBranches[id].parentId = to;
 			this.recommendBranches[id].prevId = (last ? last : "0");
 			this.recommendBranches[id].nextId = "0"; // set next loop.
 
-			patchIds.push(id);
+			patchIds[id] = true;
 			last = id;
 		});
 
-		patchIds.forEach((id) => {
+		Object.keys(patchIds).forEach((id) => {
+			console.log("move " + id + 
+					" to " + this.recommendBranches[id].parentId +
+					" prev " +  this.recommendBranches[id].prevId +
+					" next " +  this.recommendBranches[id].nextId );
 			patchAPI(`/api/recommend-branches/${id}`,{
 				parentId: this.recommendBranches[id].parentId,
 				nextId: this.recommendBranches[id].nextId,
@@ -247,7 +252,7 @@ export default class UserRecommendTreeData {
 		});
 	};
 	getRecommendBranch = (id) => {
-		return this.recommendBranches[id];
+		return Object.assing({}, this.recommendBranches[id]);
 	};
 	recommendBranchIsRecommend = (id, url) => {
 		if (id === "0") return false;

@@ -103,6 +103,9 @@ class ReviewForm extends React.Component {
 		} else {
 			this.setState({
 				recommendBranchId: "0",
+				url: '',
+				urlError: false,
+				urlHelper: '',
 			});
 		}
 	};

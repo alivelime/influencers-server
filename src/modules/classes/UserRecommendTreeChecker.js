@@ -28,7 +28,7 @@ export default class UserRecommendTreeChecker {
 			this.recommendIds.push(id);
 			this.uncheckers[id] = unchecker;
 		} else {
-			this.recommendIds.splice(this.recommendIds.indexOf(id), 1);
+			this.recommendIds = this.recommendIds.filter((v) => {return v !== id});
 			delete this.uncheckers[id];
 		}
 
@@ -41,7 +41,7 @@ export default class UserRecommendTreeChecker {
 			this.recommendBranchIds.push(id);
 			this.uncheckers[id] = unchecker;
 		} else {
-			this.recommendBranchIds.splice(this.recommendBranchIds.indexOf(id), 1);
+			this.recommendBranchIds = this.recommendBranchIds.filter((v) => {return v !== id});
 			delete this.uncheckers[id];
 		}
 
@@ -51,10 +51,10 @@ export default class UserRecommendTreeChecker {
 	}
 
 	getRecommendBranchIds() {
-		return this.recommendBranchIds;
+		return Object.assign([], this.recommendBranchIds);
 	}
 	getRecommendIds() {
-		return this.recommendIds;
+		return Object.assign([], this.recommendIds);
 	}
 
 	uncheckAll() {

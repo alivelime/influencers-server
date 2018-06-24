@@ -67,14 +67,22 @@ class RecommendToolbox extends React.Component {
 		if (this.state.recommendBranchCount === 1) {
 			this.props.data.moveUpRecommendBranch(this.props.checker.getRecommendBranchIds()[0]);
 		}
+		if (this.state.recommendCount === 1) {
+			this.props.data.moveUpRecommendBranch(this.props.checker.getRecommendIds()[0]);
+		}
 	};
 	moveDownRecommendBranch = event => {
 		if (this.state.recommendBranchCount === 1) {
 			this.props.data.moveDownRecommendBranch(this.props.checker.getRecommendBranchIds()[0]);
 		}
+		if (this.state.recommendCount === 1) {
+			this.props.data.moveDownRecommendBranch(this.props.checker.getRecommendIds()[0]);
+		}
 	};
 	moveRecommendBranches = event => {
 		if (this.state.recommendBranchCount >= 1 && (this.state.recommendBranchCount + this.state.recommendCount) >= 2) {
+			console.log("move recommends");
+			console.log(this.props.checker.getRecommendBranchIds());
 			this.props.data.moveRecommendBranches(
 				this.props.checker.getRecommendBranchIds(),
 				this.props.checker.getRecommendIds()
