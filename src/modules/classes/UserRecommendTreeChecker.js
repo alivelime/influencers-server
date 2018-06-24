@@ -61,6 +61,12 @@ export default class UserRecommendTreeChecker {
 		for (const k in this.uncheckers) {
 			this.uncheckers[k]();
 		}
+		this.recommendBranchIds.forEach((id) => {
+			this.checkRecommendBranch(id, false);
+		});
+		this.recommendIds.forEach((id) => {
+			this.checkRecommend(id, '', false);
+		});
 	}
 
 }
