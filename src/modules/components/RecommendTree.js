@@ -77,7 +77,7 @@ class RecommendTree extends React.Component {
 					data={this.state.data}
 					checker={this.state.checker}
 				/>
-				<List component='nav'>
+				<List component='nav' className={classes.list}>
 					{recommendBranches}
 				</List>
 			</div>

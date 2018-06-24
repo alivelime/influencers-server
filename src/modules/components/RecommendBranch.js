@@ -33,7 +33,6 @@ const styleSheet = theme => ({
 		paddingBottom: theme.spacing.unit * 0.5,
 	},
 	review:{
-		paddingLeft: '3em',
 	},
 });
 
@@ -94,7 +93,7 @@ class RecommendBranch extends React.Component {
 		});
 
 		return (
-			<div className={classes.container}>
+			<div>
 				<ListItem
 					className={classNames(classes.root, (this.state.checked ? classes.checked : classes.unchecked))}
 				>
@@ -142,8 +141,10 @@ class RecommendBranch extends React.Component {
 									disablePadding
 									className={(this.state.checked ? classes.checked : classes.unchecked)}
 								>
-									{children}
-									{reviews}
+									<div className={classes.container}>
+										{children}
+										{reviews}
+									</div>
 								</List>
 							</Collapse>
 						);

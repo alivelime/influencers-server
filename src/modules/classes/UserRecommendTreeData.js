@@ -252,7 +252,7 @@ export default class UserRecommendTreeData {
 		});
 	};
 	getRecommendBranch = (id) => {
-		return Object.assing({}, this.recommendBranches[id]);
+		return Object.assign({}, this.recommendBranches[id]);
 	};
 	recommendBranchIsRecommend = (id, url) => {
 		if (id === "0") return false;
