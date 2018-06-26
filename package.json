@@ -5,15 +5,17 @@
   "dependencies": {
     "@material-ui/core": "^1.2.3",
     "@material-ui/icons": "^1.1.0",
-    "material-ui-rating": "^2.0.0",
+    "ajv": "^6.5.1",
     "react": "^16.4.1",
     "react-dnd": "^2.6.0",
     "react-dnd-html5-backend": "^2.6.0",
     "react-dom": "^16.4.1",
+    "react-form": "^3.5.6",
+    "react-redux": "^5.0.7",
     "react-router": "^4.3.1",
     "react-router-dom": "^4.3.1",
     "react-scripts": "1.1.4",
-    "react-tap-event-plugin": "^3.0.3"
+    "redux-saga": "^0.16.0"
   },
   "scripts": {
     "start": "react-scripts start",
