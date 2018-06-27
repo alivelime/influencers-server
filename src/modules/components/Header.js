@@ -6,6 +6,8 @@ import Typography from '@material-ui/core/Typography';
 import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
 
+import Link from 'modules/components/Link';
+
 const styles = {
   root: {
 		flexGrow: 1,
@@ -24,7 +26,7 @@ function Header(props) {
 			>
 				<Toolbar>
 					<Typography variant="title" color="inherit" className={classes.flex} >
-            インフルず
+            <Link to='/'>インフルず</Link>
           </Typography>
 				</Toolbar>
 			</AppBar>

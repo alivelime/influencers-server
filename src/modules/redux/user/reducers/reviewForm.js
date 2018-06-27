@@ -1,5 +1,5 @@
 
-export default reviewForm = (state = [], action) => {
+export default (state = [], action) => {
 	switch (action.type) {
 		case 'PREVIEW_RECOMMEND':
 		case 'PREVIEW_REVIEW':

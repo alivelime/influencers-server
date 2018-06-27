@@ -5,39 +5,40 @@ import { withStyles } from '@material-ui/core/styles';
 import Typography from '@material-ui/core/Typography';
 import Paper from '@material-ui/core/Paper';
 
+const styleSheet = theme => ({
+	header: {
+		padding: theme.spacing.unit * 2,
+	},
+});
 class  Profile extends React.Component {
 
 	componentDidMount() {
 		this.props.loadUser(this.props.id);
 	}
 
-	testData = () {
+	testData = () => {
 		return {
-			id: this.props.data.id,
+			id: 1,
 			name: "テスト" + Date.now().toString(),
 		};
-	}
+	};
 
 	render() {
-		const { data, setUser } = this.props;
+		const { data, updateUser, classes } = this.props;
 
 		return (
 			<Paper>
 				<div className={classes.header}>
-					<Typography
-						className={classes.logo}
-						variant="display2"
-					>{data.name}
-					</Typography>
+					<Typography variant="display2" >{data.name} </Typography>
 				</div>
-				<div><button onClick={() => {setUser(this.testData())} >テストデータ投入</button></div>
+				<div><button onClick={() => {updateUser(this.testData())}} >テストデータ投入</button></div>
 			</Paper>
 		);
 	}
 
 }
 
-User.propTypes = {
+Profile.propTypes = {
   classes: PropTypes.object.isRequired,
 };
 

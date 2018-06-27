@@ -3,13 +3,11 @@ import ReactDOM from 'react-dom';
 import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
 
 import HomePage from 'HomePage';
-import MyProfile from 'my/Profile';
 import MyAdmin from 'my/Admin';
 import User from 'User';
 import Recommend from 'Recommend';
-import Review from 'Review';
-import About from 'About';
 import Contact from 'Contact';
+import Vision from 'Vision';
 import Header from 'modules/components/Header';
 import Footer from 'modules/components/Footer';
 import NotFound from 'NotFound';
@@ -30,7 +28,7 @@ class App extends React.Component {
 						<Route exact path='/my/admin' component={MyAdmin} />
 						<Route exact path='/users/:id' component={User} />
 						<Route exact path='/recommends/:id' component={Recommend} />
-						<Route exact path='/vision' component={About} />
+						<Route exact path='/vision' component={Vision} />
 						<Route exact path='/contact' component={Contact} />
 						<Route component={NotFound} />
 					</Switch>

@@ -1,11 +1,21 @@
 
-export default user = (state = [], action) => {
+export default (state = {}, action) => {
 	switch (action.type) {
-		case 'LOAD_USER':
+		case 'LOAD_USER_REQUEST':
+			return state;
+		case 'LOAD_USER_SUCCEEDED':
+			return action.data;
+		case 'LOAD_USER_FAILED':
+			return action.data;
 		case 'REGISTER_USER':
-		case 'UPDATE_USER':
+			return state;
+		case 'UPDATE_USER_REQUEST':
+		case 'UPDATE_USER_SUCCEEDED':
+			return action.data;
+		case 'UPDATE_USER_FAILED':
+			return action.data;
 		default:
-			throw new Error("no defined method " + action.type);
+			return state;
 	}
 };
 

@@ -1,12 +1,13 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { withStyles } from '@material-ui/core/styles';
-import { createStore } from 'redux'
+import { createStore, applyMiddleware } from 'redux'
+import createSagaMiddleware from 'redux-saga'
 import { Provider } from 'react-redux'
 
-import UserProfile from 'modules/components/UserProfile';
-import RecommendTree from 'modules/components/RecommendTree';
+import UserProfile from 'modules/containers/UserProfile';
 import userReducer from 'modules/redux/user/reducers'
+import userSaga from 'modules/redux/user/saga';
 
 const styleSheet = theme => ({
   root: {
@@ -24,23 +25,26 @@ const styleSheet = theme => ({
 	},
 });
 
+const sagaMiddleware = createSagaMiddleware()
+const store = createStore(
+  userReducer,
+  applyMiddleware(sagaMiddleware)
+)
+sagaMiddleware.run(userSaga);
+
 class  User extends React.Component {
-	state = {
-		store = createStore(userReducer)
-	};
 
 	render() {
 		const { classes } = this.props;
 	  const { id } = this.props.match.params;
 
 		return (
-			<Provider store={this.state.store} >
+			<Provider store={store} >
 				<div className={classes.root}>
 					<div className={classes.content}>
-						<UserPrifile id={id} />
+						<UserProfile id={id} />
 					</div>
 					<div className={classes.content}>
-						<RecommendTree userId={id} />
 					</div>
 				</div>
 			</Provider>

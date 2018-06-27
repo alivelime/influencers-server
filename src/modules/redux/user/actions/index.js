@@ -2,7 +2,7 @@
 // user
 
 export const loadUser = id => ({
-	type: 'LOAD_USER',
+	type: 'LOAD_USER_REQUEST',
 	id,
 });
 
@@ -12,9 +12,11 @@ export const registerUser = data => ({
 });
 
 export const updateUser = data => ({
-	type: 'UPDATE_USER',
+	type: 'UPDATE_USER_REQUEST',
 	data,
 })
+
+// checker
 
 // user recommend branche
 
@@ -54,6 +56,8 @@ export const moveRecommendBranch = (ids, to) => ({
 	to,
 })
 
+// user redommends
+
 export const loadRecommends = userId => ({
 	type: 'LOAD_RECOMMENDS',
 	userId,
@@ -68,6 +72,13 @@ export const updateRecommend = recommend => ({
 	type: 'UPDATE_RECOMMEND',
 	recommend,
 })
+
+// user review
+
+export const loadReviews = userId => ({
+	type: 'LOAD_REVIEWS',
+	userId,
+});
 
 export const addReview = review => ({
 	type: 'ADD_REVIEW',

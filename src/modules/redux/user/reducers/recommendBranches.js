@@ -1,4 +1,4 @@
-export default recommendBranches = (state = [], action) => {
+export default (state = [], action) => {
 	switch (action.type) {
 		case 'LOAD_RECOMMEND_BRANCHES':
 		case 'ADD_RECOMMEND_BRANCH':
@@ -8,7 +8,7 @@ export default recommendBranches = (state = [], action) => {
 		case 'MOVEDOWN_RECOMMEND_BRANCH':
 		case 'MOVE_RECOMMEND_BRANCH':
 		default:
-			throw new Error("no defined method " + action.type);
+			return state;
 	}
 };
 
