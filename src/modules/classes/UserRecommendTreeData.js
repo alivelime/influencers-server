@@ -4,45 +4,6 @@ import { getAPI, postAPI, deleteAPI, patchAPI } from 'modules/utils/Request';
 
 export default class UserRecommendTreeData {
 
-	userId = 0;
-	updateState;
-	recommendBranches = [];
-	reviews = {};
-	recommends = {};
-
-	constructor(updater) {
-		this.updateState = updater;
-	}
-
-	async loadDataFromServer(userId) {
-		this.userId = userId;
-		await Promise.all([
-			(async () => {
-				this.recommendBranches = await getAPI(`/api/users/${this.userId}/recommend-branches`);
-			})(),
-			(async () => {
-				this.reviews = await getAPI(`/api/users/${this.userId}/reviews`);
-			})(),
-			(async () => {
-				this.recommends = await getAPI(`/api/users/${this.userId}/recommends`);
-			})(),
-		]);
-
-		if (Object.keys(this.recommendBranches).length > 0) {
-			Object.keys(this.reviews).forEach((id) => {
-				this.reviews[id]["meta"] = this.recommends[this.reviews[id].evidence];
-			});
-		} else {
-			this.addRecommendBranch("0");
-		}
-
-		this.updateState({
-				recommendBranches: this.recommendBranches,
-				reviews: this.reviews,
-				recommends: this.recommends
-		});
-	}
-
 	moveUpRecommendBranch = (id) => {
 		const prevId = this.recommendBranches[id].prevId;
 		if (prevId !== "0") {

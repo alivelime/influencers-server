@@ -27,6 +27,8 @@ class App extends React.Component {
 						<Route exact path='/' component={HomePage} />
 						<Route exact path='/my/admin' component={MyAdmin} />
 						<Route exact path='/users/:id' component={User} />
+						<Route exact path='/users/:userId/recommend-branches/:recommendBranchId' component={User} />
+						<Route exact path='/users/:userId/iine/:iineId' component={User} />
 						<Route exact path='/recommends/:id' component={Recommend} />
 						<Route exact path='/vision' component={Vision} />
 						<Route exact path='/contact' component={Contact} />

@@ -2,96 +2,75 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { withStyles } from '@material-ui/core/styles';
 import List from '@material-ui/core/List';
+import CircularProgress from '@material-ui/core/CircularProgress';
 
 import ReviewForm from 'modules/components/ReviewForm';
-import RecommendBranch from 'modules/components/RecommendBranch';
+import RecommendList from 'modules/containers/RecommendList';
 import RecommendToolbox from 'modules/components/RecommendToolbox';
-import UserRecommendTreeData from 'modules/classes/UserRecommendTreeData';
-import UserRecommendTreeChecker from 'modules/classes/UserRecommendTreeChecker';
 
 const styleSheet = theme => ({
 	root: {
 		backgroundColor: theme.palette.background.paper,
 	},
-	icon: {
-		width: '1.6em',
-		height: '1.6em',
+	progres: {
+		marginTop: theme.spacing.unit * 2,
+		marginBotton: theme.spacing.unit * 2,
+		marginLeft: 'auto';
+		marginRight: 'auto';
 	},
 });
 
 class RecommendTree extends React.Component {
-	/*
-	 * this.state.recommendBranches is one level list.
-	 * do not make complex as nested object.
-	 */
-	state = {
-		recommendBranches: [],
-		reviews: {},
-		recommends: {},
-		data: new UserRecommendTreeData((data) => {console.log("recommend tree update."); this.setState(data);}),
-		checker: new UserRecommendTreeChecker(),
-	};
 	componentWillMount() {
-    this.state.data.loadDataFromServer(this.props.userId)
+    this.props.loadUserRecommendData();
 	}
-
-	getChildRecommendBranches = (parentId, parentChecked) => {
-		return this.state.data.getRecommendBranchesList(parentId).map((recommendBranch) => {
-			const reviews = this.state.data.getReviewList(recommendBranch.id);
-			const recommend = (reviews.length > 0 ? this.state.recommends[reviews[0].recommendId] : null);
-			return (
-					<RecommendBranch
-						key={recommendBranch.id}
-						data={this.state.data}
-						checker={this.state.checker}
-						recommendBranch={recommendBranch}
-						recommend={recommend}
-						reviews={reviews}
-						getChildren={this.getChildRecommendBranches}
-						parentChecked={parentChecked}
-						open
-					/>
-				);
-		});
-	};
 
 	render() {
 		console.log("render recommend tree");
 		const { classes } = this.props;
 
-		// get first level list.
-		const recommendBranches = this.getChildRecommendBranches("0", false);
 		return (
 			<div className={classes.root}>
 				<div className={classes.content}>
 					<ReviewForm
 						recommendBranch={{id: "0", name: "自動選択 or トップ"}}
 						userId={this.props.userId}
-						iineId={0}
-						data={this.state.data}
-						checker={this.state.checker}
+						iineId={this.props.iineId}
 						searchParent
 					/>
 				</div>
-				<RecommendToolbox
-					data={this.state.data}
-					checker={this.state.checker}
+				<RecommendToolbox 
+					addRecommendBranch={this.props.addRecommendBranch}
+					addSubRecommendBranch={this.props.addSubRecommendBranch}
+					deleteRecommendBranch={this.props.deleteRecommendBranch}
+					moveUpRecommendBranch={this.props.moveUpRecommendBranch}
+					moveDownRecommendBranch={this.props.moveDownRecommendBranch}
+					moveRecommendBranches={this.props.moveRecommendBranches}
 				/>
 				<List component='nav' className={classes.list}>
-					{recommendBranches}
+				{(() => {
+					if (this.props.dataLoaded) {
+						return (
+							<RecommendList
+								id={this.props.recommendBranchId}
+								key={this.props.recommendBranchId}
+								open={this.props.open}
+							/>
+						);
+					} else {
+						return (
+							<CircularProgress
+								className={classes.progress}
+								variant="determinate"
+							/>
+						);
+					}
+				})()}
 				</List>
 			</div>
 		);
 	}
 
-	shouldComponentUpdate(nextProp, nextState) {
-		if (nextState !== this.state) return true;
-
-		if (nextProp.id === this.props.id) {
-			return false;
-		}
-		return true;
-	}
 }
 
 RecommendTree.propTypes = {

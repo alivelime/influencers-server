@@ -5,6 +5,7 @@ import { createStore, applyMiddleware } from 'redux'
 import createSagaMiddleware from 'redux-saga'
 import { Provider } from 'react-redux'
 
+import UserRecommendTree from 'modules/containers/UserRecommendTree';
 import UserProfile from 'modules/containers/UserProfile';
 import userReducer from 'modules/redux/user/reducers'
 import userSaga from 'modules/redux/user/saga';
@@ -36,7 +37,7 @@ class  User extends React.Component {
 
 	render() {
 		const { classes } = this.props;
-	  const { id } = this.props.match.params;
+	  const { id, recommendBranchId, iineId } = this.props.match.params;
 
 		return (
 			<Provider store={store} >
@@ -45,6 +46,11 @@ class  User extends React.Component {
 						<UserProfile id={id} />
 					</div>
 					<div className={classes.content}>
+						<UserRecommendTree
+							userId={id}
+							recommendBranchId={recommendBranchId || "0"}
+							iineId={iineId}
+						/>
 					</div>
 				</div>
 			</Provider>

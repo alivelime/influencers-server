@@ -80,10 +80,29 @@ class RecommendBranch extends React.Component {
 		}
 	}
 
+	getChildRecommendBranches = (parentId, parentChecked) => {
+		return this.state.data.getRecommendBranchesList(parentId).map((recommendBranch) => {
+			const reviews = this.state.data.getReviewList(recommendBranch.id);
+			const recommend = (reviews.length > 0 ? this.state.recommends[reviews[0].recommendId] : null);
+			return (
+					<RecommendBranch
+						key={recommendBranch.id}
+						data={this.state.data}
+						checker={this.state.checker}
+						recommendBranch={recommendBranch}
+						recommend={recommend}
+						reviews={reviews}
+						getChildren={this.getChildRecommendBranches}
+						parentChecked={parentChecked}
+						open
+					/>
+				);
+		});
+	};
+
 	render() {
 		const { classes } = this.props;
 
-		const children = this.props.getChildren(this.props.recommendBranch.id, this.state.checked || this.props.parentChecked);
 		const reviews = this.props.reviews.map((review) => {
 			return (
 				<ListItem key={review.id} className={classes.review} >
