@@ -110,14 +110,6 @@ export default class UserRecommendTreeData {
 	}
 
 	addRecommendBranch = async (id) => {
-		// if id = 0 then add first branch.
-		let res = await postAPI(`/api/recommend-branches`, {
-			name: "新しいリスト",
-			userId: this.userId,
-			prevId: id,
-			nextId: (id === "0" ? "0" : this.recommendBranches[id].nextId),
-		})
-
 		this.recommendBranches[res.id] = res;
 
 		// set nextId of prev branch.
@@ -230,111 +222,7 @@ export default class UserRecommendTreeData {
 			return true;
 		}
 	}
-	changeRecommendBranch = (id, name) => {
-		patchAPI(`/api/recommend-branches/${id}`, {name: name});
-		this.recommendBranches[id].name = name;
-	}
 
-	// get 1 level list. and fix broken list.
-	getRecommendBranchesList = (parentId) => {
-		let recommendBranches = [];
-
-		// find parent id.
-		const list = Object.keys(this.recommendBranches).filter((id) => {
-			return this.recommendBranches[id].parentId === parentId;
-		});
-		if (list.length > 0) {
-			let patchIds = [];
-
-			const firsts = list.filter((id) => {
-				return this.recommendBranches[id].prevId === "0";
-			});
-
-			// if prevId is "0" not found.
-			let first;
-			if (firsts.length >= 1) {
-				first = firsts[0];
-			} else {
-				console.log("could not find first elem.");
-				first = list[0];
-
-				// fix prevId = "0"
-				let recommendBranch = this.recommendBranches[first];
-				recommendBranch.prevId = "0";
-				patchIds.push(first);
-			}
-
-			let outOfLinks = {};
-			list.forEach(id => outOfLinks[id] = null);
-
-			let id, prevId;
-			for (id = first;
-					list.indexOf(id) >= 0;
-					id = this.recommendBranches[id].nextId)
-			{
-				// check out of link.
-				prevId = id;
-				delete outOfLinks[id];
-
-				recommendBranches.push(this.recommendBranches[id]);
-				
-				// check if nextId is loop
-				const nextId = this.recommendBranches[id].nextId;
-				if (list.indexOf(nextId) >= 0 &&
-						!outOfLinks.hasOwnProperty(nextId)
-				) {
-					console.log("recommend branches is loop!");
-					// fix netxtId to zero.
-					let recommendBranch = this.recommendBranches[id];
-					recommendBranch.nextId = "0";
-					patchIds.push(id);
-					break; // last recommendBranches is outOfLinks
-				}
-			}
-
-			// if link is broken. concat last recommendBranches.
-			if (Object.keys(outOfLinks).length > 0) {
-				patchIds.push(prevId);
-
-				Object.keys(outOfLinks).forEach((id) => {
-					console.log(`link list is broken. so fix it. ${parentId}`);
-
-					let prev = this.recommendBranches[prevId];
-					prev.nextId = id;
-
-					let recommendBranch = this.recommendBranches[id];
-					recommendBranch.prevId = prevId;
-					recommendBranch.nextId = "0";
-					recommendBranches.push(recommendBranch);
-
-					patchIds.push(id);
-					prevId = id;
-				});
-			}
-
-			patchIds.forEach((id) => {
-				patchAPI(`/api/recommend-branches/${id}`, {
-					prevId: this.recommendBranches[id].prevId,
-					nextId: this.recommendBranches[id].nextId,
-				});
-			});
-
-		} else {
-			// if recommend branch is empty.
-			// but do not addRecommendBranch.
-			// Because recommendBranches is empty when ComponentDidMount() called.
-		}
-
-		return recommendBranches;
-	};
-
-	getReviewList(recommendBranchId) {
-		return Object.keys(this.reviews).filter((id) => {
-			return this.reviews[id].recommendBranchId === recommendBranchId;
-		})
-		.map(id => this.reviews[id])
-		.sort((a, b) => { return b.createdAt - a.createdAt});
-	}
 
 }
 

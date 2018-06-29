@@ -32,20 +32,14 @@ const styleSheet = theme => ({
 		paddingTop: theme.spacing.unit * 0.5,
 		paddingBottom: theme.spacing.unit * 0.5,
 	},
-	review:{
-	},
 });
 
 class RecommendBranch extends React.Component {
-	state = Object.assign({
+	state = {
+		name: this.props.name,
 		changeFlag: false,
-		checked: false,
-		open: this.props.open,
-	}, this.props.recommendBranch);
-
-	handleCollapse = () => {
-		this.setState({open: !this.state.open});
-	}
+	};
+	
 	handleChange = event => {
 		this.setState({
 			changeFlag: true,
@@ -55,53 +49,23 @@ class RecommendBranch extends React.Component {
 	handleSubmit = event => {
 		event.preventDefault();
 		if (this.state.changeFlag) {
-			this.props.data.changeRecommendBranch(this.state.id, this.state.name);
+			this.props.handleSubmit();
 			this.setState({changeFlag: false});
 		}
-	};
-	uncheck = () => {
-		this.setState({checked: false});
-	}
-	handleCheck = event => {
-		
-		const checked = !this.state.checked;
-		if (this.props.recommend) {
-			this.props.checker.checkRecommend(this.state.id, this.props.recommend.url, checked, this.uncheck);
-		} else {
-			this.props.checker.checkRecommendBranch(this.state.id, checked, this.uncheck );
-		}
-
-		this.setState({checked: checked});
-	}
-	componentWillUnmount() {
-		if (this.state.checked) {
-			this.props.checker.checkRecommend(this.state.id, '', false);
-			this.props.checker.checkRecommendBranch(this.state.id, false);
-		}
-	}
-
-	getChildRecommendBranches = (parentId, parentChecked) => {
-		return this.state.data.getRecommendBranchesList(parentId).map((recommendBranch) => {
-			const reviews = this.state.data.getReviewList(recommendBranch.id);
-			const recommend = (reviews.length > 0 ? this.state.recommends[reviews[0].recommendId] : null);
-			return (
-					<RecommendBranch
-						key={recommendBranch.id}
-						data={this.state.data}
-						checker={this.state.checker}
-						recommendBranch={recommendBranch}
-						recommend={recommend}
-						reviews={reviews}
-						getChildren={this.getChildRecommendBranches}
-						parentChecked={parentChecked}
-						open
-					/>
-				);
-		});
 	};
 
 	render() {
 		const { classes } = this.props;
+
+		const children = this.props.children.map((id) => {
+			return (
+				<RecommendList id={id} />
+			);
+		});
+
+		if (this.props.id === "0") {
+			return {children};
+		}
 
 		const reviews = this.props.reviews.map((review) => {
 			return (
@@ -114,20 +78,20 @@ class RecommendBranch extends React.Component {
 		return (
 			<div>
 				<ListItem
-					className={classNames(classes.root, (this.state.checked ? classes.checked : classes.unchecked))}
+					className={classNames(classes.root, (this.props.isChecked ? classes.checked : classes.unchecked))}
 				>
 					<Checkbox
-						checked={this.state.checked}
-						onClick={this.handleCheck}
+						checked={this.props.isChecked}
+						onClick={this.props.handleCheck}
 						tabIndex={-1}
-						disabled={this.props.parentChecked}
+						disabled={this.props.parentIsChecked}
 						disableRipple
 					/>
 					{(() => {
 						if (!this.props.recommend) {
 							return (
 								<TextField
-									id={this.state.id}
+									id={this.props.id}
 									placeholder="リスト名"
 									fullWidth
 									value={this.state.name}
@@ -145,7 +109,7 @@ class RecommendBranch extends React.Component {
 						if (children.length > 0 || reviews.length > 0) {
 							return (
 									<IconButton onClick={this.handleCollapse}>
-										{this.state.open ? <ExpandLess className={classes.icon}/> : <ExpandMore className={classes.icon}/>}
+										{this.props.isOpen ? <ExpandLess className={classes.icon}/> : <ExpandMore className={classes.icon}/>}
 									</IconButton>
 							);
 						}
@@ -154,11 +118,11 @@ class RecommendBranch extends React.Component {
 				{(() => {
 					if (children.length > 0 || reviews.length > 0) {
 						return (
-							<Collapse in={this.state.open} tomeout="auto">
+							<Collapse in={this.prosp.isOpen} tomeout="auto">
 								<List
 									component="div"
 									disablePadding
-									className={(this.state.checked ? classes.checked : classes.unchecked)}
+									className={(this.prosp.isChecked ? classes.checked : classes.unchecked)}
 								>
 									<div className={classes.container}>
 										{children}

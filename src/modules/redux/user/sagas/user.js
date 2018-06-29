@@ -37,22 +37,10 @@ function* loadUserRecommendData(action) {
 		if (Object.keys(recommendBranches).length > 0) {
 			yield put({type: "LOAD_USER_RECOMMEND_DATA_SUCCEEDED", recommendBranches, recommends, reviews});
 		} else {
-			yield put({type: "ADD_RECOMMEND_BRANCH", {id: "0"});
+			yield put({type: "ADD_RECOMMEND_BRANCH_REQUEST", {id: "0"}});
 		}
 	} catch (e) {
 		yield put({type: "LOAD_USER_RECOMMEND_DATA_FAILED", recommendBranches: {}, recommends: {}, reviews: {}});
 	}
-}
-
-export default function* userSaga() {
-	yield takeEvery("LOAD_USER_REQUEST", fetchUser);
-	yield takeEvery("UPDATE_USER_REQUEST", updateUser);
-	yield takeEvery("ADD_RECOMMEND_BRANCH_REQUEST", addRecommendBranch);
-	yield takeEvery("ADD_SUB_RECOMMEND_BRANCH_REQUEST", addSubRecommendBranch);
-	yield takeEvery("DELETE_RECOMMEND_BRANCH_REQUEST", deleteRecommendBranch);
-	yield takeEvery("MOVE_UP_RECOMMEND_BRANCH_REQUEST", moveUpRecommendBranch);
-	yield takeEvery("MOVE_DOWN_RECOMMEND_BRANCH_REQUEST", moveDownRecommendBranch);
-	yield takeEvery("MOVE_RECOMMEND_BRANCHES_REQUEST", moveRecommendBranches);
-	yield takeEvery("LOAD_USER_RECOMMEND_DATA_REQUEST", loadUserRecommendData);
 }
 
