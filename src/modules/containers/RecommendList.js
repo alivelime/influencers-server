@@ -8,6 +8,9 @@ const mapStateToProps = state => state;
 const mapDispatchToProps = dispatch => ({ dispatch });
 const mergeProps = (state, {dispatch}, props) => {
 	const reviews = getReviewList(props.id);
+	const isChecked = (props.recommend) ?
+		? state.checker.recommendIds.find(props.id)
+		: state.checker.recommendBranchIds.find(props.id);
 
 	return {
 	...props,
@@ -24,15 +27,14 @@ const mergeProps = (state, {dispatch}, props) => {
 	handleCheck: props.parentIsChecked 
 		? () => {}
 		: () => {
-			const checked = !state.recommendBranches[props.id].isChecked;
 			(props.recommend)
-				? dispatch(checkRecommend(props.id, checked))
-				: dispatch(checkRecommendBranch(props.id, checked))
-			)}
+				? isChecked ? dispatch(uncheckRecommend(props.id)) : dispatch(checkRecommend(props.id)
+				: isChecked ? dispatch(uncheckRecommendBranch(props.id)) : dispatch(uncheckRecommendBranch(props.id))
+			}
 	},
 	handleSubmit: name => {dispatch(updateRecommendBranch(Object.assign(state.recommendBranches[props.id], {name: name})))},
 	isOpen: state.recommendBranches[props.id].isOpen || props.open,
-	isChecked: state.recommendBranches[props.id].isChecked || props.parentIsChecked,
+	isChecked: isChecked || props.parentIsChecked,
 }
 };
 

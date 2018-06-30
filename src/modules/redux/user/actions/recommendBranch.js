@@ -1,9 +1,4 @@
 
-export const loadRecommendBranches = userId => ({
-	type: 'LOAD_RECOMMEND_BRANCHES',
-	userId,
-});
-
 export const addRecommendBranch = id => ({
 	type: 'ADD_RECOMMEND_BRANCH_REQUEST',
 	id,
@@ -39,5 +34,20 @@ export const updateRecommendBranch = data => ({
 	type: 'UPDATE_RECOMMEND_BRANCH_REQUEST',
 	data,
 })
+
+export const updateRecommendBranches = data => ({
+	type: 'UPDATE_RECOMMEND_BRANCHES_REQUEST',
+	data,
+})
+
+export const openRecommendBranch = id => ({
+	type: 'OPEN_RECOMMEND_BRANCHES',
+	id,
+});
+
+export const closeRecommendBranch = id => ({
+	type: 'CLOSE_RECOMMEND_BRANCHES',
+	id,
+});
 
 

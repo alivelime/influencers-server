@@ -6,10 +6,16 @@ export default (state = [], action) => {
 			});
 			return action.reviews;
 
-		case 'ADD_REVIEW':
-		case 'DELETE_REVIEW':
+		case 'ADD_REVIEW_SUCCEEDED':
+			return {...state.reviews, [action.data.id]: action.data};
+
+		case 'DELETE_REVIEW_SUCCEEDED':
+			let reviews = Object.assign({}, state.reviews);
+			delete reviews[action.id];
+			return reviews;
+
 		default:
-			return state;
+			return state.reviews;
 	}
 };
 

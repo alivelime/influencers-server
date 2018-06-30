@@ -10,8 +10,11 @@ function* addRecommendBranch(action) {
 			yield put({type: "ADD_RECOMMEND_BRANCH_FAILED", res});
 		}
 	} catch (e) {
-		yield put({type: "ADD_RECOMMEND_BRANCH_FAILED", data: {id: action.id, name: e.message}});
+		yield put({type: "ADD_RECOMMEND_BRANCH_FAILED", data: {id: action.data.id, name: e.message}});
 	}
+}
+
+function* updateRecommendBranches(action) {
 }
 
 function* updateRecommendBranch(action) {
