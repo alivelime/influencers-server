@@ -3,7 +3,7 @@ import { connect } from 'react-redux'
 import * from 'modules/redux/user/actions'
 import RecommendTree from 'modules/components/RecommendTree';
 
-// for performance reference http://anect.hatenablog.com/entry/2018/04/05/124654
+// for performance reference http://anect.hatenablog.com/entry/2018/04/18/190841
 const mapStateToProps = state => state;
 const mapDispatchToProps = dispatch => ({ dispatch });
 const mergeProps = (state, {dispatch}, props) => ({

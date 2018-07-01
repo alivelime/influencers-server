@@ -1,6 +1,8 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { withStyles } from '@material-ui/core/styles';
+import { connect } from 'react-redux'
+import { Field, reduxForm, formValueSelector } from 'redux-form'
 
 import Paper from '@material-ui/core/Paper';
 import Typography from '@material-ui/core/Typography';
@@ -13,9 +15,12 @@ import ListItemSecondaryAction from '@material-ui/core/ListItemSecondaryAction';
 import Button from '@material-ui/core/Button';
 import FormControl from '@material-ui/core/FormControl';
 import InputLabel from '@material-ui/core/InputLabel';
-import Select from '@material-ui/core/Select';
 import MenuItem from '@material-ui/core/MenuItem';
-import TextField from '@material-ui/core/TextField';
+import {
+  Select,
+  TextField,
+} from 'redux-form-material-ui'
+
 import IconButton from '@material-ui/core/IconButton';
 import BackspaceIcon from '@material-ui/icons/Backspace';
 
@@ -50,46 +55,6 @@ class ReviewForm extends React.Component {
 		this.state = this.initState();
 		this.props.checker.addRecommendHandler('ReviewForm', this.checkRecommend);
 		this.props.checker.addRecommendBranchHandler('ReviewForm', this.checkRecommendBranch);
-	}
-	initState() {
-
-		// searchRecommendBranch(url)[0] > this.props.recommendBranchId > "0" ...
-		let recommendBranchId = "0";
-		if (this.props.url) {
-			const recommendBranchIds = this.props.data.searchRecommendBranchIds(this.props.url);
-			if (recommendBranchIds.length > 0) {
-				recommendBranchId = recommendBranchIds[0];
-			}
-		} else {
-			if (this.props.recommendBranchId) {
-				recommendBranchId = this.props.recommendBranchId;
-			}
-		}
-
-		return {
-			kind: this.props.kind || 'mono',
-			error: false,
-			errorMessage: '',
-			url: this.props.url || '',
-			urlError: false,
-			urlHelper: '',
-			evidence: '',
-			evidenceError: '',
-			memo: '',
-			forMe: 3,
-			forYou: 3,
-			date: (new Date()).getFullYear() + '-'
-					+ ("0"+((new Date()).getMonth()+1)).slice(-2) + '-'
-					+ ("0"+(new Date()).getDate()).slice(-2),
-			recommendBranchId: recommendBranchId,
-			urlData: {},
-			evidenceData: {},
-		};
-	}
-
-	componentWillUnmount() {
-		this.props.checker.removeRecommendHandler('ReviewForm');
-		this.props.checker.removeRecommendBranchHandler('ReviewForm');
 	}
 
 	checkRecommend = (id, url, value) => {
@@ -294,17 +259,15 @@ class ReviewForm extends React.Component {
 						{(() => {
 							if (this.props.kind === undefined) {
 								return (
-									<Select
-										id="kind"
-										value={this.state.kind}
-										onChange={this.handleChange}
+									<Field  
+										component={Select}
+										name="kind"
 										fullWidth
-										inputProps={{name:"kind"}}
 									>
 										<MenuItem value="mono">モノ</MenuItem>
 										<MenuItem value="service">サービス</MenuItem>
 										<MenuItem value="information">情報</MenuItem>
-									</Select>
+									</Field>
 								);
 							} else {
 								return (
@@ -319,14 +282,11 @@ class ReviewForm extends React.Component {
 						if (this.props.url === undefined) {
 							return (
 								<ListItem>
-									<TextField
-										id="url"
+									<Field
+										component={TextField}
+										name="url"
 										placeholder="オススメしたいもの(URL)"
 										fullWidth
-										value={this.state.url}
-										onChange={this.handleChangeURL}
-										helperText={this.state.urlHelper}
-										error={(this.state.urlError)}
 									/>
 									<ListItemSecondaryAction>
 										<IconButton aria-label='Delete' onClick={this.clear('url')}>
@@ -344,17 +304,14 @@ class ReviewForm extends React.Component {
 						}
 					})()}
 					<ListItem>
-						<Recommend data={this.state.urlData} />
+						<Recommend data={this.props.urlData} />
 					</ListItem>
 					<ListItem>
-						<TextField
-							id="evidence"
+						<Field
+							component={TextField}
+							name="evidence"
 							placeholder="感想URL(あなたのブログや動画のURL)"
 							fullWidth
-							value={this.state.evidence}
-							onChange={this.handleChangeEvidence}
-							helperText={this.state.evidenceError}
-							error={(this.state.evidenceError.length > 0)}
 						/>
 						<ListItemSecondaryAction>
 							<IconButton aria-label='Delete' onClick={this.clear('evidence')}>
@@ -366,13 +323,11 @@ class ReviewForm extends React.Component {
 						<Recommend data={this.state.evidenceData} />
 					</ListItem>
 					<ListItem>
-						<TextField
-							id="memo"
+						<Field
+							component={TextField}
 							name="memo"
 							placeholder="ひとこと"
 							fullWidth
-							value={this.state.memo}
-							onChange={this.handleChange}
 						/>
 						<ListItemSecondaryAction>
 							<IconButton aria-label='Delete' onClick={this.clear('memo')}>
@@ -385,7 +340,8 @@ class ReviewForm extends React.Component {
 							<Grid item xs={6} sm={3}> 
 								<FormControl className={classes.formControl}>
 									<InputLabel htmlFor='forMe'>お気に入り度</InputLabel>
-									<Select
+									<Field
+										component={Select}
 										id="forMe"
 										value={this.state.forMe}
 										onChange={this.handleChange}
@@ -449,5 +405,4 @@ ReviewForm.propTypes = {
   classes: PropTypes.object.isRequired,
 };
 
-export default withStyles(styleSheet)(ReviewForm);
-
+export default withStyles(styleSheet)(reviewForm);

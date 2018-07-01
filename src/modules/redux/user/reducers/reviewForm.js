@@ -1,12 +1,27 @@
 
 export default (state = [], action) => {
 	switch (action.type) {
-		case 'PREVIEW_RECOMMEND':
-		case 'PREVIEW_REVIEW':
-		case 'SET_RECOMMEND_BRANCH_ID':
-		case 'SET_RECOMMEND_URL':
-		case 'SET_REVIEW_URL':
+		case 'CHECK_RECOMMEND':
+			// use form plugin.
+			break;
+
+		case 'CHECK_RECOMMEND_BRANCH':
+			// use form plugin.
+			return {...state.reviewForm, recommendBranchId: action.recommendBranchId);
+			
+		case 'UNCHECK_RECOMMEND':
+			return {...state.reviewForm, recommendBranchId: "0"};
+
+		case 'UNCHECK_RECOMMEND_BRANCH':
+			return {...state.reviewForm, recommendBranchId: "0"};
+
+		case 'PREVIEW_RECOMMEND_REQUEST':
+			return {...state.reviewForm, recommendPreview: action.data};
+
+		case 'PREVIEW_EVIDENCE_REQUEST':
+			return {...state.reviewForm, evidencePreview: action.data};
+
 		default:
-			throw new Error("no defined method " + action.type);
+			return state.reviewForm;
 	}
 };
