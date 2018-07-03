@@ -6,6 +6,7 @@ import checker from 'modules/redux/user/reducers/checker';
 import recommendBranches from 'modules/redux/user/reducers/recommendBranches';
 import recommends from 'modules/redux/user/reducers/recommends';
 import reviewForm from 'modules/redux/user/reducers/reviewForm';
+import reviewFormPlugin from 'modules/redux/user/reducers/reviewFormPlugin';
 
 export default combineReducers({
 	user,
@@ -14,5 +15,5 @@ export default combineReducers({
 	recommends,
 	reviews,
 	reviewForm,
-	form: formReducer,
+	form: formReducer.plugin(reviewForm: reviewFormPlugin),
 });

@@ -20,8 +20,9 @@ export default (state = {}, action) => {
 
 			return recommendBranches;
 		}
+			
 		case 'UPDATE_RECOMMEND_BRANCH_SUCCEEDED':
-			return {...state.recommendBranches, [action.data.id]: action.data};
+			throw Error('use UPDATE_RECOMMEND_BRANCHES');
 			
 		case 'UPDATE_RECOMMEND_BRANCHES_SUCCEEDED':
 		{
@@ -32,6 +33,7 @@ export default (state = {}, action) => {
 			return recommendBranches;
 		}	
 		case 'DELETE_RECOMMEND_BRANCHES_SUCCEEDED':
+			throw Error("yet no implement.");
 
 		case 'OPEN_RECOMMEND_BRANCH':
 			return Object.assign({}, state.recommendBranches, {
@@ -42,14 +44,19 @@ export default (state = {}, action) => {
 				[action.id]: {isOpen: false}
 			});
 
-		case 'CHECK_RECOMMEND_BRANCH': // ignore. handle with checker.js
+		// use action instead.
+		case 'MOVE_UP_RECOMMEND_BRANCH_REQUEST':
+		case 'MOVE_DOWN_RECOMMEND_BRANCH_REQUEST':
+		case 'MOVE_RECOMMEND_BRANCHES_REQUEST':
+			throw Error("use action creator.");
+
+		// ignore. handle with checker.js
+		case 'CHECK_RECOMMEND_BRANCH':
+
 		// implement sagas/recommendBranches.js
 		case 'ADD_RECOMMEND_BRANCH_REQUEST':
-		case 'UPDATE_RECOMMEND_BRANCH_REQUEST':
-		case 'DELETE_RECOMMEND_BRANCH_REQUEST':
-		case 'MOVEUP_RECOMMEND_BRANCH_REQUEST':
-		case 'MOVEDOWN_RECOMMEND_BRANCH_REQUEST':
-		case 'MOVE_RECOMMEND_BRANCHES_REQUEST':
+		case 'UPDATE_RECOMMEND_BRANCHES_REQUEST':
+		case 'DELETE_RECOMMEND_BRANCHES_REQUEST':
 		default:
 			return state;
 	}

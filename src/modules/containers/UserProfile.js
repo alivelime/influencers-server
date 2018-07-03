@@ -3,12 +3,20 @@ import { connect } from 'react-redux'
 import { loadUser, updateUser } from 'modules/redux/user/actions'
 import Profile from 'modules/components/Profile';
 
-const mapStateToProps = state => state;
-const mapDispatchToProps = dispatch => ({ dispatch });
-const mergeProps = (state, {dispatch}, props) => ({
-export default connect(
-	...props,
+const mapStateToProps = state => ({
 	data: state.user,
-  loadUser: id => dispatch(loadUser(id)),
-	updateUser: data => dispatch(updateUser(data)),
+);
+const mapDispatchToProps = (dispatch, props) => ({
+	loadUser: () => dispatch(loadUser(props.id)),
+	updateUser: () => dispatch(updateUser()),
+});
+const mergeProps = (state, {dispatch}, props) => ({
+		...state,
+		...dispatch,
+});
+
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps,
+  mergeProps
 )(Profile);

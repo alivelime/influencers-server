@@ -1,38 +1,43 @@
 import { connect } from 'react-redux'
 
-import { loadUserRecommendData } from 'modules/redux/user/actions'
-import RecommendTree from 'modules/components/RecommendTree';
+import * from 'modules/redux/user/actions'
+import RecommendBranch from 'modules/components/RecommendBranch';
 
 // for performance reference http://anect.hatenablog.com/entry/2018/04/05/124654
-const mapStateToProps = state => state;
+const mapStateToProps = state => ({
+	recommendBranches: state.recommendBranches,
+	reviews: state.reviews,
+	recommends: state.recommends,
+	checker: state.checker,
+});
 const mapDispatchToProps = dispatch => ({ dispatch });
 const mergeProps = (state, {dispatch}, props) => {
-	const reviews = getReviewList(props.id);
+	const reviews = getReviewList(state, props.id);
 	const isChecked = (props.recommend) ?
 		? state.checker.recommendIds.find(props.id)
 		: state.checker.recommendBranchIds.find(props.id);
 
 	return {
 	...props,
-	...state.recommendBranches[props.id],
+	name: (props.id === "0" ? '' : state.recommendBranches[props.id]),
 
 	children: getChildren(state, props.id),
 	reviews: reviews,
 	recommend: reviews.length > 0 ? state.recommends[reviews[0].recommendId] : null;
 
 	handleCollaps: () => {state.recommendBranches[props.id].isOpen
-		? dispatch(closeRecommendBranch(props.id))
-		: dispatch(openRecommendBranch(props.id))
+		? dispatch(actions.closeRecommendBranch(props.id))
+		: dispatch(actions.openRecommendBranch(props.id))
 	},
 	handleCheck: props.parentIsChecked 
 		? () => {}
 		: () => {
-			(props.recommend)
-				? isChecked ? dispatch(uncheckRecommend(props.id)) : dispatch(checkRecommend(props.id)
-				: isChecked ? dispatch(uncheckRecommendBranch(props.id)) : dispatch(uncheckRecommendBranch(props.id))
+			(reviews.length > 0)
+				? isChecked ? dispatch(actions.uncheckRecommend(props.id)) : dispatch(actions.checkRecommend(props.id)
+				: isChecked ? dispatch(actions.uncheckRecommendBranch(props.id)) : dispatch(actions.uncheckRecommendBranch(props.id))
 			}
 	},
-	handleSubmit: name => {dispatch(updateRecommendBranch(Object.assign(state.recommendBranches[props.id], {name: name})))},
+	handleSubmit: name => {dispatch(actions.updateRecommendBranch({id: props.id, name: name}))},
 	isOpen: state.recommendBranches[props.id].isOpen || props.open,
 	isChecked: isChecked || props.parentIsChecked,
 }
@@ -43,31 +48,36 @@ const mergeProps = (state, {dispatch}, props) => {
  * do not make complex as nested object.
  */
 function getChildren(state, parentId) {
-	let recommendBranches = [];
+	// deep copy state.recommendBranches
+	let recommendBranches = {};
+	Object.keys(state.recommendBranches).forEach((id) => {
+		recommendBranches[id] = Object.assign({}, state.recommendBranches[id]);
+	});
+	let children = [];
 
 	// find parent id.
-	const list = Object.keys(state.recommendBranches).filter((id) => {
-		return state.recommendBranches[id].parentId === parentId;
+	const list = Object.keys(recommendBranches).filter((id) => {
+		return recommendBranches[id].parentId === parentId;
 	});
 	if (list.length > 0) {
-		let patchRecommendBranches = [];
+		let patchIds = [];
 
 		const firsts = list.filter((id) => {
-			return state.recommendBranches[id].prevId === "0";
+			return recommendBranches[id].prevId === "0";
 		});
 
-		// if prevId is "0" not found.
 		let first;
 		if (firsts.length >= 1) {
 			first = firsts[0];
 		} else {
+			// if prevId is "0" not found.
 			console.log("could not find first elem.");
 			first = list[0];
 
 			// fix prevId = "0"
-			let recommendBranch = state.recommendBranches[first];
+			let recommendBranch = recommendBranches[first];
 			recommendBranch.prevId = "0";
-			patchRecommendBranches.push(recommendBranch);
+			patchIds.push(first);
 		}
 
 		let outOfLinks = {};
@@ -76,59 +86,54 @@ function getChildren(state, parentId) {
 		let id, prevId;
 		for (id = first;
 				list.indexOf(id) >= 0;
-				id = state.recommendBranches[id].nextId)
+				id = recommendBranches[id].nextId)
 		{
 			// check out of link.
 			prevId = id;
 			delete outOfLinks[id];
-
-			recommendBranches.push(state.recommendBranches[id]);
+			children.push(id);
 			
 			// check if nextId is loop
-			const nextId = state.recommendBranches[id].nextId;
+			const nextId = recommendBranches[id].nextId;
 			if (list.indexOf(nextId) >= 0 &&
 					!outOfLinks.hasOwnProperty(nextId)
 			) {
 				console.log("recommend branches is loop!");
 				// fix netxtId to zero.
-				let recommendBranch = state.recommendBranches[id];
-				recommendBranch.nextId = "0";
-				patchRecommendBranches.push(recommendBranch);
+				recommendBranch[id].nextId = "0";
+				patchIds.push(id);
 				break; // last recommendBranches is outOfLinks
 			}
 		}
 
 		// if link is broken. concat last recommendBranches.
 		if (Object.keys(outOfLinks).length > 0) {
-			patchRecommendBranches.push(state.recommendBranches[prevId]);
-
+			patchIds.push(prevId);
 			Object.keys(outOfLinks).forEach((id) => {
 				console.log(`link list is broken. so fix it. ${parentId}`);
 
-				let prev = state.recommendBranches[prevId];
-				prev.nextId = id;
+				recommendBranches[prevId].nextId = id;
 
-				let recommendBranch = state.recommendBranches[id];
-				recommendBranch.prevId = prevId;
-				recommendBranch.nextId = "0";
-				recommendBranches.push(recommendBranch);
+				recommendBranches[id].prevId = prevId;
+				recommendBranches[id].nextId = "0";
+				children.push(id);
+				patchIds.push(id);
 
-				patchRecommendBranches.push(recommendBranch);
 				prevId = id;
 			});
 		}
 
-		dispatch(updateRecommendBranches(patchRecommendBranches);
+		// dispatch(actions.updateRecommendBranches(patchIds.map(id => recommendBranches[id])));
 	} else {
 		// if recommend branch is empty.
 		// but do not addRecommendBranch.
 		// Because recommendBranches is empty when ComponentDidMount() called.
 	}
 
-	return recommendBranches;
+	return children.map(id => recommendBranches[id]);
 }
 
-function getReviewList(recommendBranchId) {
+function getReviewList(state, recommendBranchId) {
 	return Object.keys(state.reviews).filter((id) => {
 		return state.reviews[id].recommendBranchId === recommendBranchId;
 	})

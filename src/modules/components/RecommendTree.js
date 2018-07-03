@@ -4,7 +4,7 @@ import { withStyles } from '@material-ui/core/styles';
 import List from '@material-ui/core/List';
 import CircularProgress from '@material-ui/core/CircularProgress';
 
-import ReviewForm from 'modules/components/ReviewForm';
+import ReviewForm from 'modules/containers/IiyoReviewForm';
 import RecommendList from 'modules/containers/RecommendList';
 import RecommendToolbox from 'modules/components/RecommendToolbox';
 
@@ -33,7 +33,7 @@ class RecommendTree extends React.Component {
 			<div className={classes.root}>
 				<div className={classes.content}>
 					<ReviewForm
-						recommendBranch={{id: "0", name: "自動選択 or トップ"}}
+						recommendBranchId={"0"}
 						userId={this.props.userId}
 						iineId={this.props.iineId}
 						searchParent
@@ -42,30 +42,26 @@ class RecommendTree extends React.Component {
 				<RecommendToolbox 
 					addRecommendBranch={this.props.addRecommendBranch}
 					addSubRecommendBranch={this.props.addSubRecommendBranch}
-					deleteRecommendBranch={this.props.deleteRecommendBranch}
+					deleteRecommendBranches={this.props.deleteRecommendBranches}
 					moveUpRecommendBranch={this.props.moveUpRecommendBranch}
 					moveDownRecommendBranch={this.props.moveDownRecommendBranch}
 					moveRecommendBranches={this.props.moveRecommendBranches}
 				/>
 				<List component='nav' className={classes.list}>
-				{(() => {
-					if (this.props.dataLoaded) {
-						return (
+				{(this.props.dataLoaded) 
+					? (
 							<RecommendList
 								id={this.props.recommendBranchId}
-								key={this.props.recommendBranchId}
 								open={this.props.open}
 							/>
-						);
-					} else {
-						return (
+						)
+					: (
 							<CircularProgress
 								className={classes.progress}
 								variant="determinate"
 							/>
-						);
-					}
-				})()}
+						)
+				}
 				</List>
 			</div>
 		);

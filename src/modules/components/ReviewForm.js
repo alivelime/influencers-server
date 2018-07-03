@@ -29,6 +29,25 @@ import { postAPI } from 'modules/utils/Request';
 import { isURL } from 'modules/utils/Validation';
 import { getMetaData } from 'modules/utils/Meta';
 
+const message = {
+};
+const kindLabel = {
+	'mono': 'モノ',
+	'service': 'サービス',
+	'information': '情報',
+};
+const siteLabel = (preview) => {
+	if (!preview || !preview.site) return null;
+
+	switch(preview.site) {
+		case "amazon": return "AmazonJapanです。アフィリタグは自動的に挿入されます。";
+		case "iherb": return "iHerbへのリンクです。アフィリタグは自動的に挿入されます。";
+		case "niconico": return "ニコニコ動画のリンクです。生放送のリンクはデータ取得できません。";
+		default:
+	}
+	return null;
+}
+
 const styleSheet = theme => ({
 	root: {
 		backgroundColor: theme.palette.background.paper,
@@ -49,109 +68,7 @@ const styleSheet = theme => ({
 });
 
 class ReviewForm extends React.Component {
-	constructor(props) {
-		super(props);
-
-		this.state = this.initState();
-		this.props.checker.addRecommendHandler('ReviewForm', this.checkRecommend);
-		this.props.checker.addRecommendBranchHandler('ReviewForm', this.checkRecommendBranch);
-	}
-
-	checkRecommend = (id, url, value) => {
-		if (value === true) {
-			this.setState({
-				recommendBranchId: id,
-				url: url,
-				urlError: false,
-				urlHelper: '',
-			});
-		} else {
-			this.setState({
-				recommendBranchId: "0",
-				url: '',
-				urlError: false,
-				urlHelper: '',
-			});
-		}
-	};
-	checkRecommendBranch = (id, value) => {
-		if (value === true) {
-			this.setState({
-				recommendBranchId: id,
-			});
-		} else {
-			this.setState({
-				recommendBranchId: "0",
-			});
-		}
-	};
-
 	handleSubmit = async event => {
-		event.preventDefault();
-		if (this.isInvalid()) {
-			return;
-		}
-		
-		const recommend = {
-			url: this.state.url,
-			link: this.state.url,
-			kind: this.state.kind,
-			Description: "",
-		};
-
-		let res;
-		try {
-			postAPI(`/api/recommends`, recommend)
-			.then((res) => {
-				this.props.data.updateRecommend(res);
-			});
-
-			// if recommend branch does not have same review. add sub recommend branch.
-			let addFlag = false;
-			if (!this.props.data.recommendBranchIsRecommend(this.state.recommendBranchId, this.state.url)) {
-				addFlag = true;
-			}
-			const recommendBranchId = (addFlag 
-				 ? (await this.props.data.addSubRecommendBranch(this.state.recommendBranchId)).id
-				 : this.state.recommendBranchId);
-
-			res = await postAPI(`/api/reviews`, {
-				userId: this.props.userId,
-				recommendBranchId: recommendBranchId,
-				recommendId: this.state.url,
-				iineId: this.props.iineId,
-				evidence: this.state.evidence,
-				memo: String(this.state.memo),
-				forMe: this.state.forMe,
-				forYou: this.state.forYou,
-			});
-
-			if (Object.keys(res).length === 0) {
-				this.setState({urlError: true, urlHelper: '登録に失敗しました'});
-				if (addFlag) {
-					this.props.data.deleteRecommendBranch([recommendBranchId]);
-				}
-				return;
-			}
-
-			if (this.state.evidence.length > 0) {
-				const evidence = {
-					url: this.state.evidence,
-					kind: "information",
-				};
-				postAPI(`/api/recommends`, evidence)
-				.then((r) => {
-					this.props.data.updateEvidence(res, r);
-				});
-			}
-		} catch (err) {
-			console.log(err);
-			return;
-		}
-
-		this.setState(this.initState());
-		this.props.data.addReview(res, recommend);
-		this.props.checker.uncheckAll();
 	};
 	handleChange = event => {
 		this.setState({ [event.target.name]: event.target.value });
@@ -176,12 +93,6 @@ class ReviewForm extends React.Component {
 			urlError = false;
 
 			// get preview
-			const message = {
-				"amazon": "AmazonURLです。アフィリタグは自動的に挿入されます。",
-				"iherb": "iHerbへのリンクです。アフィリタグは自動的に挿入されます。",
-				"niconico": "ニコニコ動画のリンクです。生放送のリンクはデータ取得できません。",
-				"general": "",
-			};
 			getMetaData(url).then((res) => this.setState({urlData: res, url: res.url, urlHelper: message[res.site]}));
 		}
 
@@ -249,16 +160,16 @@ class ReviewForm extends React.Component {
 		const { classes } = this.props;
 
 		return (
+		<form onSubmit={this.props.handleSubmit}
 			<Paper>
-				<Typography className={classes.title} variant="headline">オススメ教えて?</Typography>
+				<Typography className={classes.title} variant="headline">オススメ教えて!</Typography>
 				<List component='nav'>
 					<ListItem>
 						<ListItemText primary={`親リスト: ${this.getParentRecommendBranchName()}`} />
 					</ListItem>
 					<ListItem>
-						{(() => {
-							if (this.props.kind === undefined) {
-								return (
+						{this.props.kind === undefined
+							? (
 									<Field  
 										component={Select}
 										name="kind"
@@ -268,19 +179,14 @@ class ReviewForm extends React.Component {
 										<MenuItem value="service">サービス</MenuItem>
 										<MenuItem value="information">情報</MenuItem>
 									</Field>
-								);
-							} else {
-								return (
-									<ListItemText primary={(this.props.kind === "mono" ? "モノ" :
-																			 (this.props.kind === "service" ? "サービス" : "情報"))}
-									/>
-								);
-							}
-						})()}
+								)
+							: (
+									<ListItemText primary={kindLable[this.props.kind]} />
+								)
+						}
 					</ListItem>
-					{(() => {
-						if (this.props.url === undefined) {
-							return (
+					{this.props.url === undefined
+						? (
 								<ListItem>
 									<Field
 										component={TextField}
@@ -294,17 +200,16 @@ class ReviewForm extends React.Component {
 										</IconButton>
 									</ListItemSecondaryAction>
 								</ListItem>
-							);
-						} else {
-							return (
+							)
+						: (
 								<ListItem>
 									<ListItemText primary={this.props.url} />
 								</ListItem>
-							);
-						}
-					})()}
+							)
+					}
 					<ListItem>
-						<Recommend data={this.props.urlData} />
+						<ListItemText primary={siteLabel(this.props.recommendPreview)} />
+						<Recommend data={this.props.recommendPreview} />
 					</ListItem>
 					<ListItem>
 						<Field
@@ -320,7 +225,8 @@ class ReviewForm extends React.Component {
 						</ListItemSecondaryAction>
 					</ListItem>
 					<ListItem>
-						<Recommend data={this.state.evidenceData} />
+						<ListItemText primary={siteLabel(this.props.evidencePreview)} />
+						<Recommend data={this.state.evidencePreview} />
 					</ListItem>
 					<ListItem>
 						<Field
@@ -386,17 +292,18 @@ class ReviewForm extends React.Component {
 							</Grid>
 							<Grid item xs={6} sm={3}> 
 								<Button
-									onClick={this.handleSubmit}
+									onClick={this.props.handleSubmit}
 									variant="raised"
 									size="large"
 									color="primary"
 									disabled={this.isInvalid()}
-								>これいいよ!</Button>
+								>{this.props.iineId ? 'これいいね!' : 'これいいよ!'}</Button>
 							</Grid>
 						</Grid>
 					</ListItem>
 				</List>
 			</Paper>
+		</form>
 		);
 	}
 }

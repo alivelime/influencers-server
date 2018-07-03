@@ -5,7 +5,7 @@ import { createStore, applyMiddleware } from 'redux'
 import createSagaMiddleware from 'redux-saga'
 import { Provider } from 'react-redux'
 
-import UserRecommendTree from 'modules/containers/UserRecommendTree';
+import MyRecommendTree from 'modules/containers/MyRecommendTree';
 import UserProfile from 'modules/containers/UserProfile';
 import userReducer from 'modules/redux/user/reducers'
 import userSaga from 'modules/redux/user/saga';

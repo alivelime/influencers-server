@@ -1,16 +1,13 @@
-export const loadReviews = userId => ({
-	type: 'LOAD_REVIEWS',
-	userId,
-});
-
-export const addReview = review => ({
-	type: 'ADD_REVIEW',
+export const addReview = (recommendBranchId, isRecommend, recommend, review) => ({
+	type: 'ADD_REVIEW_REQUEST',
+	recommendBranchId,
+	isRecommend,
+	recommend,
 	review,
 })
 
-export const updateReview = review => ({
-	type: 'UPDATE_REVIEW',
-	review,
+export const addEvidence = data => ({
+	type: 'ADD_REVIEW_REQUEST',
+	data,
 })
-
 

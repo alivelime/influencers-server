@@ -2,26 +2,28 @@
 export default (state = [], action) => {
 	switch (action.type) {
 		case 'CHECK_RECOMMEND':
-			// use form plugin.
-			break;
+			// use form plugin to change url.
+			return {...state, recommendBranchId: action.id, isRecommend: true);
 
 		case 'CHECK_RECOMMEND_BRANCH':
-			// use form plugin.
-			return {...state.reviewForm, recommendBranchId: action.recommendBranchId);
+			return {...state, recommendBranchId: action.id, isRecommend: false);
 			
 		case 'UNCHECK_RECOMMEND':
-			return {...state.reviewForm, recommendBranchId: "0"};
+			return {...state, recommendBranchId: "0", isRecommend: false};
 
 		case 'UNCHECK_RECOMMEND_BRANCH':
-			return {...state.reviewForm, recommendBranchId: "0"};
+			return {...state, recommendBranchId: "0", isRecommend: false};
+
+		case 'SET_RECOMMEND_BRANCH_ID':
+			return {...state, recommendBranchId: action.id, isRecommend: action.id !== "0" && action.isRecommend};
 
 		case 'PREVIEW_RECOMMEND_REQUEST':
-			return {...state.reviewForm, recommendPreview: action.data};
+			return {...state, recommendPreview: action.data};
 
 		case 'PREVIEW_EVIDENCE_REQUEST':
-			return {...state.reviewForm, evidencePreview: action.data};
+			return {...state, evidencePreview: action.data};
 
 		default:
-			return state.reviewForm;
+			return state;
 	}
 };

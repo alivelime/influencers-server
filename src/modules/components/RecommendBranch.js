@@ -59,7 +59,10 @@ class RecommendBranch extends React.Component {
 
 		const children = this.props.children.map((id) => {
 			return (
-				<RecommendList id={id} />
+				<RecommendList
+					id={id}
+					parentIsChecked={this.props.isChecked}
+				/>
 			);
 		});
 
@@ -87,9 +90,8 @@ class RecommendBranch extends React.Component {
 						disabled={this.props.parentIsChecked}
 						disableRipple
 					/>
-					{(() => {
-						if (!this.props.recommend) {
-							return (
+					{(!this.props.recommend) 
+						? (
 								<TextField
 									id={this.props.id}
 									placeholder="リスト名"
@@ -98,41 +100,35 @@ class RecommendBranch extends React.Component {
 									onChange={this.handleChange}
 									onBlur={this.handleSubmit}
 								/>
-							);
-						} else {
-							return (
+							)
+						: (
 								<Recommend data={this.props.recommend} enableLink />
-							);
-						}
-					})()}
-					{(() => {
-						if (children.length > 0 || reviews.length > 0) {
-							return (
-									<IconButton onClick={this.handleCollapse}>
-										{this.props.isOpen ? <ExpandLess className={classes.icon}/> : <ExpandMore className={classes.icon}/>}
-									</IconButton>
-							);
-						}
-					})()}
-				</ListItem>
-				{(() => {
-					if (children.length > 0 || reviews.length > 0) {
-						return (
-							<Collapse in={this.prosp.isOpen} tomeout="auto">
-								<List
-									component="div"
-									disablePadding
-									className={(this.prosp.isChecked ? classes.checked : classes.unchecked)}
-								>
-									<div className={classes.container}>
-										{children}
-										{reviews}
-									</div>
-								</List>
-							</Collapse>
-						);
+							)
 					}
-				})()}
+					{(children.length > 0 || reviews.length > 0) &&
+						(
+							<IconButton onClick={this.handleCollapse}>
+								{this.props.isOpen ? <ExpandLess className={classes.icon}/> : <ExpandMore className={classes.icon}/>}
+							</IconButton>
+						)
+					}
+				</ListItem>
+				{(children.length > 0 || reviews.length > 0) &&
+					(
+						<Collapse in={this.prosp.isOpen} tomeout="auto">
+							<List
+								component="div"
+								disablePadding
+								className={(this.prosp.isChecked ? classes.checked : classes.unchecked)}
+							>
+								<div className={classes.container}>
+									{children}
+									{reviews}
+								</div>
+							</List>
+						</Collapse>
+					)
+				}
 			</div>
 		);
 	}

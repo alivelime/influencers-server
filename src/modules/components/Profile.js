@@ -13,7 +13,7 @@ const styleSheet = theme => ({
 class  Profile extends React.Component {
 
 	componentDidMount() {
-		this.props.loadUser(this.props.id);
+		this.props.loadUser();
 	}
 
 	testData = () => {
@@ -31,7 +31,7 @@ class  Profile extends React.Component {
 				<div className={classes.header}>
 					<Typography variant="display2" >{data.name} </Typography>
 				</div>
-				<div><button onClick={() => {updateUser(this.testData())}} >テストデータ投入</button></div>
+				<div><button onClick={() => {updateUser(this.testData())}} >テストユーザ投入</button></div>
 			</Paper>
 		);
 	}

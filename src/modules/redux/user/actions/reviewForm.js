@@ -1,17 +1,18 @@
 
-export const setRecommendBranchId = id => ({
+export const setRecommendBranchId = (id, isRecommend = false) => ({
 	type: 'SET_RECOMMEND_BRANCH_ID',
 	id,
+	isRecommend,
 })
 
-export const previewRecommend = recommend => ({
+export const previewRecommend = url => ({
 	type: 'PREVIEW_RECOMMEND',
-	recommend,
+	url,
 })
 
-export const previewReview = review => ({
+export const previewEvidence = url => ({
 	type: 'PREVIEW_REVIEW',
-	review,
+	url,
 })
 
 
