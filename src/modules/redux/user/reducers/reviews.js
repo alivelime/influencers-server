@@ -9,13 +9,21 @@ export default (state = [], action) => {
 		case 'ADD_REVIEW_SUCCEEDED':
 			return {...state.reviews, [action.data.id]: action.data};
 
+		case 'ADD_RECOMMEND_SUCCEEDED':
+			Object.keys(state).forEach((id) => {
+				if (state[id].evidence === action.data.url) {
+					state[id]["meta"] = action.data;
+				}
+			});
+			return state;
+
 		case 'DELETE_REVIEW_SUCCEEDED':
 			let reviews = Object.assign({}, state.reviews);
 			delete reviews[action.id];
 			return reviews;
 
 		default:
-			return state.reviews;
+			return state;
 	}
 };
 

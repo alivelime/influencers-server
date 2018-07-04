@@ -27,7 +27,6 @@ import BackspaceIcon from '@material-ui/icons/Backspace';
 import Recommend from 'modules/components/Recommend';
 import { postAPI } from 'modules/utils/Request';
 import { isURL } from 'modules/utils/Validation';
-import { getMetaData } from 'modules/utils/Meta';
 
 const message = {
 };
@@ -68,93 +67,6 @@ const styleSheet = theme => ({
 });
 
 class ReviewForm extends React.Component {
-	handleSubmit = async event => {
-	};
-	handleChange = event => {
-		this.setState({ [event.target.name]: event.target.value });
-	};
-	validationURL = (value) => {
-		if (isURL(value)) {
-			return '';
-		} else {
-			return 'URLを入力してください(必須)';
-		}
-	};
-	handleChangeURL = event => {
-		const value = event.target.value;
-		let url = value;
-		let urlError = false;
-		let urlHelper = '';
-		const error = this.validationURL(value);
-		if (error.length > 0) {
-			urlError = true;
-			urlHelper = error;
-		} else {
-			urlError = false;
-
-			// get preview
-			getMetaData(url).then((res) => this.setState({urlData: res, url: res.url, urlHelper: message[res.site]}));
-		}
-
-		// search all review. whether having same review or not.
-		let recommendBranchId = this.state.recommendBranchId;
-		if ((this.props.searchParent && recommendBranchId === "0") ||
-				this.props.data.recommendBranchIsRecommend(recommendBranchId)
-			) {
-			const recommendBranchIds = this.props.data.searchRecommendBranchIds(url);
-			if (recommendBranchIds.length > 0) {
-				recommendBranchId = recommendBranchIds[0];
-			} else {
-				recommendBranchId = "0";
-			}
-		}
-
-		this.setState({
-			url: url,
-			urlError: urlError,
-			urlHelper: urlHelper,
-			urlData: {},
-			recommendBranchId: recommendBranchId,
-		});
-	};
-	validationEvidence = (value) => {
-		if (value.length === 0 || isURL(value)) {
-			return '';
-		} else {
-			return 'URLを入力してください';
-		}
-	}
-	handleChangeEvidence = event => {
-		const value = event.target.value;
-		getMetaData(value).then((res) => this.setState({evidenceData: res}));
-
-		this.setState({
-			evidence: value,
-			evidenceError: this.validationEvidence(value),
-			evidenceData: {},
-		});
-	};
-	isInvalid = () => {
-		return (this.state.url.length === 0 || this.state.urlError || this.state.evidenceErrorr);
-	};
-	clear(target) {
-		return event => {
-			this.setState({ [target]: ''});
-		};
-	};
-
-	getParentRecommendBranchName = () => {
-		const id = this.state.recommendBranchId;
-		if (id === "0") return "トップ(自動選択)";
-
-		const recommendBranch = this.props.data.getRecommendBranch(id);
-		return !this.props.data.recommendBranchIsRecommend(id)
-			? recommendBranch.name
-			: (recommendBranch.parentId === "0"
-					? `トップ(${id})`
-					: this.props.data.getRecommendBranch(recommendBranch.parentId).name	
-				);
-	};
 
 	render() {
 		const { classes } = this.props;
@@ -165,7 +77,7 @@ class ReviewForm extends React.Component {
 				<Typography className={classes.title} variant="headline">オススメ教えて!</Typography>
 				<List component='nav'>
 					<ListItem>
-						<ListItemText primary={`親リスト: ${this.getParentRecommendBranchName()}`} />
+						<ListItemText primary={`親リスト: ${this.props.recommendBranchName}`} />
 					</ListItem>
 					<ListItem>
 						{this.props.kind === undefined
@@ -193,10 +105,12 @@ class ReviewForm extends React.Component {
 										name="url"
 										placeholder="オススメしたいもの(URL)"
 										fullWidth
+										onChange={this.props.handleURLChange}
+										validate={[errorIfEmpty, errorIfNotURL]}
 									/>
 									<ListItemSecondaryAction>
 										<IconButton aria-label='Delete' onClick={this.clear('url')}>
-											<BackspaceIcon className={classes.icon} />
+											<BackspaceIcon className={classes.icon} onClick={this.fields.url.onChange('')} />
 										</IconButton>
 									</ListItemSecondaryAction>
 								</ListItem>
@@ -217,16 +131,17 @@ class ReviewForm extends React.Component {
 							name="evidence"
 							placeholder="感想URL(あなたのブログや動画のURL)"
 							fullWidth
+							validate={[errorIfNotURL]}
 						/>
 						<ListItemSecondaryAction>
 							<IconButton aria-label='Delete' onClick={this.clear('evidence')}>
-								<BackspaceIcon className={classes.icon} />
+								<BackspaceIcon className={classes.icon} onClick={this.fields.evidence.onChange('')} />
 							</IconButton>
 						</ListItemSecondaryAction>
 					</ListItem>
 					<ListItem>
 						<ListItemText primary={siteLabel(this.props.evidencePreview)} />
-						<Recommend data={this.state.evidencePreview} />
+						<Recommend data={this.props.evidencePreview} />
 					</ListItem>
 					<ListItem>
 						<Field
@@ -234,10 +149,11 @@ class ReviewForm extends React.Component {
 							name="memo"
 							placeholder="ひとこと"
 							fullWidth
+							validate={[errorIfNumber]}
 						/>
 						<ListItemSecondaryAction>
 							<IconButton aria-label='Delete' onClick={this.clear('memo')}>
-								<BackspaceIcon className={classes.icon} />
+								<BackspaceIcon className={classes.icon} onClick={this.fields.memo.onChange('')}/>
 							</IconButton>
 						</ListItemSecondaryAction>
 					</ListItem>
@@ -248,10 +164,7 @@ class ReviewForm extends React.Component {
 									<InputLabel htmlFor='forMe'>お気に入り度</InputLabel>
 									<Field
 										component={Select}
-										id="forMe"
-										value={this.state.forMe}
-										onChange={this.handleChange}
-										inputProps={{name:"forMe"}}
+										name="forMe"
 									>
 										<MenuItem value={5}>5</MenuItem>
 										<MenuItem value={4}>4</MenuItem>
@@ -264,11 +177,9 @@ class ReviewForm extends React.Component {
 							<Grid item xs={6} sm={3}> 
 								<FormControl className={classes.formControl}>
 									<InputLabel htmlFor='forYou'>オススメ度</InputLabel>
-									<Select
-										id="forYou"
-										value={this.state.forYou}
-										onChange={this.handleChange}
-										inputProps={{name:"forYou"}}
+									<Field
+										component={Select}
+										name="forYou"
 									>
 										<MenuItem value={5}>5</MenuItem>
 										<MenuItem value={4}>4</MenuItem>
@@ -280,13 +191,11 @@ class ReviewForm extends React.Component {
 							</Grid>
 							<Grid item xs={6} sm={3}> 
 								<FormControl className={classes.formControl}>
-								<TextField
-									id="date"
+								<Field
+									component={TextField}
 									name="date"
 									type="date"
 									label="日付"
-									value={this.state.date}
-									onChange={this.handleChange}
 								/>
 								</FormControl>
 							</Grid>
@@ -296,7 +205,6 @@ class ReviewForm extends React.Component {
 									variant="raised"
 									size="large"
 									color="primary"
-									disabled={this.isInvalid()}
 								>{this.props.iineId ? 'これいいね!' : 'これいいよ!'}</Button>
 							</Grid>
 						</Grid>

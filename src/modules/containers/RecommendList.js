@@ -33,8 +33,12 @@ const mergeProps = (state, {dispatch}, props) => {
 		? () => {}
 		: () => {
 			(reviews.length > 0)
-				? isChecked ? dispatch(actions.uncheckRecommend(props.id)) : dispatch(actions.checkRecommend(props.id)
-				: isChecked ? dispatch(actions.uncheckRecommendBranch(props.id)) : dispatch(actions.uncheckRecommendBranch(props.id))
+				? isChecked
+					? dispatch(actions.uncheckRecommend(props.id)) 
+					: dispatch(actions.checkRecommend( props.id, reviews[0].recommendId)
+				: isChecked 
+					? dispatch(actions.uncheckRecommendBranch(props.id)) 
+					: dispatch(actions.checkRecommendBranch(props.id))
 			}
 	},
 	handleSubmit: name => {dispatch(actions.updateRecommendBranch({id: props.id, name: name}))},

@@ -5,13 +5,8 @@ export const setRecommendBranchId = (id, isRecommend = false) => ({
 	isRecommend,
 })
 
-export const previewRecommend = url => ({
-	type: 'PREVIEW_RECOMMEND',
-	url,
-})
-
-export const previewEvidence = url => ({
-	type: 'PREVIEW_REVIEW',
+export const getPreview = url => ({
+	type: 'GET_PREVIEW',
 	url,
 })
 

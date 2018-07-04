@@ -5,7 +5,7 @@ export default (state = {}, action) => {
 
 		case 'ADD_RECOMMEND_BRANCH_SUCCEEDED':
 		{
-			let recommendBranches = Object.assign({}, state.recommendBranches);
+			let recommendBranches = Object.assign({}, state);
 			let data = action.data;
 			recommendBranches[data.id] = data;
 
@@ -26,7 +26,7 @@ export default (state = {}, action) => {
 			
 		case 'UPDATE_RECOMMEND_BRANCHES_SUCCEEDED':
 		{
-			let recommendBranches = Object.assign({}, state.recommendBranches);
+			let recommendBranches = Object.assign({}, state);
 			action.data.forEach((data) => {
 				recommendBranches[data.id] = data;
 			});
@@ -36,12 +36,12 @@ export default (state = {}, action) => {
 			throw Error("yet no implement.");
 
 		case 'OPEN_RECOMMEND_BRANCH':
-			return Object.assign({}, state.recommendBranches, {
-				[action.id]: {isOpen: true}
+			return Object.assign({}, state, {
+				[action.id]: {...state[action.id], isOpen: true}
 			});
 		case 'CLOSE_RECOMMEND_BRANCH':
 			return Object.assign({}, state.recommendBranches, {
-				[action.id]: {isOpen: false}
+				[action.id]: {...state[action.id], isOpen: false}
 			});
 
 		// use action instead.

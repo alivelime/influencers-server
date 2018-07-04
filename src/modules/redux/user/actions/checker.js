@@ -8,9 +8,10 @@ export const uncheckRecommendBranch = (id) => ({
 	id,
 });
 
-export const checkRecommend = (id) => ({
+export const checkRecommend = (id, url) => ({
 	type: 'CHECK_RECOMMEND',
 	id,
+	url,
 });
 
 export const uncheckRecommend = (id) => ({
