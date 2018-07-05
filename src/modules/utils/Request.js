@@ -1,27 +1,27 @@
 
 
 
-function getAPI(path) {
+export const getAPI = (path) => {
 	return requestAPI('GET', path);
 }
 
-function postAPI(path, data) {
+export const postAPI = (path, data) => {
 	return requestAPI('POST', path, data);
 }
 
-function putAPI(path, data) {
+export const putAPI = (path, data) => {
 	return requestAPI('PUT', path, data);
 }
 
-function patchAPI(path, data) {
+export const patchAPI = (path, data) => {
 	return requestAPI('PATCH', path, data);
 }
 
-function deleteAPI(path) {
+export const deleteAPI = (path) => {
 	return requestAPI('DELETE', path);
 }
 
-function requestAPI(method, path, data = null) {
+export const requestAPI = (method, path, data = null) => {
 	let myHeaders = new Headers();
 	myHeaders.append('Content-Type', 'application/json');
 	return fetch(path, {
@@ -64,4 +64,6 @@ function JSONint642string(data) {
 	});
 }
 
-export { getAPI, postAPI, deleteAPI, putAPI, patchAPI }
+export const base64encode = (string) => {
+	return btoa(unescape(encodeURIComponent(string)));
+}

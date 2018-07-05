@@ -1,4 +1,3 @@
-
 export const addRecommendBranch = (id, state) => ({
 	type: 'ADD_RECOMMEND_BRANCH_REQUEST',
 	data: {
@@ -16,13 +15,14 @@ export const addSubRecommendBranch = (parentId, state) => {
 	});
 
 	return {
-	type: 'ADD_RECOMMEND_BRANCH_REQUEST',
-	data: {
-		name: "新しいリスト",
-		userId: state.user.id,
-		parentId: parentId,
-		prevId: last || "0",
-		nextId: "0",
+		type: 'ADD_RECOMMEND_BRANCH_REQUEST',
+		data: {
+			name: "新しいリスト",
+			userId: state.user.id,
+			parentId: parentId,
+			prevId: last || "0",
+			nextId: "0",
+		}
 	};
 }
 
@@ -41,7 +41,7 @@ export const moveUpRecommendBranch = (id, state) => {
 
 export const moveDownRecommendBranch = (id, state) => {
 	let recommendBranches = Object.assign({}, state.recommendBranches);
-	let patchRecommendBranches = [];
+	let patchArray = [];
 
 	const B = id;
 	const A = state.recommendBranches[B].prevId;
@@ -56,7 +56,7 @@ export const moveDownRecommendBranch = (id, state) => {
 	// set prev id
 	if (A !== "0") {
 		recommendBranches[A].nextId = C;
-		patchRecommendBranches.push({
+		patchArray.push({
 			id: A,
 			nextId: C,
 		});
@@ -64,7 +64,7 @@ export const moveDownRecommendBranch = (id, state) => {
 
 	recommendBranches[B].prevId = C;
 	recommendBranches[B].nextId = D;
-	patchRecommendBranches.push({
+	patchArray.push({
 		id: B,
 		prevId: C,
 		nextId: D,
@@ -72,7 +72,7 @@ export const moveDownRecommendBranch = (id, state) => {
 
 	recommendBranches[C].prevId = A;
 	recommendBranches[C].nextId = B;
-	patchRecommendBranches({
+	patchArray.push({
 		id: C,
 		prevId: A,
 		nextId: B,
@@ -80,7 +80,7 @@ export const moveDownRecommendBranch = (id, state) => {
 
 	if (D !== "0") {
 		recommendBranches[D].prevId = B;
-		patchRecommendBranches({
+		patchArray({
 			id: D,
 			prevId: B,
 		});
@@ -88,7 +88,7 @@ export const moveDownRecommendBranch = (id, state) => {
 
 	return {
 		type: 'UPDATE_RECOMMEND_BRANCHES_REQUEST',
-		data: patchRecommendBranches,
+		data: patchArray,
 	}
 
 };
@@ -97,7 +97,7 @@ export const moveDownRecommendBranch = (id, state) => {
 // 
 // but this function should be in reducer... and dispatch patch data??
 export const moveRecommendBranches = (ids, to, state) => {
-	let patchRecommendBranches = {};
+	let patches = {};
 
 	let last = Object.keys(state.recommendBranches).find((id) => {
 		return state.recommendBranches[id].parentId === to && state.recommendBranches[id].nextId === "0";
@@ -107,30 +107,30 @@ export const moveRecommendBranches = (ids, to, state) => {
 		if (last === id) { console.log("skip " + id + " is last."); return;}
 
 		if (last in state.recommendBranches) {
-			if (!(last in patchRecommendBranches)) {
-				patchRecommendBranches[last] = Object.assign({}, state.recommendBranches[last]);
+			if (!(last in patches)) {
+				patches[last] = Object.assign({}, state.recommendBranches[last]);
 			}
-			patchRecommendBranches[last].nextId = id;
+			patches[last].nextId = id;
 		}
 		
 		// remove from old branch.
 		const prevId = state.recommendBranches[id].prevId;
 		if (prevId in state.recommendBranches) {
-			if (!(prevId in patchRecommendBranches)) {
-				patchRecommendBranches[prevId] = Object.assign({}, state.recommendBranches[prevId]);
+			if (!(prevId in patches)) {
+				patches[prevId] = Object.assign({}, state.recommendBranches[prevId]);
 			}
-			patchRecommendBranches[prevId].nextId = state.recommendBranches[id].nextId;
+			patches[prevId].nextId = state.recommendBranches[id].nextId;
 		}
 		const nextId = state.recommendBranches[id].nextId;
 		if (nextId in state.recommendBranches) {
-			if (!(nextId in patchRecommendBranches)) {
-				patchRecommendBranches[nextId] = Object.assign({}, state.recommendBranches[nextId]);
+			if (!(nextId in patches)) {
+				patches[nextId] = Object.assign({}, state.recommendBranches[nextId]);
 			}
-			patchRecommendBranches[nextId].prevId = state.recommendBranches[id].prevId;
+			patches[nextId].prevId = state.recommendBranches[id].prevId;
 		}
 
 		// set new data.
-		patchRecommendBranches[id] = {
+		patches[id] = {
 			parentId: to,
 			prevId: (last ? last : "0"),
 			nextId: "0",
@@ -139,19 +139,19 @@ export const moveRecommendBranches = (ids, to, state) => {
 		last = id;
 	});
 
-	const data = Object.keys(patchRecommendBranches).map((id) => {
+	const data = Object.keys(patches).map((id) => {
 		return {
 			id: id,
-			parentId: patchRecommendBranches[id].parentId,
-			nextId: patchRecommendBranches[id].nextId,
-			prevId: patchRecommendBranches[id].prevId,
+			parentId: patches[id].parentId,
+			nextId: patches[id].nextId,
+			prevId: patches[id].prevId,
 		}
 	});
 
 	return {
 		type: 'UPDATE_RECOMMEND_BRANCHES_REQUEST',
-		data: 
-	}
+		data,
+	};
 };
 
 export const updateRecommendBranch = data => {

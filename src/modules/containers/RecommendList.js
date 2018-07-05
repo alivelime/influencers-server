@@ -1,6 +1,6 @@
-import { connect } from 'react-redux'
+import { connect } from 'react-redux';
 
-import * from 'modules/redux/user/actions'
+import * as actions from 'modules/redux/user/actions';
 import RecommendBranch from 'modules/components/RecommendBranch';
 
 // for performance reference http://anect.hatenablog.com/entry/2018/04/05/124654
@@ -13,7 +13,7 @@ const mapStateToProps = state => ({
 const mapDispatchToProps = dispatch => ({ dispatch });
 const mergeProps = (state, {dispatch}, props) => {
 	const reviews = getReviewList(state, props.id);
-	const isChecked = (props.recommend) ?
+	const isChecked = (props.recommend) 
 		? state.checker.recommendIds.find(props.id)
 		: state.checker.recommendBranchIds.find(props.id);
 
@@ -23,7 +23,7 @@ const mergeProps = (state, {dispatch}, props) => {
 
 	children: getChildren(state, props.id),
 	reviews: reviews,
-	recommend: reviews.length > 0 ? state.recommends[reviews[0].recommendId] : null;
+	recommend: reviews.length > 0 ? state.recommends[reviews[0].recommendId] : null,
 
 	handleCollaps: () => {state.recommendBranches[props.id].isOpen
 		? dispatch(actions.closeRecommendBranch(props.id))
@@ -33,14 +33,14 @@ const mergeProps = (state, {dispatch}, props) => {
 		? () => {}
 		: () => {
 			(reviews.length > 0)
-				? isChecked
+				? (isChecked
 					? dispatch(actions.uncheckRecommend(props.id)) 
-					: dispatch(actions.checkRecommend( props.id, reviews[0].recommendId)
-				: isChecked 
+					: dispatch(actions.checkRecommend( props.id, reviews[0].recommendId)))
+				: (isChecked 
 					? dispatch(actions.uncheckRecommendBranch(props.id)) 
-					: dispatch(actions.checkRecommendBranch(props.id))
+					: dispatch(actions.checkRecommendBranch(props.id)))
 			}
-	},
+	,
 	handleSubmit: name => {dispatch(actions.updateRecommendBranch({id: props.id, name: name}))},
 	isOpen: state.recommendBranches[props.id].isOpen || props.open,
 	isChecked: isChecked || props.parentIsChecked,
@@ -104,7 +104,7 @@ function getChildren(state, parentId) {
 			) {
 				console.log("recommend branches is loop!");
 				// fix netxtId to zero.
-				recommendBranch[id].nextId = "0";
+				recommendBranches[id].nextId = "0";
 				patchIds.push(id);
 				break; // last recommendBranches is outOfLinks
 			}

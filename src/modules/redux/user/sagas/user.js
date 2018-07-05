@@ -1,7 +1,7 @@
-import { call, put, takeEvery } from 'redux-saga/effects'
+import { call, put } from 'redux-saga/effects'
 import { getAPI, putAPI } from 'modules/utils/Request';
 
-function* fetchUser(action) {
+export function* fetch(action) {
 	try{
 		const data = yield call(getAPI, `/api/users/${action.id}`, null);
 		yield put({type: "LOAD_USER_SUCCEEDED", data: data});
@@ -10,7 +10,7 @@ function* fetchUser(action) {
 	}
 }
 
-function* updateUser(action) {
+export function* update(action) {
 	try{
 		const res = yield call(putAPI, `/api/users/${action.data.id}`, action.data)
 		yield put({type: "UPDATE_USER_SUCCEEDED", data: res});
@@ -19,7 +19,7 @@ function* updateUser(action) {
 	}
 }
 
-function* loadUserRecommendData(action) {
+export function* loadRecommendData(action) {
 	try{
 		let recommendBranches, reviews, recommends;
 		yield call(Promise.all, ([
@@ -37,7 +37,7 @@ function* loadUserRecommendData(action) {
 		if (Object.keys(recommendBranches).length > 0) {
 			yield put({type: "LOAD_USER_RECOMMEND_DATA_SUCCEEDED", recommendBranches, recommends, reviews});
 		} else {
-			yield put({type: "ADD_RECOMMEND_BRANCH_REQUEST", {id: "0"}});
+			yield put({type: "ADD_RECOMMEND_BRANCH_REQUEST", id: "0"});
 		}
 	} catch (e) {
 		yield put({type: "LOAD_USER_RECOMMEND_DATA_FAILED", recommendBranches: {}, recommends: {}, reviews: {}});

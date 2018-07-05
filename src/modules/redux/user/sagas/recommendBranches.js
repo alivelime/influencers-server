@@ -1,7 +1,7 @@
 import { call, put } from 'redux-saga/effects'
-import { patchAPI } from 'modules/utils/Request';
+import { postAPI, patchAPI, deleteAPI } from 'modules/utils/Request';
 
-function* addRecommendBranch(action) {
+export function* add(action) {
 	try{
 		const res = yield call(postAPI, `/api/recommend=branches`, action.data);
 		if (Object.keys(res).length > 0) {
@@ -13,50 +13,48 @@ function* addRecommendBranch(action) {
 		yield put({type: "ADD_RECOMMEND_BRANCH_FAILED", data: {id: action.data.id, name: e.message}});
 	}
 }
-function* addSubRecommendBranch(action) {
+export function addSub(action) {
 	throw Error("use addRecommendBranch.");
 }
-function* moveRecommendBranch(action) {
+export function moveUp(action) {
+	throw Error("use action creator.");
+}
+export function moveDown(action) {
+	throw Error("use action creator.");
+}
+export function move(action) {
+	throw Error("use action creator.");
+}
+export function deleteOne(action) {
+	throw Error("use action creator.");
+}
+export function updateOne(action) {
 	throw Error("use action creator.");
 }
 
-
-function* updateRecommendBranch(action) {
-	try{
-		const res = yield call(patchAPI, `/api/recommend-branches/${action.data.id}`, data);
-		if (Object.keys(res).length > 0) {
-			yield put({type: "UPDATE_RECOMMEND_BRANCH_SUCCEEDED", res});
-		} else {
-			yield put({type: "UPDATE_RECOMMEND_BRANCH_FAILED", res});
-		}
-	} catch (e) {
-		yield put({type: "UPDATE_RECOMMEND_BRANCH_FAILED", error: e.message});
-	}
-}
-
-function* updateRecommendBranches(action) {
+export function* updateMulti(action) {
 	try{
 		let res = [];
-		yield call(Promise.all, ([
+		yield call(Promise.all, (
 			action.data.map((data) => {
-				(async () => {
+				return (async () => {
 					res.push(await patchAPI(`/api/recommend-branches/${data.id}`, data));
-				})()
-			});
-		]));
+				})
+			})
+		));
 
 		yield put({type: "UPDATE_RECOMMEND_BRANCHES_SUCCEEDED", res: res});
 	} catch (e) {
 		yield put({type: "UPDATE_RECOMMEND_BRANCHES_FAILED", error: e.message});
 	}
 }
-function* deleteRecommendBranches(action) {
+export function* deleteMulti(action) {
 	try{
-		action.ids.forEach((id) => {
+		action.ids.forEach(async (id) => {
 			// call one by one. do not call concurrency. data will be broken.
-			yield call(deletehAPI, `/api/recommend-branches/${id}`);
+			await call(deleteAPI, `/api/recommend-branches/${id}`);
 		});
-		yield put({type: "DELETE_RECOMMEND_BRANCH_SUCCEEDED", action.ids});
+		yield put({type: "DELETE_RECOMMEND_BRANCH_SUCCEEDED", ids: action.ids});
 	} catch (e) {
 		yield put({type: "UPDATE_RECOMMEND_BRANCH_FAILED", error: e.message});
 	}

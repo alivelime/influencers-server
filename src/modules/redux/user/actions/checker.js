@@ -21,7 +21,6 @@ export const uncheckRecommend = (id) => ({
 
 export const uncheckAll = () => ({
 	type: 'UNCHECK_ALL',
-	id,
 });
 
 

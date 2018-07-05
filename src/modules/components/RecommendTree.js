@@ -12,17 +12,17 @@ const styleSheet = theme => ({
 	root: {
 		backgroundColor: theme.palette.background.paper,
 	},
-	progres: {
-		marginTop: theme.spacing.unit * 2,
-		marginBotton: theme.spacing.unit * 2,
-		marginLeft: 'auto';
-		marginRight: 'auto';
+	progressDiv: {
+		textAlign: 'center',
+	},
+	progress: {
+		margin: theme.spacing.unit * 2,
 	},
 });
 
 class RecommendTree extends React.Component {
 	componentWillMount() {
-    this.props.loadUserRecommendData();
+//    this.props.loadRecommendData();
 	}
 
 	render() {
@@ -47,22 +47,24 @@ class RecommendTree extends React.Component {
 					moveDownRecommendBranch={this.props.moveDownRecommendBranch}
 					moveRecommendBranches={this.props.moveRecommendBranches}
 				/>
-				<List component='nav' className={classes.list}>
 				{(this.props.dataLoaded) 
 					? (
-							<RecommendList
-								id={this.props.recommendBranchId}
-								open={this.props.open}
-							/>
+							<List component='nav' className={classes.list}>
+								<RecommendList
+									id={this.props.recommendBranchId}
+									open={this.props.open}
+								/>
+							</List>
 						)
 					: (
-							<CircularProgress
-								className={classes.progress}
-								variant="determinate"
-							/>
+							<div className={classes.progressDiv}>
+								<CircularProgress
+									className={classes.progress}
+									size={100}
+								/>
+							</div>
 						)
 				}
-				</List>
 			</div>
 		);
 	}

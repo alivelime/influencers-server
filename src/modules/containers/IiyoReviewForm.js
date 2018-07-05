@@ -1,7 +1,9 @@
 import { connect } from 'react-redux'
+import { reduxForm, formValueSelector } from 'redux-form'
 
-import { loadUser, updateUser } from 'modules/redux/user/actions'
-import ReviewFrom from 'modules/components/ReviewForm';
+import * as actions from 'modules/redux/user/actions'
+import * as validation from 'modules/utils/validation'
+import ReviewForm from 'modules/components/ReviewForm';
 
 const initialValues = {
 	kind: 'mono',
@@ -33,7 +35,8 @@ const mapStateToProps = state => ({
 	evidence: selector(state, 'evidence'),
 
 	recommendBranches: state.recommendBranches,
-	reviews: state.reviews;
+	recommends: state.recommends,
+	reviews: state.reviews,
 });
 const mapDispatchToProps = dispatch => ({ dispatch });
 const mergeProps = (state, {dispatch}, props) => ({
@@ -41,18 +44,18 @@ const mergeProps = (state, {dispatch}, props) => ({
 
 	initialValues: initialValues,
 	recommendPreview: (state.url in state.recommends)
-		? state.recommends[url]
-		: dispatch(actions.getPreview(url)),
+		? state.recommends[state.url]
+		: dispatch(actions.getPreview(state.url)),
 	evidencePreview: (state.evidence in state.recommends)
-		? state.recommend[evidence] 
-		: dispatch(actions.getPreview(evidence)),
+		? state.recommend[state.evidence] 
+		: dispatch(actions.getPreview(state.evidence)),
 
 	recommendBranchName: (state.recommendBranchId === "0")
 		? "トップ(自動選択)"
 		: state.isRecommend
-			? state.recommendBranches[state.recommendBranchId].paretnId === "0" 
+			? (state.recommendBranches[state.recommendBranchId].paretnId === "0" 
 				? `トップ${state.recommendBranchId}` 
-				: state.recommendBranches[state.recommendBranches[state.recommendBranchId].parentId]).name,
+				: state.recommendBranches[state.recommendBranches[state.recommendBranchId].parentId].name)
 			: state.recommendBranches[state.recommendBranchId].name
 	,
 	handleURLChange: (url) => {
@@ -60,8 +63,8 @@ const mergeProps = (state, {dispatch}, props) => ({
 			return;
 		}
 
-		if (state.recommendBranchId === "0" || state.isRecommend)
-			const recommendBranchIds = searchRecommendBranchIds(reviews, url);
+		if (state.recommendBranchId === "0" || state.isRecommend) {
+			const recommendBranchIds = searchRecommendBranchIds(state.reviews, url);
 			if (recommendBranchIds.length > 0) {
 				dispatch(actions.setRecommendBranchId(recommendBranchIds[0], true));
 			} else {
@@ -70,7 +73,7 @@ const mergeProps = (state, {dispatch}, props) => ({
 		}
 	},
 
-	handleSubmit: values => 
+	handleSubmit: value => 
 	{
 		dispatch(actions.addRecommend({
 			url: value.url,
@@ -93,12 +96,15 @@ const mergeProps = (state, {dispatch}, props) => ({
 			dispatch(actions.addEvidence({
 				url: value.evidence,
 				kind: "information",
-			});
+			}));
 		}
 
 		dispatch(actions.uncheckAll());
 		props.reset();
 	},
+
+	clearURL: () => dispatch(actions.clearURL()),
+	clearEvidence: () => dispatch(actions.clearEvidence()),
 });
 
 export default connect(
@@ -107,4 +113,4 @@ export default connect(
 	mergeProps
 )(reduxForm({
 	form: 'reviewForm' // a unique identifier for this form
-})(reviewForm));
+})(ReviewForm));

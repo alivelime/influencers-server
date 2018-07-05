@@ -1,6 +1,6 @@
-import { connect } from 'react-redux'
+import { connect } from 'react-redux';
 
-import * from 'modules/redux/user/actions'
+import * as actions from 'modules/redux/user/actions';
 import RecommendTree from 'modules/components/RecommendTree';
 
 // for performance reference http://anect.hatenablog.com/entry/2018/04/18/190841
@@ -13,7 +13,7 @@ const mapDispatchToProps = dispatch => ({ dispatch });
 
 const mergeProps = (state, {dispatch}, props) => ({
 
-	loadUserRecommendData: () => dispatch(actions.loadUserRecommendData(props.userId)),
+	loadRecommendData: () => dispatch(actions.loadUserRecommendData(props.userId)),
 	dataLoaded: Object.keys(state.recommendBranches).length > 0,
 
 	// RecommendToolbox
@@ -21,7 +21,7 @@ const mergeProps = (state, {dispatch}, props) => ({
 		state.checker.recommendBranchIds.length === 1
 			? () => {
 				const id = state.checker.checkedRecommendBranchIds[0];
-				dispatch(actions.addRecommendBranch(id, state);
+				dispatch(actions.addRecommendBranch(id, state));
 			}
 			: null
 	,
@@ -30,7 +30,7 @@ const mergeProps = (state, {dispatch}, props) => ({
 			? () => {
 				// insert sub last branch.
 				const parentId = state.checker.checkedRecommendBranchIds[0];
-				dispatch(actions.addRecommendBranch(parentId, state))}
+				dispatch(actions.addSubRecommendBranch(parentId, state))}
 			: null
 	,
   deleteRecommendBranches:
@@ -40,12 +40,12 @@ const mergeProps = (state, {dispatch}, props) => ({
 	,
   moveUpRecommendBranch:
 		((state.checker.recommendBranchIds.length + state.checker.recommendIds.length) === 1)
-		? () => dispatch(actions.moveUpRecommendBranch((state.checker.recommendBranchIds[0] || state.checker.recommendId[0]),state)); 
+		? () => dispatch(actions.moveUpRecommendBranch(state.checker.recommendBranchIds[0] || state.checker.recommendId[0], state))
 		: null
 	,
   moveDownRecommendBranch:
 		((state.checker.recommendBranchIds.length + state.checker.recommendIds.length) === 1)
-		? () => dispatch(actions.moveDownRecommendBranch((state.checker.recommendBranchIds[0] || state.checker.recommendId[0]), state));
+		? () => dispatch(actions.moveDownRecommendBranch(state.checker.recommendBranchIds[0] || state.checker.recommendId[0], state))
 		: null
 	,
   moveRecommendBranches:
@@ -53,7 +53,7 @@ const mergeProps = (state, {dispatch}, props) => ({
 		 (state.checker.recommendBranchIds.length + state.checker.recommendIds.length) >= 2
 		) ? () => {
 				// move to last recommendBranches
-				let recommendBrancheIds = Object.assign([], state.checker.recommendBranchIds);
+				let recommendBranchIds = Object.assign([], state.checker.recommendBranchIds);
 				let recommendIds = Object.assign([], state.checker.recommendIds);
 				const to = recommendBranchIds.pop();
 				dispatch(actions.moveRecommendBranches([...recommendBranchIds, ...recommendIds], to, state)); 

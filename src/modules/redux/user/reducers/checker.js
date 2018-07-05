@@ -19,7 +19,7 @@ export default (state = {recommendIds: [], recommendBranchIds: []}, action) => {
 			};
 		case 'UNCHECK_RECOMMEND':
 			return {
-				recommendIds: state.recommendIds.filter((id) => { return id !== action.id; });
+				recommendIds: state.recommendIds.filter((id) => { return id !== action.id; }),
 				recommendBranchIds: state.recommendBranchIds,
 			};
 

@@ -47,7 +47,7 @@ class RecommendToolbox extends React.Component {
 					<Tooltip id="tooltip-top-start" title="上に移動">
 						<IconButton>
 							<ArrowUpwardIcon
-								onClick={this.props.moveUpRecommendBranch || () => {}}
+								onClick={this.props.moveUpRecommendBranch || Function.prototype}
 								className={classNames(classes.icon, ( this.props.moveUpRecommendBranches
 											? classes.enable
 											: classes.disable))}
@@ -57,7 +57,7 @@ class RecommendToolbox extends React.Component {
 					<Tooltip id="tooltip-top-start" title="下に移動">
 						<IconButton>
 							<ArrowDownwardIcon
-								onClick={this.props.moveDownRecommendBranch || () => {}}
+								onClick={this.props.moveDownRecommendBranch || Function.prototype}
 								className={classNames(classes.icon, ( this.props.moveDownRecommendBranch 
 											? classes.enable 
 											: classes.disable))}
@@ -70,7 +70,7 @@ class RecommendToolbox extends React.Component {
 					>
 						<IconButton>
 							<SwapHorizIcon
-								onClick={this.props.moveRecommendBranches || () => {}}
+								onClick={this.props.moveRecommendBranches || Function.prototype}
 								className={classNames(classes.icon, (this.props.moveRecommendBranches
 											? classes.enable 
 											: classes.disable))}
@@ -80,7 +80,7 @@ class RecommendToolbox extends React.Component {
 					<Tooltip id="tooltip-top-start" title="リストを追加">
 						<IconButton>
 							<AddFolderIcon
-								onClick={this.props.addRecommendBranch || () => {}}
+								onClick={this.props.addRecommendBranch || Function.prototype}
 								className={classNames(classes.icon, (this.props.addRecommendBranch
 											? classes.enable 
 											: classes.disable))}
@@ -90,20 +90,16 @@ class RecommendToolbox extends React.Component {
 					<Tooltip id="tooltip-top-start" title="サブリストを追加">
 						<IconButton>
 							<SubdirectoryIcon
-								onClick={this.props.addSubRecommendBranch || () => {}}
-								className={classNames(classes.icon, ((this.props.addSubRecommendBranch
-											? classes.enable 
-											: classes.disable))}
+								onClick={this.props.addSubRecommendBranch || Function.prototype}
+								className={classNames(classes.icon, (this.props.addSubRecommendBranch ? classes.enable : classes.disable))}
 							/>
 						</IconButton>
 					</Tooltip>
 					<Tooltip id="tooltip-top-start" title="削除(子要素は全て削除されます)">
 						<IconButton>
 							<DeleteIcon
-								onClick={this.deleteAllRecommendBranch || () => {}}
-								className={classNames(classes.icon, ((this.props.deleteRecommendBranches
-											? classes.enableDelete 
-											: classes.disable))}
+								onClick={this.deleteAllRecommendBranch || Function.prototype}
+								className={classNames(classes.icon, (this.props.deleteRecommendBranches ? classes.enableDelete : classes.disable))}
 							/>
 						</IconButton>
 					</Tooltip>

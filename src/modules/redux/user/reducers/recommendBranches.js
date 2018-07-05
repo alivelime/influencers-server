@@ -50,11 +50,8 @@ export default (state = {}, action) => {
 		case 'MOVE_RECOMMEND_BRANCHES_REQUEST':
 			throw Error("use action creator.");
 
-		// ignore. handle with checker.js
-		case 'CHECK_RECOMMEND_BRANCH':
-
-		// implement sagas/recommendBranches.js
-		case 'ADD_RECOMMEND_BRANCH_REQUEST':
+		case 'CHECK_RECOMMEND_BRANCH': // ignore. handle with checker.js
+		case 'ADD_RECOMMEND_BRANCH_REQUEST': // implement sagas/recommendBranches.js
 		case 'UPDATE_RECOMMEND_BRANCHES_REQUEST':
 		case 'DELETE_RECOMMEND_BRANCHES_REQUEST':
 		default:

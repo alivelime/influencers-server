@@ -1,8 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { withStyles } from '@material-ui/core/styles';
-import { connect } from 'react-redux'
-import { Field, reduxForm, formValueSelector } from 'redux-form'
+import { Field } from 'redux-form'
 
 import Paper from '@material-ui/core/Paper';
 import Typography from '@material-ui/core/Typography';
@@ -25,11 +24,8 @@ import IconButton from '@material-ui/core/IconButton';
 import BackspaceIcon from '@material-ui/icons/Backspace';
 
 import Recommend from 'modules/components/Recommend';
-import { postAPI } from 'modules/utils/Request';
-import { isURL } from 'modules/utils/Validation';
+import * as validation from 'modules/utils/validation.js';
 
-const message = {
-};
 const kindLabel = {
 	'mono': 'モノ',
 	'service': 'サービス',
@@ -72,7 +68,7 @@ class ReviewForm extends React.Component {
 		const { classes } = this.props;
 
 		return (
-		<form onSubmit={this.props.handleSubmit}
+		<form onSubmit={this.props.handleSubmit} >
 			<Paper>
 				<Typography className={classes.title} variant="headline">オススメ教えて!</Typography>
 				<List component='nav'>
@@ -93,7 +89,7 @@ class ReviewForm extends React.Component {
 									</Field>
 								)
 							: (
-									<ListItemText primary={kindLable[this.props.kind]} />
+									<ListItemText primary={kindLabel[this.props.kind]} />
 								)
 						}
 					</ListItem>
@@ -106,11 +102,11 @@ class ReviewForm extends React.Component {
 										placeholder="オススメしたいもの(URL)"
 										fullWidth
 										onChange={this.props.handleURLChange}
-										validate={[errorIfEmpty, errorIfNotURL]}
+										validate={[validation.errorIfEmpty, validation.errorIfNotURL]}
 									/>
 									<ListItemSecondaryAction>
-										<IconButton aria-label='Delete' onClick={this.clear('url')}>
-											<BackspaceIcon className={classes.icon} onClick={this.fields.url.onChange('')} />
+										<IconButton aria-label='Delete' onClick={this.props.clearURL}>
+											<BackspaceIcon className={classes.icon} />
 										</IconButton>
 									</ListItemSecondaryAction>
 								</ListItem>
@@ -131,11 +127,11 @@ class ReviewForm extends React.Component {
 							name="evidence"
 							placeholder="感想URL(あなたのブログや動画のURL)"
 							fullWidth
-							validate={[errorIfNotURL]}
+							validate={[validation.errorIfNotURL]}
 						/>
 						<ListItemSecondaryAction>
-							<IconButton aria-label='Delete' onClick={this.clear('evidence')}>
-								<BackspaceIcon className={classes.icon} onClick={this.fields.evidence.onChange('')} />
+							<IconButton aria-label='Delete' onClick={this.props.clearEvidence} >
+								<BackspaceIcon className={classes.icon} />
 							</IconButton>
 						</ListItemSecondaryAction>
 					</ListItem>
@@ -149,11 +145,11 @@ class ReviewForm extends React.Component {
 							name="memo"
 							placeholder="ひとこと"
 							fullWidth
-							validate={[errorIfNumber]}
+							validate={[validation.errorIfNumber]}
 						/>
 						<ListItemSecondaryAction>
-							<IconButton aria-label='Delete' onClick={this.clear('memo')}>
-								<BackspaceIcon className={classes.icon} onClick={this.fields.memo.onChange('')}/>
+							<IconButton aria-label='Delete' onClick={this.props.clearMemo}>
+								<BackspaceIcon className={classes.icon} />
 							</IconButton>
 						</ListItemSecondaryAction>
 					</ListItem>
@@ -171,7 +167,7 @@ class ReviewForm extends React.Component {
 										<MenuItem value={3}>3</MenuItem>
 										<MenuItem value={2}>2</MenuItem>
 										<MenuItem value={1}>1</MenuItem>
-									</Select>
+									</Field>
 								</FormControl>
 							</Grid>
 							<Grid item xs={6} sm={3}> 
@@ -186,7 +182,7 @@ class ReviewForm extends React.Component {
 										<MenuItem value={3}>3</MenuItem>
 										<MenuItem value={2}>2</MenuItem>
 										<MenuItem value={1}>1</MenuItem>
-									</Select>
+									</Field>
 								</FormControl>
 							</Grid>
 							<Grid item xs={6} sm={3}> 
@@ -220,4 +216,4 @@ ReviewForm.propTypes = {
   classes: PropTypes.object.isRequired,
 };
 
-export default withStyles(styleSheet)(reviewForm);
+export default withStyles(styleSheet)(ReviewForm);

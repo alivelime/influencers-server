@@ -1,17 +1,17 @@
 import { call, put } from 'redux-saga/effects'
 import { postAPI } from 'modules/utils/Request';
 
-function* addReivew(action) {
+export function* add(action) {
 	try{
-		let addFlag = (action.isRecommend ? false : true;
-		const action.review.recommendBranchId = (addFlag 
-		 ? (yeild put({type: "ADD_RECOMMEND_BRANCH_REQUEST", data: {
+		let addFlag = action.isRecommend ? false : true;
+		action.review.recommendBranchId = (addFlag 
+			? ((yield put({type: "ADD_RECOMMEND_BRANCH_REQUEST", data: {
 					name: action.review.recommendId,
 					userId: action.review.urserId,
 					parentId: action.recommendBranchId,
 					prevId: "0",
 					nextId: "0",
-			 }}).id
+			 }})).id)
 		 : action.recommendBranchId);
 
 		const res = yield call(postAPI, `/api/reviews`, action.review);

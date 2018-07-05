@@ -11,6 +11,7 @@ import IconButton from '@material-ui/core/IconButton';
 import ExpandLess from '@material-ui/icons/ExpandLess';
 import ExpandMore from '@material-ui/icons/ExpandMore';
 
+import RecommendList from 'modules/containers/RecommendList';
 import Recommend from 'modules/components/Recommend';
 import Review from 'modules/components/Review';
 

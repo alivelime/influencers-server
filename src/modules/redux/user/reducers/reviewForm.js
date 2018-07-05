@@ -1,5 +1,5 @@
 
-export default (state = [], action) => {
+export default (state = {isRecommend: false, recommendBranchId: "0"}, action) => {
 	switch (action = {}.type) {
 		case 'CHECK_RECOMMEND':
 			// use form plugin to change url.
@@ -12,6 +12,9 @@ export default (state = [], action) => {
 			return {...state, isRecommend: false, recommendBranchId: "0"};
 
 		case 'UNCHECK_RECOMMEND_BRANCH':
+			return {...state, isRecommend: false, recommendBranchId: "0"};
+
+		case 'UNCHECK_ALL':
 			return {...state, isRecommend: false, recommendBranchId: "0"};
 
 		case 'SET_RECOMMEND_BRANCH_ID':

@@ -8,7 +8,7 @@ import { Provider } from 'react-redux'
 import MyRecommendTree from 'modules/containers/MyRecommendTree';
 import UserProfile from 'modules/containers/UserProfile';
 import userReducer from 'modules/redux/user/reducers'
-import userSaga from 'modules/redux/user/saga';
+import userSaga from 'modules/redux/user/sagas';
 
 const styleSheet = theme => ({
   root: {
@@ -46,7 +46,7 @@ class  User extends React.Component {
 						<UserProfile id={id} />
 					</div>
 					<div className={classes.content}>
-						<UserRecommendTree
+						<MyRecommendTree
 							userId={id}
 							recommendBranchId={recommendBranchId || "0"}
 							iineId={iineId}

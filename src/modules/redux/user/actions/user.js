@@ -13,4 +13,9 @@ export const updateUser = data => ({
 	data,
 })
 
+export const loadUserRecommendData = id => ({
+	type: 'LOAD_USER_RECOMMEND_DATA',
+	id,
+});
+
 

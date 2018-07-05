@@ -10,4 +10,12 @@ export const getPreview = url => ({
 	url,
 })
 
+export const clearURL = url => ({
+	type: 'REVIEW_FORM_CLEAR_URL',
+})
+
+export const clearEvidence = url => ({
+	type: 'REVIEW_FORM_CLEAR_EVIDENCE',
+})
+
 
