@@ -13,6 +13,9 @@ export default (state, action) => {
 		case 'REVIEW_FORM_CLEAR_EVIDENCE':
 			return {...state, values: {...state.values, evidence: ''}};
 
+		case 'REVIEW_FORM_CLEAR_MEMO':
+			return {...state, values: {...state.values, memo: ''}};
+
 		case 'CHECK_RECOMMEND_BRANCH':
 		case 'UNCHECK_RECOMMEND_BRANCH':
 		case 'UNCHECK_ALL':

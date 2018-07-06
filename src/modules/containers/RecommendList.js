@@ -14,18 +14,18 @@ const mapDispatchToProps = dispatch => ({ dispatch });
 const mergeProps = (state, {dispatch}, props) => {
 	const reviews = getReviewList(state, props.id);
 	const isChecked = (props.recommend) 
-		? state.checker.recommendIds.find(props.id)
-		: state.checker.recommendBranchIds.find(props.id);
+		? state.checker.recommendIds.includes(props.id)
+		: state.checker.recommendBranchIds.includes(props.id);
 
 	return {
 	...props,
-	name: (props.id === "0" ? '' : state.recommendBranches[props.id]),
+	name: (props.id === "0" ? '' : state.recommendBranches[props.id].name),
 
 	children: getChildren(state, props.id),
 	reviews: reviews,
 	recommend: reviews.length > 0 ? state.recommends[reviews[0].recommendId] : null,
 
-	handleCollaps: () => {state.recommendBranches[props.id].isOpen
+	handleCollapse: () => {state.recommendBranches[props.id].isOpen
 		? dispatch(actions.closeRecommendBranch(props.id))
 		: dispatch(actions.openRecommendBranch(props.id))
 	},
@@ -42,7 +42,7 @@ const mergeProps = (state, {dispatch}, props) => {
 			}
 	,
 	handleSubmit: name => {dispatch(actions.updateRecommendBranch({id: props.id, name: name}))},
-	isOpen: state.recommendBranches[props.id].isOpen || props.open,
+	isOpen: props.id !== "0" && state.recommendBranches[props.id].isOpen,
 	isChecked: isChecked || props.parentIsChecked,
 }
 };
@@ -134,7 +134,7 @@ function getChildren(state, parentId) {
 		// Because recommendBranches is empty when ComponentDidMount() called.
 	}
 
-	return children.map(id => recommendBranches[id]);
+	return children;
 }
 
 function getReviewList(state, recommendBranchId) {

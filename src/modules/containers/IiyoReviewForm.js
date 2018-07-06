@@ -45,10 +45,10 @@ const mergeProps = (state, {dispatch}, props) => ({
 	initialValues: initialValues,
 	recommendPreview: (state.url in state.recommends)
 		? state.recommends[state.url]
-		: dispatch(actions.getPreview(state.url)),
+		: (validation.isURL(state.url) ? dispatch(actions.getPreview(state.url)) : null),
 	evidencePreview: (state.evidence in state.recommends)
 		? state.recommend[state.evidence] 
-		: dispatch(actions.getPreview(state.evidence)),
+		: (validation.isURL(state.evidence) ? dispatch(actions.getPreview(state.evidence)) : null),
 
 	recommendBranchName: (state.recommendBranchId === "0")
 		? "トップ(自動選択)"
@@ -105,6 +105,7 @@ const mergeProps = (state, {dispatch}, props) => ({
 
 	clearURL: () => dispatch(actions.clearURL()),
 	clearEvidence: () => dispatch(actions.clearEvidence()),
+	clearMemo: () => dispatch(actions.clearMemo()),
 });
 
 export default connect(

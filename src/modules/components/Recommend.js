@@ -32,7 +32,7 @@ class Recommend extends React.Component {
 	render() {
 		const { classes } = this.props;
 
-		if (!this.props.data.title || this.props.data.title.length === 0) {
+		if (!this.props.data || !this.props.data.title || this.props.data.title.length === 0) {
 			return null;
 		}
 

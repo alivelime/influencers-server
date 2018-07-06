@@ -4,7 +4,7 @@ export default (state = {recommendIds: [], recommendBranchIds: []}, action) => {
 		case 'CHECK_RECOMMEND_BRANCH':
 			return {
 				recommendIds: state.recommendIds,
-				recommendBranchIds: state.recommendBranchIds.push(action.id),
+				recommendBranchIds: state.recommendBranchIds.concat(action.id),
 			};
 		case 'UNCHECK_RECOMMEND_BRANCH':
 			return {
@@ -14,7 +14,7 @@ export default (state = {recommendIds: [], recommendBranchIds: []}, action) => {
 
 		case 'CHECK_RECOMMEND':
 			return {
-				recommendIds: state.recommendIds.push(action.id),
+				recommendIds: state.recommendIds.concat(action.id),
 				recommendBranchIds: state.recommendBranchIds,
 			};
 		case 'UNCHECK_RECOMMEND':

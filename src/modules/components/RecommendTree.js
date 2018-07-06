@@ -22,7 +22,7 @@ const styleSheet = theme => ({
 
 class RecommendTree extends React.Component {
 	componentWillMount() {
-//    this.props.loadRecommendData();
+		this.props.loadRecommendData();
 	}
 
 	render() {

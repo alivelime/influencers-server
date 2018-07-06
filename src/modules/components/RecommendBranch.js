@@ -47,10 +47,11 @@ class RecommendBranch extends React.Component {
 			name: event.target.value,
 		});
 	};
+	handleOnBlur = this.handleSubmit;
 	handleSubmit = event => {
 		event.preventDefault();
 		if (this.state.changeFlag) {
-			this.props.handleSubmit();
+			this.props.handleSubmit(this.state.name);
 			this.setState({changeFlag: false});
 		}
 	};
@@ -62,13 +63,15 @@ class RecommendBranch extends React.Component {
 			return (
 				<RecommendList
 					id={id}
+					key={id}
+					open={this.props.open}
 					parentIsChecked={this.props.isChecked}
 				/>
 			);
 		});
 
 		if (this.props.id === "0") {
-			return {children};
+			return children;
 		}
 
 		const reviews = this.props.reviews.map((review) => {
@@ -108,7 +111,7 @@ class RecommendBranch extends React.Component {
 					}
 					{(children.length > 0 || reviews.length > 0) &&
 						(
-							<IconButton onClick={this.handleCollapse}>
+							<IconButton onClick={this.props.handleCollapse}>
 								{this.props.isOpen ? <ExpandLess className={classes.icon}/> : <ExpandMore className={classes.icon}/>}
 							</IconButton>
 						)
@@ -116,11 +119,11 @@ class RecommendBranch extends React.Component {
 				</ListItem>
 				{(children.length > 0 || reviews.length > 0) &&
 					(
-						<Collapse in={this.prosp.isOpen} tomeout="auto">
+						<Collapse in={this.props.isOpen} tomeout="auto">
 							<List
 								component="div"
 								disablePadding
-								className={(this.prosp.isChecked ? classes.checked : classes.unchecked)}
+								className={(this.props.isChecked ? classes.checked : classes.unchecked)}
 							>
 								<div className={classes.container}>
 									{children}

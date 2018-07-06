@@ -68,7 +68,7 @@ class ReviewForm extends React.Component {
 		const { classes } = this.props;
 
 		return (
-		<form onSubmit={this.props.handleSubmit} >
+		<form >
 			<Paper>
 				<Typography className={classes.title} variant="headline">オススメ教えて!</Typography>
 				<List component='nav'>
@@ -197,6 +197,7 @@ class ReviewForm extends React.Component {
 							</Grid>
 							<Grid item xs={6} sm={3}> 
 								<Button
+								 disabled={this.props.invalid || this.props.submitting || this.props.pristine}
 									onClick={this.props.handleSubmit}
 									variant="raised"
 									size="large"

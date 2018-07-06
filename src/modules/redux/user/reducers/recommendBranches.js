@@ -36,14 +36,34 @@ export default (state = {}, action) => {
 			throw Error("yet no implement.");
 
 		case 'OPEN_RECOMMEND_BRANCH':
-			return Object.assign({}, state, {
-				[action.id]: {...state[action.id], isOpen: true}
-			});
+			return {
+				...state,
+				[action.id]: {...state[action.id], isOpen: true},
+			};
 		case 'CLOSE_RECOMMEND_BRANCH':
-			return Object.assign({}, state.recommendBranches, {
-				[action.id]: {...state[action.id], isOpen: false}
+			return {
+				...state,
+				[action.id]: {...state[action.id], isOpen: false},
+			};
+		case 'OPEN_ALL_RECOMMEND_BRANCHES':
+		{
+			console.log('open all rb');
+			let ret = {};
+			Object.keys(state).forEach((id) => {
+				ret[id] = Object.assign({}, state[id]); 
+				ret[id].isOpen = true;
 			});
-
+			return ret;
+		}
+		case 'CLOSE_ALL_RECOMMEND_BRANCHES':
+		{
+			let ret = {};
+			Object.keys(state).forEach((id) => {
+				ret[id] = Object.assign({}, state[id]); 
+				ret[id].isOpen = false;
+			});
+			return ret;
+		}
 		// use action instead.
 		case 'MOVE_UP_RECOMMEND_BRANCH_REQUEST':
 		case 'MOVE_DOWN_RECOMMEND_BRANCH_REQUEST':

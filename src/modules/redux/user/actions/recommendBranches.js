@@ -1,24 +1,24 @@
-export const addRecommendBranch = (id, state) => ({
+export const addRecommendBranch = (id, userId, recommendBranches) => ({
 	type: 'ADD_RECOMMEND_BRANCH_REQUEST',
 	data: {
 		name: "新しいリスト",
-		userId: state.user.id,
-		parentId: state.recommendBranches[id].parentId,
+		userId: userId,
+		parentId: recommendBranches[id].parentId,
 		prevId: id,
-		nextId: (id === "0" ? "0" : state.recommendBranches[id].nextId),
+		nextId: recommendBranches[id].nextId,
 	},
 })
 
-export const addSubRecommendBranch = (parentId, state) => {
-	const last = Object.keys(state.recommendBranches).find((id) => {
-		return (state.recommendBranches[id].parentId === parentId && state.recommendBranches[id].nextId === "0");
+export const addSubRecommendBranch = (parentId, userId, recommendBranches) => {
+	const last = Object.keys(recommendBranches).find((id) => {
+		return (recommendBranches[id].parentId === parentId && recommendBranches[id].nextId === "0");
 	});
 
 	return {
 		type: 'ADD_RECOMMEND_BRANCH_REQUEST',
 		data: {
 			name: "新しいリスト",
-			userId: state.user.id,
+			userId: userId,
 			parentId: parentId,
 			prevId: last || "0",
 			nextId: "0",
@@ -36,7 +36,7 @@ export const moveUpRecommendBranch = (id, state) => {
 	if (prevId !== "0") {
 		return moveDownRecommendBranch(prevId, state);
 	}
-	return null;
+	return {type:null};
 }
 
 export const moveDownRecommendBranch = (id, state) => {
@@ -49,7 +49,7 @@ export const moveDownRecommendBranch = (id, state) => {
 
 	// id is bottom.
 	if (C === "0") {
-		return null;
+		return {type:null};
 	}
 	const D = state.recommendBranches[C].nextId;
 
@@ -80,7 +80,7 @@ export const moveDownRecommendBranch = (id, state) => {
 
 	if (D !== "0") {
 		recommendBranches[D].prevId = B;
-		patchArray({
+		patchArray.push({
 			id: D,
 			prevId: B,
 		});
@@ -164,13 +164,21 @@ export const updateRecommendBranches = data => ({
 })
 
 export const openRecommendBranch = id => ({
-	type: 'OPEN_RECOMMEND_BRANCHES',
+	type: 'OPEN_RECOMMEND_BRANCH',
 	id,
 });
 
 export const closeRecommendBranch = id => ({
-	type: 'CLOSE_RECOMMEND_BRANCHES',
+	type: 'CLOSE_RECOMMEND_BRANCH',
 	id,
+});
+
+export const openALLRecommendBranch = () => ({
+	type: 'OPEN_ALL_RECOMMEND_BRANCHES',
+});
+
+export const closeAllRecommendBranch = () => ({
+	type: 'CLOSE_ALL_RECOMMEND_BRANCHES',
 });
 
 

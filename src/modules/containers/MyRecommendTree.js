@@ -7,12 +7,11 @@ import RecommendTree from 'modules/components/RecommendTree';
 const mapStateToProps = state => ({
 	recommendBranches: state.recommendBranches,
 	checker: state.checker,
-	user: state.user,
 });
 const mapDispatchToProps = dispatch => ({ dispatch });
 
 const mergeProps = (state, {dispatch}, props) => ({
-
+	...props,
 	loadRecommendData: () => dispatch(actions.loadUserRecommendData(props.userId)),
 	dataLoaded: Object.keys(state.recommendBranches).length > 0,
 
@@ -20,8 +19,8 @@ const mergeProps = (state, {dispatch}, props) => ({
   addRecommendBranch:
 		state.checker.recommendBranchIds.length === 1
 			? () => {
-				const id = state.checker.checkedRecommendBranchIds[0];
-				dispatch(actions.addRecommendBranch(id, state));
+				const id = state.checker.recommendBranchIds[0];
+				dispatch(actions.addRecommendBranch(id, props.userId, state.recommendBranches));
 			}
 			: null
 	,
@@ -29,8 +28,8 @@ const mergeProps = (state, {dispatch}, props) => ({
 		state.checker.recommendBranchIds.length === 1
 			? () => {
 				// insert sub last branch.
-				const parentId = state.checker.checkedRecommendBranchIds[0];
-				dispatch(actions.addSubRecommendBranch(parentId, state))}
+				const parentId = state.checker.recommendBranchIds[0];
+				dispatch(actions.addSubRecommendBranch(parentId, props.userId, state.recommendBranches))}
 			: null
 	,
   deleteRecommendBranches:

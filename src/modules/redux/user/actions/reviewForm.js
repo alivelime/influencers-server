@@ -6,7 +6,7 @@ export const setRecommendBranchId = (id, isRecommend = false) => ({
 })
 
 export const getPreview = url => ({
-	type: 'GET_PREVIEW',
+	type: 'GET_PREVIEW_REQUEST',
 	url,
 })
 
@@ -16,6 +16,10 @@ export const clearURL = url => ({
 
 export const clearEvidence = url => ({
 	type: 'REVIEW_FORM_CLEAR_EVIDENCE',
+})
+
+export const clearMemo = url => ({
+	type: 'REVIEW_FORM_CLEAR_MEMO',
 })
 
 

@@ -48,7 +48,7 @@ class RecommendToolbox extends React.Component {
 						<IconButton>
 							<ArrowUpwardIcon
 								onClick={this.props.moveUpRecommendBranch || Function.prototype}
-								className={classNames(classes.icon, ( this.props.moveUpRecommendBranches
+								className={classNames(classes.icon, ( this.props.moveUpRecommendBranch
 											? classes.enable
 											: classes.disable))}
 							/>

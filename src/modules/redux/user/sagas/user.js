@@ -22,22 +22,33 @@ export function* update(action) {
 export function* loadRecommendData(action) {
 	try{
 		let recommendBranches, reviews, recommends;
-		yield call(Promise.all, ([
+		yield Promise.all([
 			(async () => {
-				recommendBranches = await getAPI(`/api/users/${action.userId}/recommend-branches`);
+				recommendBranches = await getAPI(`/api/users/${action.id}/recommend-branches`);
 			})(),
 			(async () => {
-				reviews = await getAPI(`/api/users/${action.userId}/reviews`);
+				reviews = await getAPI(`/api/users/${action.id}/reviews`);
 			})(),
 			(async () => {
-				recommends = await getAPI(`/api/users/${action.userId}/recommends`);
+				recommends = await getAPI(`/api/users/${action.id}/recommends`);
 			})(),
-		]));
+		]);
 
 		if (Object.keys(recommendBranches).length > 0) {
 			yield put({type: "LOAD_USER_RECOMMEND_DATA_SUCCEEDED", recommendBranches, recommends, reviews});
+			if (Object.keys(recommendBranches).length < 100) {
+				yield put({type: "OPEN_ALL_RECOMMEND_BRANCHES"});
+			} else {
+				yield put({type: "CLOSE_ALL_RECOMMEND_BRANCHES"});
+			}
 		} else {
-			yield put({type: "ADD_RECOMMEND_BRANCH_REQUEST", id: "0"});
+			yield put({type: "ADD_RECOMMEND_BRANCH_REQUEST", data: {
+				name: "新しいリスト",
+				userId: action.id,
+				parentId: "0",
+				prevId: "0",
+				nextId: "0",
+			}});
 		}
 	} catch (e) {
 		yield put({type: "LOAD_USER_RECOMMEND_DATA_FAILED", recommendBranches: {}, recommends: {}, reviews: {}});
