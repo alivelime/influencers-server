@@ -117,10 +117,16 @@ class ReviewForm extends React.Component {
 								</ListItem>
 							)
 					}
-					<ListItem>
-						<ListItemText primary={siteLabel(this.props.recommendPreview)} />
-						<Recommend data={this.props.recommendPreview} />
-					</ListItem>
+					{this.props.recommendPreview && siteLabel(this.props.recommendPreview) && 
+						<ListItem>
+							<ListItemText primary={siteLabel(this.props.recommendPreview)} />
+						</ListItem>
+					}
+					{this.props.recommendPreview && 
+						<ListItem>
+							<Recommend data={this.props.recommendPreview} />
+						</ListItem>
+					}
 					<ListItem>
 						<Field
 							component={TextField}
@@ -135,10 +141,16 @@ class ReviewForm extends React.Component {
 							</IconButton>
 						</ListItemSecondaryAction>
 					</ListItem>
-					<ListItem>
-						<ListItemText primary={siteLabel(this.props.evidencePreview)} />
-						<Recommend data={this.props.evidencePreview} />
-					</ListItem>
+					{this.props.evidencePreview && siteLabel(this.props.evidencePreview) &&
+						<ListItem>
+							<ListItemText primary={siteLabel(this.props.evidencePreview)} />
+						</ListItem>
+					}
+					{this.props.evidencePreview &&
+						<ListItem>
+							<Recommend data={this.props.evidencePreview} />
+						</ListItem>
+					}
 					<ListItem>
 						<Field
 							component={TextField}

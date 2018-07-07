@@ -95,11 +95,11 @@ class RecommendToolbox extends React.Component {
 							/>
 						</IconButton>
 					</Tooltip>
-					<Tooltip id="tooltip-top-start" title="削除(子要素は全て削除されます)">
+					<Tooltip id="tooltip-top-start" title="削除(仕様考え中)">
 						<IconButton>
 							<DeleteIcon
-								onClick={this.deleteAllRecommendBranch || Function.prototype}
-								className={classNames(classes.icon, (this.props.deleteRecommendBranches ? classes.enableDelete : classes.disable))}
+								onClick={Function.prototype}
+								className={classNames(classes.icon, classes.disable)}
 							/>
 						</IconButton>
 					</Tooltip>

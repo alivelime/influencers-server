@@ -1,5 +1,5 @@
 import { connect } from 'react-redux'
-import { reduxForm, formValueSelector } from 'redux-form'
+import { reduxForm, formValueSelector, reset } from 'redux-form'
 
 import * as actions from 'modules/redux/user/actions'
 import * as validation from 'modules/utils/validation'
@@ -45,20 +45,21 @@ const mergeProps = (state, {dispatch}, props) => ({
 	initialValues: initialValues,
 	recommendPreview: (state.url in state.recommends)
 		? state.recommends[state.url]
-		: (validation.isURL(state.url) ? dispatch(actions.getPreview(state.url)) : null),
+		: (validation.isURL(state.url) ? dispatch(actions.getRecommendPreview(state.url)) : null),
 	evidencePreview: (state.evidence in state.recommends)
-		? state.recommend[state.evidence] 
-		: (validation.isURL(state.evidence) ? dispatch(actions.getPreview(state.evidence)) : null),
+		? state.recommends[state.evidence] 
+		: (validation.isURL(state.evidence) ? dispatch(actions.getEvidencePreview(state.evidence)) : null),
 
 	recommendBranchName: (state.recommendBranchId === "0")
 		? "トップ(自動選択)"
 		: state.isRecommend
-			? (state.recommendBranches[state.recommendBranchId].paretnId === "0" 
+			? (state.recommendBranches[state.recommendBranchId].parentId === "0" 
 				? `トップ${state.recommendBranchId}` 
 				: state.recommendBranches[state.recommendBranches[state.recommendBranchId].parentId].name)
 			: state.recommendBranches[state.recommendBranchId].name
 	,
-	handleURLChange: (url) => {
+	handleURLChange: event => {
+		const url = event.target.value;
 		if (!validation.isURL(url)) {
 			return;
 		}
@@ -73,34 +74,35 @@ const mergeProps = (state, {dispatch}, props) => ({
 		}
 	},
 
-	handleSubmit: value => 
+	onSubmit: value => 
 	{
-		dispatch(actions.addRecommend({
-			url: value.url,
-			link: value.url,
-			kind: value.kind,
-			Description: "",
-		}));
+		// do not dispatch addRecommends here.
 		dispatch(actions.addReview(state.recommendBranchId, state.isRecommend, {
-			userId: props.userId,
-			recommendBranchId: null, // change whether if recommendBranchId has recommend or not.
-			recommendId: value.url,
-			iineId: props.iineId || "0",
-			evidence: value.evidence,
-			memo: String(value.memo), // must string.
-			forMe: value.forMe,
-			forYou: value.forYou,
-		}));
-
-		if (value.evidence.length > 0) {
-			dispatch(actions.addEvidence({
+			review: {
+				userId: props.userId,
+				recommendBranchId: null, // change whether if recommendBranchId has recommend or not.
+				recommendId: value.url,
+				iineId: props.iineId || "0",
+				evidence: value.evidence,
+				memo: String(value.memo), // must string.
+				forMe: value.forMe,
+				forYou: value.forYou,
+			},
+			recommend: {
+				url: value.url,
+				link: value.url,
+				kind: value.kind,
+				Description: "",
+			},
+			evidence: {
 				url: value.evidence,
 				kind: "information",
-			}));
-		}
+			},
+			recommendBranches: state.recommendBranches,
+		}));
 
 		dispatch(actions.uncheckAll());
-		props.reset();
+		dispatch(reset('reviewForm')); 
 	},
 
 	clearURL: () => dispatch(actions.clearURL()),

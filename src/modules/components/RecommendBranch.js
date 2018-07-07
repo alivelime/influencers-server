@@ -65,7 +65,7 @@ class RecommendBranch extends React.Component {
 					id={id}
 					key={id}
 					open={this.props.open}
-					parentIsChecked={this.props.isChecked}
+					parentIsChecked={this.props.isChecked || this.props.parentIsChecked}
 				/>
 			);
 		});

@@ -1,6 +1,12 @@
 
 export default (state, action) => {
 	switch (action.type) {
+		case 'GET_RECOMMEND_PREVIEW_SUCCEEDED':
+			return {...state, values: {...state.values, url: action.data.url}};
+
+		case 'GET_EVIDENCE_PREVIEW_SUCCEEDED':
+			return {...state, values: {...state.values, evidence: action.data.url}};
+
 		case 'CHECK_RECOMMEND':
 			return {...state, values: {...state.values, url: action.url}};
 

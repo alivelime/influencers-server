@@ -20,6 +20,15 @@ export default (state = {}, action) => {
 
 			return recommendBranches;
 		}
+		case 'ADD_REVIEW_SUCCEEDED':
+		{
+			if (!action.addRecommendBranch) return state;
+
+			let recommendBranches = Object.assign({}, state);
+			recommendBranches[action.addRecommendBranch.id] = {...action.addRecommendBranch, isOpen: true};
+
+			return recommendBranches;
+		}
 			
 		case 'UPDATE_RECOMMEND_BRANCH_SUCCEEDED':
 			throw Error('use UPDATE_RECOMMEND_BRANCHES');
@@ -28,7 +37,7 @@ export default (state = {}, action) => {
 		{
 			let recommendBranches = Object.assign({}, state);
 			action.data.forEach((data) => {
-				recommendBranches[data.id] = data;
+				recommendBranches[data.id] = {...data, isOpen: state[data.id].isOpen};
 			});
 			return recommendBranches;
 		}	
@@ -47,7 +56,6 @@ export default (state = {}, action) => {
 			};
 		case 'OPEN_ALL_RECOMMEND_BRANCHES':
 		{
-			console.log('open all rb');
 			let ret = {};
 			Object.keys(state).forEach((id) => {
 				ret[id] = Object.assign({}, state[id]); 

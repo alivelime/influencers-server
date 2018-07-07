@@ -39,12 +39,12 @@ const mergeProps = (state, {dispatch}, props) => ({
 	,
   moveUpRecommendBranch:
 		((state.checker.recommendBranchIds.length + state.checker.recommendIds.length) === 1)
-		? () => dispatch(actions.moveUpRecommendBranch(state.checker.recommendBranchIds[0] || state.checker.recommendId[0], state))
+		? () => dispatch(actions.moveUpRecommendBranch(state.checker.recommendBranchIds[0] || state.checker.recommendIds[0], state))
 		: null
 	,
   moveDownRecommendBranch:
 		((state.checker.recommendBranchIds.length + state.checker.recommendIds.length) === 1)
-		? () => dispatch(actions.moveDownRecommendBranch(state.checker.recommendBranchIds[0] || state.checker.recommendId[0], state))
+		? () => dispatch(actions.moveDownRecommendBranch(state.checker.recommendBranchIds[0] || state.checker.recommendIds[0], state))
 		: null
 	,
   moveRecommendBranches:

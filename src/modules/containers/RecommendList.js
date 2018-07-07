@@ -13,7 +13,7 @@ const mapStateToProps = state => ({
 const mapDispatchToProps = dispatch => ({ dispatch });
 const mergeProps = (state, {dispatch}, props) => {
 	const reviews = getReviewList(state, props.id);
-	const isChecked = (props.recommend) 
+	const isChecked = (reviews.length > 0) 
 		? state.checker.recommendIds.includes(props.id)
 		: state.checker.recommendBranchIds.includes(props.id);
 
@@ -21,7 +21,7 @@ const mergeProps = (state, {dispatch}, props) => {
 	...props,
 	name: (props.id === "0" ? '' : state.recommendBranches[props.id].name),
 
-	children: getChildren(state, props.id),
+	children: getChildren(state, props.id, dispatch),
 	reviews: reviews,
 	recommend: reviews.length > 0 ? state.recommends[reviews[0].recommendId] : null,
 
@@ -43,7 +43,7 @@ const mergeProps = (state, {dispatch}, props) => {
 	,
 	handleSubmit: name => {dispatch(actions.updateRecommendBranch({id: props.id, name: name}))},
 	isOpen: props.id !== "0" && state.recommendBranches[props.id].isOpen,
-	isChecked: isChecked || props.parentIsChecked,
+	isChecked: isChecked,
 }
 };
 
@@ -51,7 +51,7 @@ const mergeProps = (state, {dispatch}, props) => {
  * this.state.recommendBranches, recommends, reviews is one level list.
  * do not make complex as nested object.
  */
-function getChildren(state, parentId) {
+function getChildren(state, parentId, dispatch) {
 	// deep copy state.recommendBranches
 	let recommendBranches = {};
 	Object.keys(state.recommendBranches).forEach((id) => {
@@ -127,7 +127,9 @@ function getChildren(state, parentId) {
 			});
 		}
 
-		// dispatch(actions.updateRecommendBranches(patchIds.map(id => recommendBranches[id])));
+		if (patchIds.length > 0) {
+			dispatch(actions.updateRecommendBranches(patchIds.map(id => recommendBranches[id])));
+		}
 	} else {
 		// if recommend branch is empty.
 		// but do not addRecommendBranch.

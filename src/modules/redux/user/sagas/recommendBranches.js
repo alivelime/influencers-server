@@ -6,12 +6,15 @@ export function* add(action) {
 		const res = yield call(postAPI, `/api/recommend-branches`, action.data);
 		if (Object.keys(res).length > 0) {
 			yield put({type: "ADD_RECOMMEND_BRANCH_SUCCEEDED", data: res});
+			return res;
 		} else {
 			yield put({type: "ADD_RECOMMEND_BRANCH_FAILED", data: res});
+			return {};
 		}
 	} catch (e) {
 		yield put({type: "ADD_RECOMMEND_BRANCH_FAILED", data: {id: action.data.id, name: e.message}});
 	}
+	return {};
 }
 export function addSub(action) {
 	throw Error("use addRecommendBranch.");

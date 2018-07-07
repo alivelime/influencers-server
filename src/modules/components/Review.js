@@ -35,11 +35,13 @@ class Review extends React.Component {
 
 		return (
 			<Card className={classes.card}>
-				<CardMedia
-					className={classes.image}
-					image={meta.image}
-					title={meta.title}
-				/>
+				{this.image &&
+					<CardMedia
+						className={classes.image}
+						image={meta.image}
+						title={meta.title}
+					/>
+				}
 				<CardContent className={classes.content}>
 					<Link to={this.props.data.evidence} target="new" rel="noopener noreferrer">
 						<Typography variant="title">{this.props.data.memo}</Typography>

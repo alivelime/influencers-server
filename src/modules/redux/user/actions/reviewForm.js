@@ -5,8 +5,15 @@ export const setRecommendBranchId = (id, isRecommend = false) => ({
 	isRecommend,
 })
 
-export const getPreview = url => ({
+export const getRecommendPreview = url => ({
 	type: 'GET_PREVIEW_REQUEST',
+	callback: 'GET_RECOMMEND_PREVIEW_SUCCEEDED',
+	url,
+})
+
+export const getEvidencePreview = url => ({
+	type: 'GET_PREVIEW_REQUEST',
+	callback: 'GET_EVIDENCE_PREVIEW_SUCCEEDED',
 	url,
 })
 
