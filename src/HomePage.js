@@ -5,8 +5,8 @@ import Typography from '@material-ui/core/Typography';
 import Button from '@material-ui/core/Button';
 import Divider from '@material-ui/core/Divider';
 
+import Login from 'modules/components/Login';
 import Link from 'modules/components/Link';
-
 
 const styles = theme => ({
   hero: {
@@ -70,85 +70,75 @@ const styles = theme => ({
   },
 });
 
-function HomePage(props) {
-	const { classes } = props;
-	return (
-		<div className={classes.hero}>
-			<div className={classes.content}>
-				<div className={classes.text}>
-					<Typography
-						className={classes.logo}
-						variant="display4"
-						align="center"
-						color="secondary"
-					>InFlus
-					</Typography>
-					<Typography
-						variant="display2"
-						align="center"
-						component="h1"
-						color="inherit"
-						gutterBottom
-						className={classes.title}
-					>
-						{'「これイイよ!」'}<br />
-						{'で繋がろう'}
-					</Typography>
-					<Typography
-						variant="headline"
-						component="h2"
-						color="inherit"
-						gutterBottom
-						className={classes.headline}
-					>
-						{"誰もがインフルエンサーである時代へ"}
-					</Typography>
-				</div>
-				<div className={classes.buttons}>
-					<Button
-						component={buttonProps => (
-							<Link
-								variant="button"
-								to="/users/1"
-								{...buttonProps}
-							/>
-						)}
-						className={classes.button}
-						variant="raised"
-						color="primary"
-					>
-						{'登録'}
-					</Button>
-					<Button
-						component={buttonProps => (
-							<Link
-								variant="button"
-								to="/users/1"
-								{...buttonProps}
-							/>
-						)}
-						className={classes.button}
-						variant="outlined"
-						color="primary"
-					>
-						{'ログイン'}
-					</Button>
-				</div>
-				<Divider />
+class HomePage extends React.Component {
+	state = {
+		open: false,
+	};
+
+	render() {
+		const { classes } = this.props;
+		return (
+			<div className={classes.hero}>
 				<div className={classes.content}>
-					<Typography
-						variant="headline"
-						gutterBottom
-						className={classes.headline}
-					>
-					「この広告消せないかな?」<br />
-					そんなふとした想いからこのサイトは始まりました。<br />
-					<Link to='/vision'>私たちのビジョン</Link>
-					</Typography>
+					<div className={classes.text}>
+						<Typography
+							className={classes.logo}
+							variant="display4"
+							align="center"
+							color="secondary"
+						>InFlus
+						</Typography>
+						<Typography
+							variant="display2"
+							align="center"
+							component="h1"
+							color="inherit"
+							gutterBottom
+							className={classes.title}
+						>
+							{'「これイイよ!」'}<br />
+							{'で繋がろう'}
+						</Typography>
+						<Typography
+							variant="headline"
+							component="h2"
+							color="inherit"
+							gutterBottom
+							className={classes.headline}
+						>
+							{"誰もがインフルエンサーである時代へ"}
+						</Typography>
+					</div>
+					<div className={classes.buttons}>
+						<Button
+							className={classes.button}
+							variant="raised"
+							color="primary"
+							onClick={() => {this.setState({open: true})}}
+						>
+							{'LOGIN'}
+						</Button>
+						<Login
+							open={this.state.open}
+							onClose={() => {this.setState({open: false})}}
+						/>
+					</div>
+					<Divider />
+					<div className={classes.content}>
+						<Typography
+							variant="headline"
+							gutterBottom
+							className={classes.headline}
+						>
+						「この広告消せないかな?」<br />
+						そんなふとした想いからこのサイトは始まりました。<br />
+						<Link to='/vision'>私たちのビジョン</Link>
+						</Typography>
+					</div>
 				</div>
 			</div>
-		</div>
-	);
+		);
+	}
 }
 
 HomePage.propTypes = {

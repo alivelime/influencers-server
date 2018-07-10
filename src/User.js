@@ -1,14 +1,9 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { withStyles } from '@material-ui/core/styles';
-import { createStore, applyMiddleware } from 'redux'
-import createSagaMiddleware from 'redux-saga'
-import { Provider } from 'react-redux'
 
 import MyRecommendTree from 'modules/containers/MyRecommendTree';
 import UserProfile from 'modules/containers/UserProfile';
-import userReducer from 'modules/redux/user/reducers'
-import userSaga from 'modules/redux/user/sagas';
 
 const styleSheet = theme => ({
   root: {
@@ -26,13 +21,6 @@ const styleSheet = theme => ({
 	},
 });
 
-const sagaMiddleware = createSagaMiddleware()
-const store = createStore(
-  userReducer,
-  applyMiddleware(sagaMiddleware)
-)
-sagaMiddleware.run(userSaga);
-
 class  User extends React.Component {
 
 	render() {
@@ -40,20 +28,18 @@ class  User extends React.Component {
 	  const { id, recommendBranchId, iineId } = this.props.match.params;
 
 		return (
-			<Provider store={store} >
-				<div className={classes.root}>
-					<div className={classes.content}>
-						<UserProfile id={id} />
-					</div>
-					<div className={classes.content}>
-						<MyRecommendTree
-							userId={id}
-							recommendBranchId={recommendBranchId || "0"}
-							iineId={iineId}
-						/>
-					</div>
+			<div className={classes.root}>
+				<div className={classes.content}>
+					<UserProfile id={id} />
 				</div>
-			</Provider>
+				<div className={classes.content}>
+					<MyRecommendTree
+						userId={id}
+						recommendBranchId={recommendBranchId || "0"}
+						iineId={iineId}
+					/>
+				</div>
+			</div>
 		);
 	}
 }
