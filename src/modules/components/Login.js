@@ -20,6 +20,9 @@ const styles = theme => ({
 		backgroundColor: '#1DA1F2',
     margin: theme.spacing.unit,
 	},
+	twitterLink: {
+		color: '#ffffff',
+	},
 });
 
 class Login extends React.Component {
@@ -46,8 +49,8 @@ class Login extends React.Component {
 								variant="raised"
 								size="large"
 								color="primary"
+								href={`http://35.189.141.152:3001/api/twitter/auth`}
 								className={classes.twitter}
-								href={this.state.twitterURL}
 							>twitter</Button>
 						</ListItem>
 					</List>

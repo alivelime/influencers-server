@@ -5,23 +5,38 @@ import (
 )
 
 type User struct {
-	ID              int64     `json:"id" datastore:"-"`
-	Name            string    `json:"name"`
-	Title           string    `json:"title"`
-	Memo            string    `json:"memo" datastore:",noindex"`
-	Link            string    `json:"link" datastore:",noindex"`
-	MediaType       string    `json:"mediaType" datastore:",noindex"`
-	Follow          []int64   `json:"foloow" datastore:"-"`
-	Follower        []int64   `json:"foloower" datastore:"-"`
-	Ignore          []int64   `json:"noneed" datastore:"-"`
-	Ignored         []int64   `json:"noneed" datastore:"-"`
-	Community       []int64   `json:"community" datastore:"-"`
-	CommunityMember []int64   `json:"community" datastore:"-"`
-	InfluCount      int64     `json:"influCount" datastore:"-"` /* count of follower's iine */
-	IiyoCount       int64     `json:"iiyoCount" datastore:"-"`  /* = cound of recommend */
-	IineCount       int64     `json:"iinemmendCount" datastore:"-"`
-	CreatedAt       time.Time `datastore:",noindex"`
-	UpdatedAt       time.Time `datastore:",noindex"`
+	ID         int64     `json:"id" datastore:"-"`
+	Name       string    `json:"name" datastore:",noindex"`
+	Title      string    `json:"title" datastore:",noindex"`
+	Image      string    `json:"image" datastore:",noindex"`
+	Memo       string    `json:"memo" datastore:",noindex"`
+	Link       string    `json:"link" datastore:",noindex"`
+	Avator     string    `json:"avator" datastore:",noindex"`
+	MediaID    int64     `json:"mediaId" datastore:",noindex"`
+	MediaType  string    `json:"mediaType" datastore:",noindex"`
+	InfluCount int64     `json:"influCount" datastore:"-"` /* count of follower's iine */
+	IiyoCount  int64     `json:"iiyoCount" datastore:"-"`  /* = cound of recommend */
+	IineCount  int64     `json:"iinemmendCount" datastore:"-"`
+	CreatedAt  time.Time `datastore:",noindex"`
+	UpdatedAt  time.Time `datastore:",noindex"`
+}
+
+type MediaType int
+
+const (
+	Twitter MediaType = iota
+	Facebook
+)
+
+func (mt MediaType) String() string {
+	switch mt {
+	case Twitter:
+		return "Twitter"
+	case Facebook:
+		return "Facebook"
+	default:
+		return "Unknown"
+	}
 }
 
 type Follow struct {
@@ -42,8 +57,8 @@ type Community struct {
 }
 
 type CommunityMember struct {
-	I           int64 `json:"i"`
-	CommunityID int64 `json:"u"`
+	I  int64 `json:"i"`
+	ID int64 `json:"id"`
 }
 
 type NagesenInfo struct {
@@ -97,4 +112,13 @@ type Recommend struct {
 	Image       string `json:"image" datastore:",noindex"`
 	Description string `json:"description" datastore:",noindex"`
 	Kind        string `json:"kind" datastore:",noindex"` // mono, service, information
+}
+
+type TwitterUser struct {
+	Token  string `json:"token"`
+	ID     string `json:"id"`
+	Name   string `json:"name"`
+	Title  string `json:"title"`
+	Avator string `json:"avator"`
+	Image  string `json:"image"`
 }

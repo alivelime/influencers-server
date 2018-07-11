@@ -38,8 +38,9 @@ class App extends React.Component {
 						<Switch>
 							<Route exact path='/' component={HomePage} />
 							<Route exact path='/users/:id' component={User} />
-							<Route exact path='/users/:userId/recommend-branches/:recommendBranchId' component={User} />
-							<Route exact path='/users/:userId/iine/:iineId' component={User} />
+							<Route exact path='/users/:id/token/:token' component={User} />
+							<Route exact path='/users/:id/recommend-branches/:recommendBranchId' component={User} />
+							<Route exact path='/users/:id/iine/:iineId' component={User} />
 							<Route exact path='/recommends/:id' component={Recommend} />
 							<Route exact path='/recommends/:id/userId/:userId' component={Recommend} />
 							<Route exact path='/vision' component={Vision} />

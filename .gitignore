@@ -18,4 +18,4 @@ node_modules/
 build/
 
 # secret keys
-app/secret.yaml
+app/secret_*.yaml

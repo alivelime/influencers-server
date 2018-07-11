@@ -36,6 +36,9 @@ func init() {
 	r.HandleFunc("/api/reviews", api.HandleReviews)
 	r.HandleFunc("/api/reviews/{id}", api.HandleReview)
 	r.HandleFunc("/api/meta/{id:.+}", api.HandleMeta)
+	r.HandleFunc("/api/twitter/auth", api.HandleTwitterAuth)
+	r.HandleFunc("/api/twitter/auth/redirect/{s:.+}", api.HandleTwitterAuth)
+	r.HandleFunc("/api/twitter/callback", api.HandleTwitterCallback)
 	http.Handle("/", r)
 
 	log.Println("Server started: http://localhost:")
