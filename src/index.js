@@ -5,12 +5,13 @@ import { Provider } from 'react-redux'
 import { createStore, applyMiddleware } from 'redux'
 import createSagaMiddleware from 'redux-saga'
 
+import Callback from 'src/modules/containers/Auth/Callback';
 import HomePage from 'HomePage';
 import User from 'User';
 import Recommend from 'Recommend';
 import Contact from 'Contact';
 import Vision from 'Vision';
-import Header from 'modules/components/Header';
+import Header from 'modules/containers/Headers/Header';
 import Footer from 'modules/components/Footer';
 import NotFound from 'NotFound';
 
@@ -37,8 +38,8 @@ class App extends React.Component {
 						<Header />
 						<Switch>
 							<Route exact path='/' component={HomePage} />
+							<Route exact path='/login/callback/:sns/:token/to' component={Callback} />
 							<Route exact path='/users/:id' component={User} />
-							<Route exact path='/users/:id/token/:token' component={User} />
 							<Route exact path='/users/:id/recommend-branches/:recommendBranchId' component={User} />
 							<Route exact path='/users/:id/iine/:iineId' component={User} />
 							<Route exact path='/recommends/:id' component={Recommend} />

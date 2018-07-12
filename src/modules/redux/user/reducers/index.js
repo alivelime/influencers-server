@@ -1,6 +1,7 @@
 import { combineReducers } from 'redux';
 import { reducer as formReducer } from 'redux-form'
 
+import session from 'modules/redux/user/reducers/session';
 import user from 'modules/redux/user/reducers/user';
 import checker from 'modules/redux/user/reducers/checker';
 import recommendBranches from 'modules/redux/user/reducers/recommendBranches';
@@ -10,6 +11,7 @@ import reviewForm from 'modules/redux/user/reducers/reviewForm';
 import reviewFormPlugin from 'modules/redux/user/reducers/reviewFormPlugin';
 
 export default combineReducers({
+	session,
 	user,
 	checker,
 	recommendBranches,

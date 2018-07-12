@@ -1,5 +1,6 @@
 import { takeEvery } from 'redux-saga/effects'
 
+import * as Session from 'modules/redux/user/sagas/session.js';
 import * as user from 'modules/redux/user/sagas/user.js';
 import * as recommendBranches from 'modules/redux/user/sagas/recommendBranches.js';
 import * as reviews from 'modules/redux/user/sagas/reviews.js';
@@ -7,6 +8,9 @@ import * as recommends from 'modules/redux/user/sagas/recommends.js';
 import * as reviewForm from 'modules/redux/user/sagas/reviewForm.js';
 
 export default function* userSaga() {
+	yield takeEvery("LOAD_USER_REQUEST", session.fetch);
+	yield takeEvery("UPDATE_USER_REQUEST", session.registerUser);
+
 	yield takeEvery("LOAD_USER_REQUEST", user.fetch);
 	yield takeEvery("UPDATE_USER_REQUEST", user.update);
 

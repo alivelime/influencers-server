@@ -2,6 +2,7 @@ package twitter
 
 import (
 	"context"
+	"encoding/base64"
 	"net/http"
 	"os"
 
@@ -33,6 +34,10 @@ func getCallbackURL() string {
 }
 func getRedirectDefaultURL() string {
 	return os.Getenv("AUTH_LOGIN_REDIRECT_DEFAULT_URL")
+}
+
+func getLoginCallbackURL() string {
+	return os.Getenv("AUTH_LOGIN_CALLBACK_URL")
 }
 
 type Client struct {
@@ -77,23 +82,20 @@ func GetCallbackURL(r *http.Request) (string, error) {
 
 	requestToken, verifier, err := oauth1.ParseAuthorizationCallback(r)
 	if err != nil {
-		return "a", err
+		return "parse auth callback error.", err
 	}
 
 	cache, err := memcache.Get(ctx, prefixTwitterRequest+requestToken)
 	if err != nil {
-		return "b", err
+		return "request token not found.", err
 	}
 
 	accessToken, accessSecret, err := config.AccessToken(requestToken, string(cache.Value), verifier)
 	if err != nil {
-		return "c", err
+		return "access token error.", err
 	}
 
 	token := oauth1.NewToken(accessToken, accessSecret)
-	httpClient := config.Client(ctx, token)
-
-	_ = lib.NewClient(httpClient)
 
 	memcache.Delete(ctx, prefixTwitterRequest+requestToken)
 	memcache.Set(ctx, &memcache.Item{Key: prefixTwitterToken + accessToken, Value: []byte(accessSecret)})
@@ -101,12 +103,31 @@ func GetCallbackURL(r *http.Request) (string, error) {
 	var redirectTo string
 	cache, err = memcache.Get(ctx, prefixLoginRedirectURL+requestToken)
 	if err != nil {
-		redirectTo = getRedirectDefaultURL()
+		redirectTo = base64.StdEncoding.EncodeToString([]byte(getRedirectDefaultURL()))
 	} else {
+		// cache value is base64 encoded.
 		redirectTo = string(cache.Value)
 	}
 
-	url := redirectTo + "/token/" + accessToken
+	url := getLoginCallbackURL() + "/token/" + accessToken + "/redirect/" + redirectTo
 
 	return url, nil
+}
+
+func GetVerify(r *http.Request, token string) (session.User, error) {
+	cache, err := memcache.Get(ctx, prefixTwitterToken+token)
+	if err != nil {
+		return NewError("access secret not found.", err)
+	}
+
+	token := oauth1.NewToken(accessToken, string(cache.Value))
+	httpClient := config.Client(ctx, token)
+
+	client = lib.NewClient(httpClient)
+	user, _, err := client.Accounts.VerifyCredentials(nil)
+	if err != nil {
+		return NewError("twitter verify credentails failed..", err)
+	}
+
+	return data
 }

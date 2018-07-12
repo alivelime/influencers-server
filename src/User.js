@@ -25,11 +25,10 @@ class  User extends React.Component {
 
 	render() {
 		const { classes } = this.props;
-	  const { id, recommendBranchId, iineId, token } = this.props.match.params;
+	  const { id, recommendBranchId, iineId } = this.props.match.params;
 
 		return (
 			<div className={classes.root}>
-				<p>{token}</p>
 				<div className={classes.content}>
 					<UserProfile id={id} />
 				</div>

@@ -26,19 +26,25 @@ func init() {
 
 	r.HandleFunc("/api/users", api.HandleUsers)
 	r.HandleFunc("/api/users/{id}", api.HandleUser)
+
 	r.HandleFunc("/api/recommend-branches", api.HandleRecommendBranches)
 	r.HandleFunc("/api/recommend-branches/{id}", api.HandleRecommendBranch)
+
 	r.HandleFunc("/api/users/{userId}/recommend-branches", api.HandleUserRecommendBranches)
 	r.HandleFunc("/api/users/{userId}/recommends", api.HandleUserRecommends)
 	r.HandleFunc("/api/users/{userId}/reviews", api.HandleUserReviews)
+
+	r.HandleFunc("/api/meta/{id:.+}", api.HandleMeta)
 	r.HandleFunc("/api/recommends", api.HandleRecommends)
 	r.HandleFunc("/api/recommends/{id:.+}", api.HandleRecommend)
+
 	r.HandleFunc("/api/reviews", api.HandleReviews)
 	r.HandleFunc("/api/reviews/{id}", api.HandleReview)
-	r.HandleFunc("/api/meta/{id:.+}", api.HandleMeta)
+
 	r.HandleFunc("/api/twitter/auth", api.HandleTwitterAuth)
-	r.HandleFunc("/api/twitter/auth/redirect/{s:.+}", api.HandleTwitterAuth)
+	r.HandleFunc("/api/twitter/auth/redirect/{to:.+}", api.HandleTwitterAuth)
 	r.HandleFunc("/api/twitter/callback", api.HandleTwitterCallback)
+	r.HandleFunc("/api/twitter/veryfy/{to:.+}", api.HandleTwitterVerify)
 	http.Handle("/", r)
 
 	log.Println("Server started: http://localhost:")
