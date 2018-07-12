@@ -19,3 +19,7 @@ build/
 
 # secret keys
 app/secret_*.yaml
+
+# env
+.env.development
+.env.production

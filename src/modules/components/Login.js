@@ -49,7 +49,7 @@ class Login extends React.Component {
 								variant="raised"
 								size="large"
 								color="primary"
-								href={`http://35.189.141.152:3001/api/twitter/auth`}
+								href={process.env.REACT_APP_TWITTER_AUTH}
 								className={classes.twitter}
 							>twitter</Button>
 						</ListItem>
