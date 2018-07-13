@@ -3,8 +3,10 @@ package twitter
 import (
 	"context"
 	"encoding/base64"
+	"errors"
 	"net/http"
 	"os"
+	"strings"
 
 	"google.golang.org/appengine"
 	"google.golang.org/appengine/memcache"
@@ -14,6 +16,18 @@ import (
 	"github.com/dghubble/oauth1"
 	endpoint "github.com/dghubble/oauth1/twitter"
 )
+
+type User struct {
+	ID       int64  `json:"id"`
+	SNSPower int64  `json:"snsPower"`
+	UserID   int64  `json:"userId"`
+	URL      string `json:"url"`
+	Name     string `json:"name"`
+	Title    string `json:"title"`
+	Avator   string `json:"avator"`
+	Image    string `json:"image"`
+	Color    string `json:"color"`
+}
 
 var config oauth1.Config
 
@@ -95,8 +109,6 @@ func GetCallbackURL(r *http.Request) (string, error) {
 		return "access token error.", err
 	}
 
-	token := oauth1.NewToken(accessToken, accessSecret)
-
 	memcache.Delete(ctx, prefixTwitterRequest+requestToken)
 	memcache.Set(ctx, &memcache.Item{Key: prefixTwitterToken + accessToken, Value: []byte(accessSecret)})
 
@@ -109,25 +121,34 @@ func GetCallbackURL(r *http.Request) (string, error) {
 		redirectTo = string(cache.Value)
 	}
 
-	url := getLoginCallbackURL() + "/token/" + accessToken + "/redirect/" + redirectTo
+	url := getLoginCallbackURL() +
+		"/sns/" + "twitter" +
+		"/token/" + prefixTwitterToken + accessToken +
+		"/redirect/" + redirectTo
 
 	return url, nil
 }
 
-func GetVerify(r *http.Request, token string) (session.User, error) {
-	cache, err := memcache.Get(ctx, prefixTwitterToken+token)
-	if err != nil {
-		return NewError("access secret not found.", err)
-	}
+func GetVerify(r *http.Request, accessToken string, secret string) (User, error) {
+	var ret User
+	ctx := appengine.NewContext(r)
 
-	token := oauth1.NewToken(accessToken, string(cache.Value))
-	httpClient := config.Client(ctx, token)
+	newCtx := context.WithValue(ctx, oauth1.HTTPClient, urlfetch.Client(ctx))
+	token := oauth1.NewToken(strings.TrimLeft(accessToken, prefixTwitterToken), secret)
+	httpClient := config.Client(newCtx, token)
 
-	client = lib.NewClient(httpClient)
+	client := lib.NewClient(httpClient)
 	user, _, err := client.Accounts.VerifyCredentials(nil)
 	if err != nil {
-		return NewError("twitter verify credentails failed..", err)
+		return ret, errors.New("twitter verify credentails failed.." + err.Error())
 	}
 
-	return data
+	ret.ID = user.ID
+	ret.Name = user.ScreenName
+	ret.Avator = user.ProfileImageURLHttps
+	ret.Image = user.ProfileBackgroundImageURLHttps
+	ret.Color = user.ProfileBackgroundColor
+	ret.URL = user.URL
+
+	return ret, nil
 }

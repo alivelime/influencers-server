@@ -14,6 +14,8 @@ import (
 
 	"google.golang.org/appengine"
 	"google.golang.org/appengine/datastore"
+
+	"github.com/alivelime/influs/auth"
 )
 
 func getUser(w http.ResponseWriter, r *http.Request) {
@@ -46,6 +48,10 @@ func getUser(w http.ResponseWriter, r *http.Request) {
 }
 
 func postUser(w http.ResponseWriter, r *http.Request, id int64) {
+	if ok, _, _ := auth.CheckLogin(w, r); !ok {
+		return
+	}
+
 	var user User
 	ctx := appengine.NewContext(r)
 

@@ -1,29 +1,32 @@
 
 
 
-export const getAPI = (path) => {
-	return requestAPI('GET', path);
+export const getAPI = (path, token) => {
+	return requestAPI('GET', path, null, token);
 }
 
-export const postAPI = (path, data) => {
-	return requestAPI('POST', path, data);
+export const postAPI = (path, data, token) => {
+	return requestAPI('POST', path, data, token);
 }
 
-export const putAPI = (path, data) => {
+export const putAPI = (path, data, token) => {
 	return requestAPI('PUT', path, data);
 }
 
-export const patchAPI = (path, data) => {
+export const patchAPI = (path, data, token) => {
 	return requestAPI('PATCH', path, data);
 }
 
-export const deleteAPI = (path) => {
-	return requestAPI('DELETE', path);
+export const deleteAPI = (path, token) => {
+	return requestAPI('DELETE', path, null, token);
 }
 
-export const requestAPI = (method, path, data = null) => {
+export const requestAPI = (method, path, data = null, token = '') => {
 	let myHeaders = new Headers();
 	myHeaders.append('Content-Type', 'application/json');
+	if (token && token.length > 0) {
+		myHeaders.append('Authenticate', `Bearer ${token}`);
+	}
 	return fetch(path, {
 		method: method,
 		headers: myHeaders,

@@ -1,22 +1,22 @@
 import { call, put } from 'redux-saga/effects'
-import { getAPI, putAPI } from 'modules/utils/Request';
+import { getAPI, postAPI } from 'modules/utils/Request';
 
 export function* fetch(action) {
-	try{
-		const data = yield call(getAPI, `/api/${action.sns}/verify/${action.token}`, null);
-		yield put({type: "FETCH_SESSION_USER_SUCCEEDED", data: data});
-	} catch (e) {
-		yield put({type: "FETCH_SESSION_USER_FAILED"});
-	}
+		const res = yield call(getAPI, `/api/${action.sns}/verify`, action.token);
+		if (Object.keys(res).length > 0) {
+			yield put({type: "FETCH_LOGIN_USER_SUCCEEDED", data: res});
+		} else {
+			yield put({type: "FETCH_LOGIN_USER_FIALED"});
+		}
 }
 
 export function* registerUser(action) {
-	try{
 		const res = yield call(postAPI, `/api/users/${action.data.id}`, action.data, action.token)
-		yield put({type: "REGISTER_USER_SUCCEEDED", data: res});
-	} catch (e) {
-		yield put({type: "REGISTER_USER_FAILED"});
-	}
+		if (Object.keys(res).length > 0) {
+			yield put({type: "REGISTER_USER_SUCCEEDED", data: res});
+		} else {
+			yield put({type: "REGISTER_USER_FAILED"});
+		}
 }
 
 

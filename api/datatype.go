@@ -8,12 +8,14 @@ type User struct {
 	ID         int64     `json:"id" datastore:"-"`
 	Name       string    `json:"name" datastore:",noindex"`
 	Title      string    `json:"title" datastore:",noindex"`
+	Avator     string    `json:"avator" datastore:",noindex"`
 	Image      string    `json:"image" datastore:",noindex"`
+	Color      string    `json:"color" datastore:",noindex"`
 	Memo       string    `json:"memo" datastore:",noindex"`
 	Link       string    `json:"link" datastore:",noindex"`
-	Avator     string    `json:"avator" datastore:",noindex"`
-	MediaID    int64     `json:"mediaId" datastore:",noindex"`
-	MediaType  string    `json:"mediaType" datastore:",noindex"`
+	SNSID      int64     `json:"SnsId"`
+	SNSType    string    `json:"snsType" datastore:",noindex"`
+	SNSPower   int64     `json:"snsPower" datastore:",noindex"`
 	InfluCount int64     `json:"influCount" datastore:"-"` /* count of follower's iine */
 	IiyoCount  int64     `json:"iiyoCount" datastore:"-"`  /* = cound of recommend */
 	IineCount  int64     `json:"iinemmendCount" datastore:"-"`
@@ -21,15 +23,15 @@ type User struct {
 	UpdatedAt  time.Time `datastore:",noindex"`
 }
 
-type MediaType int
+type SNSType int
 
 const (
-	Twitter MediaType = iota
+	Twitter SNSType = iota
 	Facebook
 )
 
-func (mt MediaType) String() string {
-	switch mt {
+func (t SNSType) String() string {
+	switch t {
 	case Twitter:
 		return "Twitter"
 	case Facebook:
@@ -114,11 +116,15 @@ type Recommend struct {
 	Kind        string `json:"kind" datastore:",noindex"` // mono, service, information
 }
 
-type TwitterUser struct {
-	Token  string `json:"token"`
-	ID     string `json:"id"`
-	Name   string `json:"name"`
-	Title  string `json:"title"`
-	Avator string `json:"avator"`
-	Image  string `json:"image"`
+type SNSUser struct {
+	SNSType  string `json:"snsType"`
+	ID       int64  `json:"id"`
+	SNSPower int64  `json:"snsPower"`
+	UserID   int64  `json:"userId"`
+	URL      string `json:"url"`
+	Name     string `json:"name"`
+	Title    string `json:"title"`
+	Avator   string `json:"avator"`
+	Image    string `json:"image"`
+	Color    string `json:"color"`
 }

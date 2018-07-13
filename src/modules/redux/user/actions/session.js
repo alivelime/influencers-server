@@ -1,5 +1,5 @@
-export const fetchSexxion = (sns, token) => ({
-	type: 'FETCH_SESSION_USER_REQUEST',
+export const fetchLoginUser = (sns, token) => ({
+	type: 'FETCH_LOGIN_USER_REQUEST',
 	sns,
 	token,
 });
@@ -10,4 +10,8 @@ export const registerUser = (sns, token) => ({
 	token,
 });
 
+
+export const logout = (sns, token) => ({
+	type: 'LOGOUT',
+});
 

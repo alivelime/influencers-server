@@ -10,6 +10,7 @@ const mapStateToProps = state => ({
 	userId: state.session.userId,
 });
 const mapDispatchToProps = (dispatch, props) => ({
+	logout: dispatch(logout()),
 });
 
 export default connect(
