@@ -58,16 +58,6 @@ const styles = theme => ({
     margin: `${theme.spacing.unit * 3}px 0 ${theme.spacing.unit * 4}px`,
 		textShadow: '1px 1px 4px #fff,5px 5px 10px #888;',
   },
-  steps: {
-    maxWidth: theme.spacing.unit * 130,
-    margin: 'auto',
-  },
-  step: {
-    padding: `${theme.spacing.unit * 3}px ${theme.spacing.unit * 2}px`,
-  },
-  stepIcon: {
-    marginBottom: theme.spacing.unit,
-  },
 });
 
 class HomePage extends React.Component {

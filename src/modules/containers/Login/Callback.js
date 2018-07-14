@@ -1,16 +1,16 @@
 import React from 'react';
 import { connect } from 'react-redux'
-
 import { Redirect } from "react-router-dom";
-import Button from '@material-ui/core/Button'
 
-import { fetchLoginUser } from 'modules/redux/user/actions'
+import Register from 'modules/components/Register';
+import * as actions from 'modules/redux/user/actions'
 
 const mapStateToProps = state => ({
 	session: state.session,
 });
 const mapDispatchToProps = (dispatch, props) => ({
-	fetchLoginUser: (sns, token) => dispatch(fetchLoginUser(sns, token)),
+	fetchLoginUser: (sns, token) => dispatch(actions.fetchLoginUser(sns, token)),
+	registerUser: (sns, token) => dispatch(actions.registerUser(sns, token)),
 });
 
 class Callback extends React.Component {
@@ -21,7 +21,7 @@ class Callback extends React.Component {
 
 	render() {
 	  const { session } = this.props;
-	  const { redirect } = this.props.match.params;
+	  const { sns, token, redirect } = this.props.match.params;
 
 		if (!session || session.state === "") {
 			return (<p>ログインしています</p>)
@@ -30,19 +30,13 @@ class Callback extends React.Component {
 		// TODO Terms of use.
 		if (session.state === "register") {
 			return (
-				<div>
-					<p>service {this.props.session.user.snsType}</p>
-					<p>id {this.props.session.user.id}</p>
-					<p>name {this.props.session.user.name}</p>
-					<p>avator {this.props.session.user.avator}</p>
-					<Button>register</Button>
-				</div>
+				<Register {...this.props} register={() => {this.props.registerUser(sns, token)}} />
 			);
 		}
 
 		if (session.state === "login") {
 			return (
-				<Redirect to={window.atob(redirect)} />
+				<Redirect to={redirect ? window.atob(redirect) : `/users/${this.props.session.user.id}`} />
 			);
 		}
 	}

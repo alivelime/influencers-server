@@ -3,7 +3,7 @@ export default (state = {state: '', user: {}}, action) => {
 	switch (action.type) {
 		case 'FETCH_LOGIN_USER_SUCCEEDED':
 			return {
-				state: (action.data.userId !== "0" ? "login" : "register"),
+				state: (action.data.id !== "0" ? "login" : "register"),
 				user: action.data
 			}
 
@@ -11,7 +11,7 @@ export default (state = {state: '', user: {}}, action) => {
 			return {state: 'failed', user: {}}
 
 		case 'REGISTER_USER_SUCCEEDED':
-			return {...state, state: 'login'}
+			return {state: 'login', user: action.data}
 
 		case 'REGISTER_USER_FAILED':
 			return {state: 'failed', user: {}}

@@ -13,14 +13,15 @@ type User struct {
 	Color      string    `json:"color" datastore:",noindex"`
 	Memo       string    `json:"memo" datastore:",noindex"`
 	Link       string    `json:"link" datastore:",noindex"`
-	SNSID      int64     `json:"SnsId"`
+	SNSID      int64     `json:"snsId"`
 	SNSType    string    `json:"snsType" datastore:",noindex"`
-	SNSPower   int64     `json:"snsPower" datastore:",noindex"`
-	InfluCount int64     `json:"influCount" datastore:"-"` /* count of follower's iine */
-	IiyoCount  int64     `json:"iiyoCount" datastore:"-"`  /* = cound of recommend */
-	IineCount  int64     `json:"iinemmendCount" datastore:"-"`
-	CreatedAt  time.Time `datastore:",noindex"`
-	UpdatedAt  time.Time `datastore:",noindex"`
+	SNSPower   int       `json:"snsPower" datastore:",noindex"`
+	SNSURL     string    `json:"snsUrl" datastore:",noindex"`
+	InfluCount int       `json:"influCount" datastore:"-"` /* count of follower's iine */
+	IiyoCount  int       `json:"iiyoCount" datastore:"-"`  /* = cound of recommend */
+	IineCount  int       `json:"iinemmendCount" datastore:"-"`
+	CreatedAt  time.Time `json:"createdAt" datastore:",noindex"`
+	UpdatedAt  time.Time `json:"updatedAt" datastore:",noindex"`
 }
 
 type SNSType int
@@ -114,17 +115,4 @@ type Recommend struct {
 	Image       string `json:"image" datastore:",noindex"`
 	Description string `json:"description" datastore:",noindex"`
 	Kind        string `json:"kind" datastore:",noindex"` // mono, service, information
-}
-
-type SNSUser struct {
-	SNSType  string `json:"snsType"`
-	ID       int64  `json:"id"`
-	SNSPower int64  `json:"snsPower"`
-	UserID   int64  `json:"userId"`
-	URL      string `json:"url"`
-	Name     string `json:"name"`
-	Title    string `json:"title"`
-	Avator   string `json:"avator"`
-	Image    string `json:"image"`
-	Color    string `json:"color"`
 }

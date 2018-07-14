@@ -41,7 +41,7 @@ class Login extends React.Component {
 		const { classes } = this.props;
 		return (
       <Dialog onClose={this.handleClose} aria-labelledby="login-dialog" open={this.props.open}>
-				<DialogTitle id="login-dialog">ログインするサービスを選んでください</DialogTitle>
+				<DialogTitle id="login-dialog">連携するサービスを選んでください</DialogTitle>
 				<div className={classes.div}>
 					<List>
 						<ListItem>

@@ -38,6 +38,7 @@ class App extends React.Component {
 						<Header />
 						<Switch>
 							<Route exact path='/' component={HomePage} />
+							<Route exact path='/login/callback/sns/:sns/token/:token/redirect/' component={Callback} />
 							<Route exact path='/login/callback/sns/:sns/token/:token/redirect/:redirect' component={Callback} />
 							<Route exact path='/users/:id' component={User} />
 							<Route exact path='/users/:id/recommend-branches/:recommendBranchId' component={User} />

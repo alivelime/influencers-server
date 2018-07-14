@@ -11,7 +11,7 @@ export function* fetch(action) {
 }
 
 export function* registerUser(action) {
-		const res = yield call(postAPI, `/api/users/${action.data.id}`, action.data, action.token)
+		const res = yield call(postAPI, `/api/${action.sns}/register`, action.data, action.token)
 		if (Object.keys(res).length > 0) {
 			yield put({type: "REGISTER_USER_SUCCEEDED", data: res});
 		} else {

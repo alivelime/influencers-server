@@ -45,6 +45,7 @@ func init() {
 	r.HandleFunc("/api/twitter/auth/redirect/{to:.+}", api.HandleTwitterAuth)
 	r.HandleFunc("/api/twitter/callback", api.HandleTwitterCallback)
 	r.HandleFunc("/api/twitter/verify", api.HandleTwitterVerify)
+	r.HandleFunc("/api/twitter/register", api.HandleTwitterRegister)
 	http.Handle("/", r)
 
 	log.Println("Server started: http://localhost:")

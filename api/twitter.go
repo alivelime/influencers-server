@@ -8,6 +8,7 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+	"time"
 
 	"github.com/gorilla/mux"
 
@@ -60,16 +61,22 @@ func getTwitterVerify(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	var snsUser SNSUser
-	snsUser.ID = data.ID
-	snsUser.Name = data.Name
-	snsUser.Avator = data.Avator
-	snsUser.Image = data.Image
-	if user != nil {
-		snsUser.UserID = user.ID
+	var ret User
+	if user == nil {
+		ret.ID = 0
+	} else {
+		ret = *user
 	}
+	ret.SNSID = data.ID
+	ret.SNSType = data.Type
+	ret.Name = data.Name
+	ret.Avator = data.Avator
+	ret.Image = data.Image
+	ret.Color = data.Color
+	ret.SNSURL = data.URL
+	ret.SNSPower = data.Followers
 
-	res, err := json.Marshal(snsUser)
+	res, err := json.Marshal(ret)
 	if err != nil {
 		http.Error(w, fmt.Sprintf("Unable to marshal session verify: %s", err), http.StatusInternalServerError)
 		return
@@ -93,7 +100,7 @@ func getUserFromSNSID(ctx context.Context, snsID int64) (*User, error) {
 		return nil, nil
 	}
 
-	var user User
+	var ret User
 	itr := query.Run(ctx)
 
 	for {
@@ -107,9 +114,70 @@ func getUserFromSNSID(ctx context.Context, snsID int64) (*User, error) {
 		}
 
 		user.ID = key.IntID()
+		ret = user
 	}
 
-	return &user, nil
+	return &ret, nil
+}
+
+func twitterRegister(w http.ResponseWriter, r *http.Request) {
+	ctx := appengine.NewContext(r)
+
+	ok, token, secret := auth.CheckLogin(w, r)
+	if !ok {
+		return
+	}
+
+	data, err := twitter.GetVerify(r, token, secret)
+	if err != nil {
+		http.Error(w, fmt.Sprintf("Cannot auth twitter token: ,%s", err), http.StatusInternalServerError)
+		return
+	}
+
+	// check if user registration.
+	{
+		user, err := getUserFromSNSID(ctx, data.ID)
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
+		if user != nil {
+			http.Error(w, fmt.Sprintf("user %d has already registerd.", user.ID), http.StatusForbidden)
+			return
+		}
+	}
+
+	var user User
+	user.SNSID = data.ID
+	user.SNSType = data.Type
+	user.Name = data.Name
+	user.Avator = data.Avator
+	user.Image = data.Image
+	user.Color = data.Color
+	user.SNSURL = data.URL
+	user.SNSPower = data.Followers
+	user.CreatedAt = time.Now()
+	user.UpdatedAt = time.Now()
+
+	key := datastore.NewIncompleteKey(ctx, "User", nil)
+	k, err := datastore.Put(ctx, key, &user)
+	if err != nil {
+		http.Error(w, fmt.Sprintf("unable put datastore  %s", err), http.StatusInternalServerError)
+		return
+	}
+
+	user.ID = k.IntID()
+	res, err := json.Marshal(user)
+	if err != nil {
+		http.Error(w, fmt.Sprintf("Unable to marshal register user: %s", err), http.StatusInternalServerError)
+		return
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	w.Header().Set("Cache-Control", "no-cache")
+	w.Header().Set("Access-Control-Allow-Origin", "*")
+	io.Copy(w, bytes.NewReader(res))
+
 }
 
 func HandleTwitterAuth(w http.ResponseWriter, r *http.Request) {
@@ -158,4 +226,8 @@ func HandleTwitterVerify(w http.ResponseWriter, r *http.Request) {
 	default:
 		http.Error(w, fmt.Sprintf("No impliment method %s", r.Method), http.StatusInternalServerError)
 	}
+}
+
+func HandleTwitterRegister(w http.ResponseWriter, r *http.Request) {
+	twitterRegister(w, r)
 }

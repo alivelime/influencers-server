@@ -18,20 +18,21 @@ import (
 )
 
 type User struct {
-	ID       int64  `json:"id"`
-	SNSPower int64  `json:"snsPower"`
-	UserID   int64  `json:"userId"`
-	URL      string `json:"url"`
-	Name     string `json:"name"`
-	Title    string `json:"title"`
-	Avator   string `json:"avator"`
-	Image    string `json:"image"`
-	Color    string `json:"color"`
+	ID        int64
+	Type      string
+	Follower  int64
+	URL       string
+	Name      string
+	Avator    string
+	Image     string
+	Color     string
+	Followers int
 }
 
 var config oauth1.Config
 
 const (
+	Twitter                = "twitter"
 	prefixTwitterRequest   = "TwitterRequest"
 	prefixTwitterToken     = "TwitterToken"
 	prefixLoginRedirectURL = "Redirect"
@@ -144,11 +145,13 @@ func GetVerify(r *http.Request, accessToken string, secret string) (User, error)
 	}
 
 	ret.ID = user.ID
-	ret.Name = user.ScreenName
+	ret.Type = Twitter
+	ret.Name = user.Name + "@" + user.ScreenName
 	ret.Avator = user.ProfileImageURLHttps
-	ret.Image = user.ProfileBackgroundImageURLHttps
+	ret.Image = user.ProfileBannerURL
 	ret.Color = user.ProfileBackgroundColor
-	ret.URL = user.URL
+	ret.URL = "https://www.twitter.com/" + user.ScreenName
+	ret.Followers = user.FollowersCount
 
 	return ret, nil
 }
