@@ -8,16 +8,11 @@ import UserProfile from 'modules/containers/UserProfile';
 const styleSheet = theme => ({
   root: {
     paddingBottom: theme.spacing.unit * 2,
-    paddingTop: theme.spacing.unit * 2,
 	},
 	content: {
     paddingBottom: theme.spacing.unit * 2,
-    paddingTop: theme.spacing.unit * 2,
-    maxWidth: theme.spacing.unit * 160,
+    maxWidth: "1024pt",
     margin: 'auto',
-	},
-	header: {
-		padding: theme.spacing.unit * 2,
 	},
 });
 

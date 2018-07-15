@@ -1,23 +1,36 @@
 import { call, put } from 'redux-saga/effects'
-import { getAPI, putAPI } from 'modules/utils/Request';
+import { getAPI, patchAPI } from 'modules/utils/Request';
 
 export function* fetch(action) {
-	try{
-		const data = yield call(getAPI, `/api/users/${action.id}`, null);
-		yield put({type: "LOAD_USER_SUCCEEDED", data: data});
-	} catch (e) {
-		yield put({type: "LOAD_USER_FAILED", data: {id: action.id, name: e.message}});
+	const res = yield call(getAPI, `/api/users/${action.id}`, null);
+
+	if (Object.keys(res).length > 0) {
+		yield put({type: "LOAD_USER_SUCCEEDED", data: res});
+	} else {
+		yield put({type: "LOAD_USER_FAILED"});
 	}
 }
 
 export function* update(action) {
-	try{
-		const res = yield call(putAPI, `/api/users/${action.data.id}`, action.data)
+	const res = yield call(patchAPI, `/api/users/${action.id}`, action.data, action.token)
+
+	if (Object.keys(res).length > 0) {
 		yield put({type: "UPDATE_USER_SUCCEEDED", data: res});
-	} catch (e) {
-		yield put({type: "UPDATE_USER_FAILED", data: {id: action.data.id, name: e.message}});
+	} else {
+		yield put({type: "UPDATE_USER_FAILED"});
 	}
 }
+
+export function* leave(action) {
+	const res = yield call(patchAPI, `/api/users/${action.id}/leave`, action.data, action.token)
+
+	if (Object.keys(res).length > 0) {
+		yield put({type: "LEAVE_USER_SUCCEEDED", data: res});
+	} else {
+		yield put({type: "LEAVE_USER_FAILED"});
+	}
+}
+
 
 export function* loadRecommendData(action) {
 	try{

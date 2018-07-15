@@ -30,21 +30,21 @@ const styles = theme => ({
 function Link(props) {
   const { classes, variant, to, children } = props;
 	let component;
-	if (to.startsWith('http')) {
-		component = (
-				<a href={to}
-					 className={classNames(classes.root, classes[variant])}
-					 target="new"
-					 rel="noopener noreferrer"
-				 {...props} >{children}</a>
-			);
-	} else if(to.length > 0) {
-		component = (
-				<NavLink className={classNames(classes.root, classes[variant])} {...props} >{children}</NavLink>
+	if (!to || to.length === 0) {
+		return (	
+			<div>{children}</div>
 		);
-	} else {
-		component = (
-				<div>{children}</div>
+	} else if (to.startsWith('http')) {
+		return (
+			<a href={to}
+				 className={classNames(classes.root, classes[variant])}
+				 target="new"
+				 rel="noopener noreferrer"
+			 {...props} >{children}</a>
+		);
+	} else if(to.length > 0) {
+		return (
+				<NavLink className={classNames(classes.root, classes[variant])} {...props} >{children}</NavLink>
 		);
 	}
 	return component;

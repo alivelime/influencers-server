@@ -70,7 +70,7 @@ func getTwitterVerify(w http.ResponseWriter, r *http.Request) {
 	ret.SNSID = data.ID
 	ret.SNSType = data.Type
 	ret.Name = data.Name
-	ret.Avator = data.Avator
+	ret.Avatar = data.Avatar
 	ret.Image = data.Image
 	ret.Color = data.Color
 	ret.SNSURL = data.URL
@@ -151,7 +151,7 @@ func twitterRegister(w http.ResponseWriter, r *http.Request) {
 	user.SNSID = data.ID
 	user.SNSType = data.Type
 	user.Name = data.Name
-	user.Avator = data.Avator
+	user.Avatar = data.Avatar
 	user.Image = data.Image
 	user.Color = data.Color
 	user.SNSURL = data.URL

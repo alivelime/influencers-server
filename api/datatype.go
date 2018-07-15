@@ -8,7 +8,7 @@ type User struct {
 	ID         int64     `json:"id" datastore:"-"`
 	Name       string    `json:"name" datastore:",noindex"`
 	Title      string    `json:"title" datastore:",noindex"`
-	Avator     string    `json:"avator" datastore:",noindex"`
+	Avatar     string    `json:"avatar" datastore:",noindex"`
 	Image      string    `json:"image" datastore:",noindex"`
 	Color      string    `json:"color" datastore:",noindex"`
 	Memo       string    `json:"memo" datastore:",noindex"`

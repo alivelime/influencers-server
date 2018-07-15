@@ -26,6 +26,7 @@ func init() {
 
 	r.HandleFunc("/api/users", api.HandleUsers)
 	r.HandleFunc("/api/users/{id}", api.HandleUser)
+	r.HandleFunc("/api/users/{id}/leave", api.HandleUserLeave)
 
 	r.HandleFunc("/api/recommend-branches", api.HandleRecommendBranches)
 	r.HandleFunc("/api/recommend-branches/{id}", api.HandleRecommendBranch)

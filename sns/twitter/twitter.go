@@ -23,7 +23,7 @@ type User struct {
 	Follower  int64
 	URL       string
 	Name      string
-	Avator    string
+	Avatar    string
 	Image     string
 	Color     string
 	Followers int
@@ -147,7 +147,7 @@ func GetVerify(r *http.Request, accessToken string, secret string) (User, error)
 	ret.ID = user.ID
 	ret.Type = Twitter
 	ret.Name = user.Name + "@" + user.ScreenName
-	ret.Avator = user.ProfileImageURLHttps
+	ret.Avatar = user.ProfileImageURLHttps
 	ret.Image = user.ProfileBannerURL
 	ret.Color = user.ProfileBackgroundColor
 	ret.URL = "https://www.twitter.com/" + user.ScreenName

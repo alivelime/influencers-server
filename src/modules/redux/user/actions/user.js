@@ -8,9 +8,17 @@ export const registerUser = data => ({
 	data,
 });
 
-export const updateUser = data => ({
+export const updateUser = (id, data, token) => ({
 	type: 'UPDATE_USER_REQUEST',
+	id,
 	data,
+	token,
+})
+
+export const deleteUser = (id, data, token) => ({
+	type: 'DELETE_USER_REQUEST',
+	data,
+	token,
 })
 
 export const loadUserRecommendData = id => ({

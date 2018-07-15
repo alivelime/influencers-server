@@ -14,7 +14,7 @@ export const putAPI = (path, data, token) => {
 }
 
 export const patchAPI = (path, data, token) => {
-	return requestAPI('PATCH', path, data);
+	return requestAPI('PATCH', path, data, token);
 }
 
 export const deleteAPI = (path, token) => {
