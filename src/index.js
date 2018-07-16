@@ -5,6 +5,7 @@ import { Provider } from 'react-redux'
 import { createStore, applyMiddleware } from 'redux'
 import createSagaMiddleware from 'redux-saga'
 
+import ReactGA from 'modules/classes/ReactGA';
 import Callback from 'modules/containers/Login/Callback';
 import HomePage from 'HomePage';
 import User from 'User';
@@ -33,7 +34,7 @@ class App extends React.Component {
 	render() {
 		return (
 			<Provider store={store} >
-				<Router>
+				<Router onUpdate={ReactGA.doPageTracking}>
 					<div>
 						<Header />
 						<Switch>

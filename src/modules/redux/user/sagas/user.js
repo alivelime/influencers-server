@@ -2,7 +2,7 @@ import { call, put } from 'redux-saga/effects'
 import { getAPI, patchAPI } from 'modules/utils/Request';
 
 export function* fetch(action) {
-	const res = yield call(getAPI, `/api/users/${action.id}`, null);
+	const res = yield call(getAPI, `/api/users/${action.id}`);
 
 	if (Object.keys(res).length > 0) {
 		yield put({type: "LOAD_USER_SUCCEEDED", data: res});
@@ -31,6 +31,26 @@ export function* leave(action) {
 	}
 }
 
+export function* fetchAffiliate(action) {
+	const res = yield call(getAPI, `/api/users/${action.id}/affiliate`);
+
+	if (Object.keys(res).length > 0) {
+		yield put({type: "LOAD_USER_AFFILIATE_SUCCEEDED", data: res});
+	} else {
+		yield put({type: "LOAD_USER_AFFILIATE_FAILED"});
+	}
+}
+
+export function* updateAffiliate(action) {
+	const res = yield call(patchAPI, `/api/users/${action.id}/affiliate`, action.data, action.token)
+
+	if (Object.keys(res).length > 0) {
+		yield put({type: "UPDATE_USER_AFFILIATE_SUCCEEDED", data: res});
+	} else {
+		yield put({type: "UPDATE_USER_AFFILIATE_FAILED"});
+	}
+}
+
 
 export function* loadRecommendData(action) {
 	try{
@@ -55,13 +75,17 @@ export function* loadRecommendData(action) {
 				yield put({type: "CLOSE_ALL_RECOMMEND_BRANCHES"});
 			}
 		} else {
-			yield put({type: "ADD_RECOMMEND_BRANCH_REQUEST", data: {
-				name: "新しいリスト",
-				userId: action.id,
-				parentId: "0",
-				prevId: "0",
-				nextId: "0",
-			}});
+			if (typeof token === "string" && token.length > 0) {
+				yield put({type: "ADD_RECOMMEND_BRANCH_REQUEST",
+					token: action.token,
+					data: {
+						name: "新しいリスト",
+						userId: action.id,
+						parentId: "0",
+						prevId: "0",
+						nextId: "0",
+				}});
+			}
 		}
 	} catch (e) {
 		yield put({type: "LOAD_USER_RECOMMEND_DATA_FAILED", recommendBranches: {}, recommends: {}, reviews: {}});

@@ -22,16 +22,16 @@ export function* add(action) {
 			parentId: action.recommendBranchId,
 			prevId: last || "0",
 			nextId: "0",
-		});
+		}, action.token);
 		action.review.recommendBranchId = res.addRecommendBranch.id;
 	} else {
 		action.review.recommendBranchId = action.recommendBranchId;
 	}
 
-	res.review = yield call(postAPI, `/api/reviews`, action.review);
+	res.review = yield call(postAPI, `/api/reviews`, action.review, action.token);
 	if (Object.keys(res.review).length === 0) {
 		if (addFlag) {
-			yield call(deleteAPI, `/api/recommend-branches/${action.review.recommendBranchId}`);
+			yield call(deleteAPI, `/api/recommend-branches/${action.review.recommendBranchId}`, action.token);
 			// do not -> yield put({type: 'DELETE_RECOMMEND_BRANCHES_REQUEST', ids: [action.review.recommendBranchId]});
 		}
 		return;

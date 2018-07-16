@@ -75,15 +75,14 @@ type NagesenMessage struct {
 	I       int64   `json:"i"`
 	U       int64   `json:"u"`
 	TxnId   string  `json:"txnId"`
-	Amount  float64 `json:"amount" datastore:"-"`
-	Message string  `json:"message" datastore:"-"`
+	Amount  float64 `json:"amount" datastore:",noindex"`
+	Message string  `json:"message" datastore:",noindex"`
 }
 
 type Affiliate struct {
-	ID     int64  `json:"id" datastore:"-"`
-	Amazon string `json:"amazon" datastore:",noindex"`
-	Febe   string `json:"febe" datastore:",noindex"`
-	Iherb  string `json:"iherb" datastore:",noindex"`
+	UserID   int64  `json:"userId" datastore:"-"`
+	Amazonjp string `json:"amazonjp" datastore:",noindex"`
+	Iherbjp  string `json:"iherbjp" datastore:",noindex"`
 }
 
 type RecommendBranch struct {

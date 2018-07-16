@@ -10,7 +10,7 @@ export const postAPI = (path, data, token) => {
 }
 
 export const putAPI = (path, data, token) => {
-	return requestAPI('PUT', path, data);
+	return requestAPI('PUT', path, data, token);
 }
 
 export const patchAPI = (path, data, token) => {

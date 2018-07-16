@@ -106,7 +106,7 @@ class HomePage extends React.Component {
 							color="primary"
 							onClick={() => {this.setState({open: true})}}
 						>
-							{'LOGIN'}
+							{'SIGN/LOG IN'}
 						</Button>
 						<Login
 							open={this.state.open}

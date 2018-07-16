@@ -15,6 +15,9 @@ const mergeProps = (state, {dispatch}, props) => ({
 	updateUser: data => dispatch(updateUser(props.id, data, state.session.token)),
 	deleteUser: () => dispatch(deleteUser(props.id, state.session.token)),
 
+	loadAffiliate: () => dispatch(loadUserAffiliate(props.id)),
+	updateAffiliate: data => dispatch(updateUserAffiliate(props.id, data, state.session.token)),
+
 	data: state.user,
 	isMine: (state.user.id === state.session.user.id),
 });

@@ -28,7 +28,10 @@ function Header(props) {
 					<Typography variant="title" color="inherit" className={classes.flex} >
             <Link to='/'>インフルず</Link>
           </Typography>
-					<div>logout</div>
+					<Link to={`/users/${this.props.session.user.id}`}>
+						<Avatar src={this.props.session.user.avatar} />
+					</Link>
+					<Button variant="contained" onClick={this.props.logout}>logout</div>
 				</Toolbar>
 			</AppBar>
 		</div>

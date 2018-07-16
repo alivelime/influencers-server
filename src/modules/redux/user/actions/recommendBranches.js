@@ -1,4 +1,4 @@
-export const addRecommendBranch = (id, userId, recommendBranches) => ({
+export const addRecommendBranch = (id, userId, recommendBranches, token) => ({
 	type: 'ADD_RECOMMEND_BRANCH_REQUEST',
 	data: {
 		name: "新しいリスト",
@@ -7,9 +7,10 @@ export const addRecommendBranch = (id, userId, recommendBranches) => ({
 		prevId: id,
 		nextId: recommendBranches[id].nextId,
 	},
+	token,
 })
 
-export const addSubRecommendBranch = (parentId, userId, recommendBranches) => {
+export const addSubRecommendBranch = (parentId, userId, recommendBranches, token) => {
 	const last = Object.keys(recommendBranches).find((id) => {
 		return (recommendBranches[id].parentId === parentId && recommendBranches[id].nextId === "0");
 	});
@@ -23,23 +24,25 @@ export const addSubRecommendBranch = (parentId, userId, recommendBranches) => {
 			prevId: last || "0",
 			nextId: "0",
 		}
+		token,
 	};
 }
 
-export const deleteRecommendBranches = ids => ({
+export const deleteRecommendBranches = (ids, token) => ({
 	type: 'DELETE_RECOMMEND_BRANCHES_REQUEST',
 	ids,
+	token,
 })
 
-export const moveUpRecommendBranch = (id, state) => {
+export const moveUpRecommendBranch = (id, state, token) => {
 	const prevId = state.recommendBranches[id].prevId;
 	if (prevId !== "0") {
-		return moveDownRecommendBranch(prevId, state);
+		return moveDownRecommendBranch(prevId, state, token);
 	}
 	return {type:null};
 }
 
-export const moveDownRecommendBranch = (id, state) => {
+export const moveDownRecommendBranch = (id, state, token) => {
 	let recommendBranches = Object.assign({}, state.recommendBranches);
 	let patchArray = [];
 
@@ -89,6 +92,7 @@ export const moveDownRecommendBranch = (id, state) => {
 	return {
 		type: 'UPDATE_RECOMMEND_BRANCHES_REQUEST',
 		data: patchArray,
+		token, token,
 	}
 
 };
@@ -96,7 +100,7 @@ export const moveDownRecommendBranch = (id, state) => {
 // make update patch -> response change recommendBranches.
 // 
 // but this function should be in reducer... and dispatch patch data??
-export const moveRecommendBranches = (ids, to, state) => {
+export const moveRecommendBranches = (ids, to, state, token) => {
 	let patches = {};
 
 	let last = Object.keys(state.recommendBranches).find((id) => {
@@ -151,16 +155,18 @@ export const moveRecommendBranches = (ids, to, state) => {
 	return {
 		type: 'UPDATE_RECOMMEND_BRANCHES_REQUEST',
 		data,
+		token,
 	};
 };
 
-export const updateRecommendBranch = data => {
-	return updateRecommendBranches([data]);
+export const updateRecommendBranch = (data, token) => {
+	return updateRecommendBranches([data], token);
 }
 
-export const updateRecommendBranches = data => ({
+export const updateRecommendBranches = (data, token) => ({
 	type: 'UPDATE_RECOMMEND_BRANCHES_REQUEST',
 	data,
+	token,
 })
 
 export const openRecommendBranch = id => ({

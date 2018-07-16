@@ -79,9 +79,17 @@ func GetAuthURL(ctx context.Context, redirectTo string) (string, error) {
 		return "", err
 	}
 
-	memcache.Set(ctx, &memcache.Item{Key: prefixTwitterRequest + requestToken, Value: []byte(requestSecret)})
+	memcache.Set(ctx, &memcache.Item{
+		Key:        prefixTwitterRequest + requestToken,
+		Value:      []byte(requestSecret),
+		Expiration: time.Duration(5) * time.Second,
+	})
 	if len(redirectTo) > 0 {
-		memcache.Set(ctx, &memcache.Item{Key: prefixLoginRedirectURL + requestToken, Value: []byte(redirectTo)})
+		memcache.Set(ctx, &memcache.Item{
+			Key:        prefixLoginRedirectURL + requestToken,
+			Value:      []byte(redirectTo),
+			Expiration: time.Duration(5) * time.Second,
+		})
 	}
 	authorizationURL, err := config.AuthorizationURL(requestToken)
 	if err != nil {
@@ -111,7 +119,11 @@ func GetCallbackURL(r *http.Request) (string, error) {
 	}
 
 	memcache.Delete(ctx, prefixTwitterRequest+requestToken)
-	memcache.Set(ctx, &memcache.Item{Key: prefixTwitterToken + accessToken, Value: []byte(accessSecret)})
+	memcache.Set(ctx, &memcache.Item{
+		Key:        prefixTwitterToken + accessToken,
+		Value:      []byte(accessSecret),
+		Expiration: time.Duration(1440) * time.Second,
+	})
 
 	var redirectTo string
 	cache, err = memcache.Get(ctx, prefixLoginRedirectURL+requestToken)

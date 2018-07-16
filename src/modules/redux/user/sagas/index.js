@@ -15,6 +15,9 @@ export default function* userSaga() {
 	yield takeEvery("UPDATE_USER_REQUEST", user.update);
 	yield takeEvery("DELETE_USER_REQUEST", user.leave);
 
+	yield takeEvery("LOAD_USER_AFFILIATE_REQUEST", user.fetchAffiliate);
+	yield takeEvery("UPDATE_USER_AFFILIATE_REQUEST", user.updateAffiliate);
+
 	yield takeEvery("LOAD_USER_RECOMMEND_DATA_REQUEST", user.loadRecommendData);
 
 

@@ -6,6 +6,7 @@ import Typography from '@material-ui/core/Typography';
 import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
 
+import Login from 'modules/components/Login';
 import Link from 'modules/components/Link';
 
 const styles = {
@@ -17,22 +18,34 @@ const styles = {
   },
 };
 
-function Header(props) {
-	const { classes } = props;
-	return (
-		<div className={classes.root}>
-			<AppBar
-				position='static'
-			>
-				<Toolbar>
-					<Typography variant="title" color="inherit" className={classes.flex} >
-            <Link to='/'>インフルず</Link>
-          </Typography>
-					<div>login</div>
-				</Toolbar>
-			</AppBar>
-		</div>
-	);
+class Header extends React.Componen {
+	state = {
+		open: false,
+	};
+
+	render () {
+		const { classes } = this.props;
+		return (
+			<div className={classes.root}>
+				<AppBar
+					position='static'
+				>
+					<Toolbar>
+						<Typography variant="title" color="inherit" className={classes.flex} >
+							<Link to='/'>インフルず</Link>
+						</Typography>
+						<Button
+							onClick={() => {this.setState({open: true})}}
+						>SIGN/LOG IN</Button>
+						<Login
+							open={this.state.open}
+							onClose={() => {this.setState({open: false})}}
+						/>
+					</Toolbar>
+				</AppBar>
+			</div>
+		);
+	}
 }
 
 

@@ -1,4 +1,4 @@
-export const addReview = (recommendBranchId, isRecommend, {review, recommend, evidence, recommendBranches}) => ({
+export const addReview = (recommendBranchId, isRecommend, {review, recommend, evidence, recommendBranches}, token) => ({
 	type: 'ADD_REVIEW_REQUEST',
 	recommendBranchId,
 	isRecommend,
@@ -8,8 +8,9 @@ export const addReview = (recommendBranchId, isRecommend, {review, recommend, ev
 	recommendBranches,
 })
 
-export const addEvidence = data => ({
+export const addEvidence = (data, token) => ({
 	type: 'ADD_RECOMMEND_REQUEST',
 	data,
+	token,
 })
 

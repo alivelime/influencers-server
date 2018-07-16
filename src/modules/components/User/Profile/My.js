@@ -13,36 +13,35 @@ const styleSheet = theme => ({
 
 class MyProfile extends React.Component {
 
+	componentWillMount() {
+		this.props.loadUserAffiliate();
+	}
+
 	state = {
-		memoChanged: false,
+		changed: {
+			memo: false,
+			link: false,
+			amazonjp: false,
+			hherbjp: false,
+	  },
 		memo: this.props.data.memo,
-		linkChanged: false,
 		link: this.props.data.link,
+		amazonjp: this.props.data.affiliate.amazonjp,
+		iherbjp: this.props.data.affiliate.iherbjp,
 	};
 
-	handleMemoChange = event => {
+	handleChange = (name) => event {
 		this.setState({
-			memoChanged: true,
-			memo: event.target.value,
+			changed: {...this.state.changed, [name]: true},
+			[name]: event.target.value,
 		});
 	}
-	handleMemoBlur = () => {
-		if (this.state.memoChanged) {
-			this.props.updateUser({memo: this.state.memo});
-			this.setState({memoChanged: false});
-		}
-	}
-
-	handleLinkChange = event => {
-		this.setState({
-			linkChanged: true,
-			link: event.target.value,
-		});
-	}
-	handleLinkBlur = () => {
-		if (this.state.linkChanged) {
-			this.props.updateUser({link: this.state.link});
-			this.setState({linkChanged: false});
+	handleBlur = (name, f) => () => {
+		if (this.state.changed[name]) {
+			f({[name]: this.state[name]});
+			this.setState({
+				changed: {...this.state.changed, [name]: false},
+			});
 		}
 	}
 
@@ -55,8 +54,8 @@ class MyProfile extends React.Component {
 							fullWidth
 							placeholder="説明を入れてください"
 							value={this.state.memo}
-							onChange={this.handleMemoChange}
-							onBlur={this.handleMemoBlur}
+							onChange={this.handleChange('memo')}
+							onBlur={this.handleBlur('memo', this.props.updateUser)}
 						/>
 					</ListItem>
 					<ListItem>
@@ -64,18 +63,27 @@ class MyProfile extends React.Component {
 							fullWidth
 							placeholder="ホームページのURL"
 							value={this.state.link}
-							onChange={this.handleLinkChange}
-							onBlur={this.handleLinkBlur}
+							onChange={this.handleChange('link'}
+							onBlur={this.handleBlur('link', this.props.updateUser}
 						/>
 					</ListItem>
 					<ListItem>
-						<div>
-							<button
-								variant="contained"
-								color="error"
-								onClick={this.props.deleteUser}
-							>アカウント削除</button>
-						</div>
+						<Paper>
+							<Typography variant="headline">アフィリタグ</Typography>
+							<TextField
+								fullWidth
+								placeholder="Amazon.jp"
+								value={this.state.amazonjp}
+								onChange={this.handleChange('amazonjp')}
+								onBlur={this.handleBlur('amazonjp', this.props.updateAffiliate)}
+							/>
+							<TextField
+								fullWidth
+								placeholder="iHerb.jp"
+								value={this.state.iherbjp}
+								onChange={this.handleChange('iherbjp')}
+								onBlur={this.handleBlur('iherb', this.props.updateAffiliate)}
+							/>
 					</ListItem>
 				</List>
 			</Paper>

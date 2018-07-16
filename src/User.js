@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { withStyles } from '@material-ui/core/styles';
 
-import MyRecommendTree from 'modules/containers/MyRecommendTree';
+import RecommendTree from 'modules/containers/RecommendTree';
 import UserProfile from 'modules/containers/UserProfile';
 
 const styleSheet = theme => ({
@@ -28,7 +28,7 @@ class  User extends React.Component {
 					<UserProfile id={id} />
 				</div>
 				<div className={classes.content}>
-					<MyRecommendTree
+					<RecommendTree
 						userId={id}
 						recommendBranchId={recommendBranchId || "0"}
 						iineId={iineId}
