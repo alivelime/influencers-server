@@ -14,25 +14,22 @@ import (
 	"google.golang.org/appengine"
 	"google.golang.org/appengine/datastore"
 
-	"github.com/alivelime/influs/affiliate"
+	"github.com/alivelime/influs/model/affiliates"
+	"github.com/alivelime/influs/model/recommends"
 	"github.com/alivelime/influs/site"
 )
 
 func getRecommend(w http.ResponseWriter, r *http.Request) {
 	ctx := appengine.NewContext(r)
 
-	var recommend Recommend
-
-	b, err := base64.StdEncoding.DecodeString(mux.Vars(r)["id"])
-	if err != nil {
-		http.Error(w, fmt.Sprintf("Unable to decode base64 url : %s", err), http.StatusInternalServerError)
+	id, ok := getPathParamBase64(w, r, "id")
+	if !ok {
 		return
 	}
-	web := site.Factory(string(b), affiliate.GetUserTag(0, w, r))
+	web := site.Factory(id, affiliate.NoTag)
 	url := web.GetSimpleURL()
 
-	key := datastore.NewKey(ctx, "Recommend", url, 0, nil)
-	recommend.URL = url
+	recommend, err := recommends.Get(ctx, url)
 
 	if err := datastore.Get(ctx, key, &recommend); err != nil {
 		http.Error(w, fmt.Sprintf("unable datastore  %s", err), http.StatusNotFound)

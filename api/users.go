@@ -1,7 +1,6 @@
 package api
 
 import (
-	"bytes"
 	"encoding/json"
 	"fmt"
 	"io"
@@ -10,161 +9,84 @@ import (
 	"strconv"
 	"time"
 
-	"github.com/gorilla/mux"
-
 	"google.golang.org/appengine"
 	"google.golang.org/appengine/datastore"
 
 	"github.com/alivelime/influs/auth"
+	"github.com/alivelime/influs/model/users"
 	"github.com/alivelime/influs/sns/twitter"
 )
 
 func getUser(w http.ResponseWriter, r *http.Request) {
 	ctx := appengine.NewContext(r)
 
-	var user User
-	id, err := strconv.ParseInt(mux.Vars(r)["id"], 10, 64)
+	id, ok := getPathParamInt64(w, r, "id")
+	if !ok {
+		return
+	}
+
+	user, err := users.Get(ctx, id)
 	if err != nil {
-		http.Error(w, fmt.Sprintf("user id is invalid %s", err), http.StatusInternalServerError)
-		return
-	}
-	key := datastore.NewKey(ctx, "User", "", id, nil)
-	user.ID = id
-
-	if err := datastore.Get(ctx, key, &user); err != nil {
-		http.Error(w, fmt.Sprintf("unable  datastore  %s", err), http.StatusNotFound)
+		http.Error(w, err.Error(), http.StatusNotFound)
 		return
 	}
 
-	res, err := json.Marshal(user)
-	if err != nil {
-		http.Error(w, fmt.Sprintf("Unable to marshal comments to json: %s", err), http.StatusInternalServerError)
-		return
-	}
-
-	w.Header().Set("Content-Type", "application/json")
-	w.Header().Set("Cache-Control", "no-cache")
-	w.Header().Set("Access-Control-Allow-Origin", "*")
-	io.Copy(w, bytes.NewReader(res))
+	response(w, user)
 }
 
 func postUser(w http.ResponseWriter, r *http.Request, id int64) {
-	if ok, _, _ := auth.CheckLogin(w, r); !ok {
+	if ok, _, _ := auth.CheckAdmin(w, r); !ok {
 		return
 	}
 
-	var user User
 	ctx := appengine.NewContext(r)
 
-	body, err := ioutil.ReadAll(io.LimitReader(r.Body, 1048576)) // 1MiB
-	if err != nil {
-		http.Error(w, fmt.Sprintf("unable read body  %s", err), http.StatusInternalServerError)
-		return
-	}
-	defer r.Body.Close()
-
-	if err := json.Unmarshal(body, &user); err != nil {
-		http.Error(w, fmt.Sprintf("unable unmarshal json  %s", err), http.StatusInternalServerError)
+	var user User
+	if ok := readParam(w, r, &user); !ok {
 		return
 	}
 
-	user.CreatedAt = time.Now()
-	user.UpdatedAt = time.Now()
-
-	key := datastore.NewKey(ctx, "User", "", id, nil)
-	k, err := datastore.Put(ctx, key, &user)
-	if err != nil {
-		http.Error(w, fmt.Sprintf("unable put datastore  %s", err), http.StatusInternalServerError)
+	if err := users.Put(ctx, &user); err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 
-	user.ID = k.IntID()
-	res, err := json.Marshal(user)
-	if err != nil {
-		http.Error(w, fmt.Sprintf("Unable to marshal comments to json: %s", err), http.StatusInternalServerError)
-		return
-	}
-
-	w.Header().Set("Content-Type", "application/json")
-	w.Header().Set("Cache-Control", "no-cache")
-	w.Header().Set("Access-Control-Allow-Origin", "*")
-	io.Copy(w, bytes.NewReader(res))
+	response(w, user)
 }
 
 func patchUser(w http.ResponseWriter, r *http.Request) {
 	ctx := appengine.NewContext(r)
 
-	ok, token, secret := auth.CheckLogin(w, r)
+	session, ok := auth.CheckLoginAndGetSession(w, r)
 	if !ok {
 		return
 	}
 
-	data, err := twitter.GetVerify(r, token, secret)
-	if err != nil {
-		http.Error(w, fmt.Sprintf("Cannot auth twitter token: ,%s", err), http.StatusInternalServerError)
+	id, ok := getPathParamInt64(w, r, "id")
+	if !ok {
+		return
+	}
+	// is mime?
+	if id != session.userId {
+		http.Error(w, fmt.Sprintf("user id is different form your. i %d d %d", id, user.ID), http.StatusBadRequest)
 		return
 	}
 
-	// check if user registration.
-	puser, err := getUserFromSNSID(ctx, data.ID)
-	if err != nil {
+	// read and patch
+	user := users.Get(userId)
+	if ok := readParam(w, r, &user); !ok {
+		return
+	}
+	if err := users.Put(ctx, &user); err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 
-	if puser == nil {
-		http.Error(w, "user data not found.", http.StatusNotFound)
-		return
-	}
-	user := *puser
-
-	id, err := strconv.ParseInt(mux.Vars(r)["id"], 10, 64)
-	if err != nil {
-		http.Error(w, fmt.Sprintf("recommendBranch id is invalid %s", err), http.StatusInternalServerError)
-		return
-	}
-	if id != user.ID {
-		http.Error(w, fmt.Sprintf("user id is different form your. i %d d %d", id, user.ID), http.StatusInternalServerError)
-		return
-	}
-
-	// read request json..
-	body, err := ioutil.ReadAll(io.LimitReader(r.Body, 1048576)) // 1MiB
-	if err != nil {
-		http.Error(w, fmt.Sprintf("unable read body  %s", err), http.StatusInternalServerError)
-		return
-	}
-	defer r.Body.Close()
-
-	// patch
-	if err := json.Unmarshal(body, &user); err != nil {
-		http.Error(w, fmt.Sprintf("unable unmarshal json  %s", err), http.StatusInternalServerError)
-		return
-	}
-
-	// put
-	key := datastore.NewKey(ctx, "user", "", user.ID, nil)
-	k, err := datastore.Put(ctx, key, &user)
-	if err != nil {
-		http.Error(w, fmt.Sprintf("unable put datastore  %s", err), http.StatusInternalServerError)
-		return
-	}
-
-	user.ID = k.IntID()
-	res, err := json.Marshal(user)
-	if err != nil {
-		http.Error(w, fmt.Sprintf("Unable to marshal user to json: %s", err), http.StatusInternalServerError)
-		return
-	}
-
-	w.Header().Set("Content-Type", "application/json")
-	w.Header().Set("Cache-Control", "no-cache")
-	w.Header().Set("Access-Control-Allow-Origin", "*")
-	io.Copy(w, bytes.NewReader(res))
+	response(w, user)
 }
 
 func userLeave(w http.ResponseWriter, r *http.Request) {
-	return
+	http.Error(w, "yet no implementation.", http.StatusNotFound)
 }
 
 func HandleUsers(w http.ResponseWriter, r *http.Request) {
@@ -180,10 +102,8 @@ func HandleUsers(w http.ResponseWriter, r *http.Request) {
 func HandleUser(w http.ResponseWriter, r *http.Request) {
 	switch r.Method {
 	case "PUT":
-		strId, _ := mux.Vars(r)["id"]
-		id, err := strconv.ParseInt(strId, 10, 64)
-		if err != nil {
-			http.Error(w, fmt.Sprintf("user id is invalid %s", err), http.StatusInternalServerError)
+		id, ok := getPathParamInt64(w, r, "id")
+		if !ok {
 			return
 		}
 		postUser(w, r, id)

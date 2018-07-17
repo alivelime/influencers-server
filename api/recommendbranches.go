@@ -1,7 +1,6 @@
 package api
 
 import (
-	"bytes"
 	"context"
 	"encoding/json"
 	"fmt"
@@ -19,157 +18,81 @@ import (
 func getRecommendBranch(w http.ResponseWriter, r *http.Request) {
 	ctx := appengine.NewContext(r)
 
-	var recommendBranch RecommendBranch
-	id, err := strconv.ParseInt(mux.Vars(r)["id"], 10, 64)
+	id, ok := getPathParamInt64(w, r, "id")
+	if !ok {
+		return
+	}
+
+	recommendBranch, err := recommendbranches.Get(ctx, id)
 	if err != nil {
-		http.Error(w, fmt.Sprintf("recommendBranch id is invalid %s", err), http.StatusInternalServerError)
-		return
-	}
-	key := datastore.NewKey(ctx, "RecommendBranch", "", id, nil)
-	recommendBranch.ID = id
-
-	if err := datastore.Get(ctx, key, &recommendBranch); err != nil {
-		http.Error(w, fmt.Sprintf("unable  datastore  %s", err), http.StatusNotFound)
+		http.Error(w, err.Error(), http.StatusNotFound)
 		return
 	}
 
-	res, err := json.Marshal(recommendBranch)
-	if err != nil {
-		http.Error(w, fmt.Sprintf("Unable to marshal comments to json: %s", err), http.StatusInternalServerError)
-		return
-	}
-
-	w.Header().Set("Content-Type", "application/json")
-	w.Header().Set("Cache-Control", "no-cache")
-	w.Header().Set("Access-Control-Allow-Origin", "*")
-	io.Copy(w, bytes.NewReader(res))
+	response(w, recommendBranch)
 }
 
 func postRecommendBranch(w http.ResponseWriter, r *http.Request, id int64) {
 	var recommendBranch RecommendBranch
 	ctx := appengine.NewContext(r)
 
-	body, err := ioutil.ReadAll(io.LimitReader(r.Body, 1048576)) // 1MiB
+	session, err := auth.CheckLoginAndGetSession(w, r)
 	if err != nil {
-		http.Error(w, fmt.Sprintf("unable read body  %s", err), http.StatusInternalServerError)
 		return
 	}
-	defer r.Body.Close()
 
-	if err := json.Unmarshal(body, &recommendBranch); err != nil {
-		http.Error(w, fmt.Sprintf("unable unmarshal json  %s", err), http.StatusInternalServerError)
+	if ok := readParam(w, r, &recommendBranch); !ok {
 		return
 	}
 
 	// validation
 	if recommendBranch.UserID == 0 {
-		http.Error(w, fmt.Sprintf("validation error: user id is required. "), http.StatusInternalServerError)
+		http.Error(w, fmt.Sprintf("validation error: user id is required. "), http.StatusBadRequest)
 		return
 	}
 
-	key := datastore.NewKey(ctx, "RecommendBranch", "", id, nil)
-	k, err := datastore.Put(ctx, key, &recommendBranch)
-	if err != nil {
-		http.Error(w, fmt.Sprintf("unable put datastore  %s", err), http.StatusInternalServerError)
+	// put
+	if err := recommendbranches.Put(ctx, &recommendBranch); err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 
-	recommendBranch.ID = k.IntID()
-	res, err := json.Marshal(recommendBranch)
-	if err != nil {
-		http.Error(w, fmt.Sprintf("Unable to marshal comments to json: %s", err), http.StatusInternalServerError)
-		return
-	}
-
-	w.Header().Set("Content-Type", "application/json")
-	w.Header().Set("Cache-Control", "no-cache")
-	w.Header().Set("Access-Control-Allow-Origin", "*")
-	io.Copy(w, bytes.NewReader(res))
-
-	if err := addLinkList(ctx, recommendBranch.PrevID, recommendBranch.NextID, recommendBranch.ID); err != nil {
-		fmt.Printf("Unable to add link list: %s", err)
-		return
-	}
-}
-
-func deleteRecommendBranch(w http.ResponseWriter, r *http.Request) {
-	ctx := appengine.NewContext(r)
-	id, err := strconv.ParseInt(mux.Vars(r)["id"], 10, 64)
-	if err != nil {
-		http.Error(w, fmt.Sprintf("recommendBranch id is invalid %s", err), http.StatusInternalServerError)
-		return
-	}
-
-	key := datastore.NewKey(ctx, "RecommendBranch", "", id, nil)
-
-	// connect link list
-	{
-		var recommendBranch RecommendBranch
-		if err := datastore.Get(ctx, key, &recommendBranch); err != nil {
-			http.Error(w, fmt.Sprintf("unable get delete datastore  %s", err), http.StatusNotFound)
-			return
-		}
-		if err := deleteLinkList(ctx, recommendBranch.PrevID, recommendBranch.NextID); err != nil {
-			http.Error(w, fmt.Sprintf("Unable to add link list: %s", err), http.StatusInternalServerError)
-			return
-		}
-	}
-
-	if err := datastore.Delete(ctx, key); err != nil {
-		http.Error(w, fmt.Sprintf("unable  datastore  %s", err), http.StatusNotFound)
-		return
-	}
-
+	response(recommendBranch)
 }
 
 func patchRecommendBranch(w http.ResponseWriter, r *http.Request) {
 	ctx := appengine.NewContext(r)
 
-	var recommendBranch RecommendBranch
-	id, err := strconv.ParseInt(mux.Vars(r)["id"], 10, 64)
-	if err != nil {
-		http.Error(w, fmt.Sprintf("recommendBranch id is invalid %s", err), http.StatusInternalServerError)
-		return
-	}
-	key := datastore.NewKey(ctx, "RecommendBranch", "", id, nil)
-
-	if err := datastore.Get(ctx, key, &recommendBranch); err != nil {
-		http.Error(w, fmt.Sprintf("unable  datastore  %s", err), http.StatusNotFound)
+	session, ok := auth.CheckLoginAndGetSession(w, r)
+	if !ok {
 		return
 	}
 
-	// read request json..
-	body, err := ioutil.ReadAll(io.LimitReader(r.Body, 1048576)) // 1MiB
-	if err != nil {
-		http.Error(w, fmt.Sprintf("unable read body  %s", err), http.StatusInternalServerError)
+	id, ok := getPathParamInt64(w, r, "id")
+	if !ok {
 		return
 	}
-	defer r.Body.Close()
-
-	// patch
-	if err := json.Unmarshal(body, &recommendBranch); err != nil {
-		http.Error(w, fmt.Sprintf("unable unmarshal json  %s", err), http.StatusInternalServerError)
+	recommendBranch := recommendbranches.Get(ctx, id)
+	// is mime?
+	if recommendBranch.UserID != session.userId {
+		http.Error(w, fmt.Sprintf("user id is different form your. i %d d %d", userId, session.UserID), http.StatusBadRequest)
 		return
 	}
 
-	// put
-	k, err := datastore.Put(ctx, key, &recommendBranch)
-	if err != nil {
-		http.Error(w, fmt.Sprintf("unable put datastore  %s", err), http.StatusInternalServerError)
+	// read and patch
+	if ok := readParam(w, r, &recommendBranch); !ok {
+		return
+	}
+	if err := recommendbranches.Put(ctx, &recommendBranch); err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 
-	recommendBranch.ID = k.IntID()
-	res, err := json.Marshal(recommendBranch)
-	if err != nil {
-		http.Error(w, fmt.Sprintf("Unable to marshal comments to json: %s", err), http.StatusInternalServerError)
-		return
-	}
+	response(w, recommendBranch)
+}
 
-	w.Header().Set("Content-Type", "application/json")
-	w.Header().Set("Cache-Control", "no-cache")
-	w.Header().Set("Access-Control-Allow-Origin", "*")
-	io.Copy(w, bytes.NewReader(res))
+func deleteRecommendBranch(w http.ResponseWriter, r *http.Request) {
+	http.Error(w, "not implement.", http.StatusNotFound)
 }
 
 func HandleRecommendBranches(w http.ResponseWriter, r *http.Request) {

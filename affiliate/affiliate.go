@@ -1,14 +1,38 @@
 package affiliate
 
 import (
+	"context"
 	"net/http"
+
+	"github.com/alivelime/influs/model/affiliates"
 )
 
 type Tag struct {
-	Amazon string
-	Iherb  string
+	Amazonjp string
+	Iherbjp  string
 }
 
-func GetUserTag(userId int64, w http.ResponseWriter, r *http.Request) Tag {
-	return Tag{Amazon: "cal92re-22", Iherb: "ABR2860"}
+const NoTag = Tag{}
+
+func GetSystemTag() Tag {
+	return Tag{
+		Amazonjp: os.Getenv("AWS_ASSOCIATE_TAG"),
+		Iherbjp:  os.Getenv("IHERB_AFFILIATE_TAG"),
+	}
+}
+
+func GetUserTag(ctx context.Context, userId int64) Tag {
+	if userId == 0 {
+		return GetSystemTag()
+	}
+
+	tag, err := model.Get(ctx, userId)
+	if err != nil {
+		return GetSystemTag()
+	}
+
+	return Tag{
+		Amazonjp: tag.Amazonjp,
+		IHerbjp:  tag.Iherbjp,
+	}
 }

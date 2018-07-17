@@ -16,6 +16,7 @@ import (
 	"google.golang.org/appengine/datastore"
 
 	"github.com/alivelime/influs/auth"
+	"github.com/alivelime/influs/model/user"
 	"github.com/alivelime/influs/sns/twitter"
 )
 
@@ -55,7 +56,7 @@ func getTwitterVerify(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// check if user registration.
-	user, err := getUserFromSNSID(ctx, data.ID)
+	user, err := GetUserFromSNSID(ctx, data.ID, data.Type)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
@@ -87,37 +88,6 @@ func getTwitterVerify(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Access-Control-Allow-Origin", "*")
 	io.Copy(w, bytes.NewReader(res))
 
-}
-
-func getUserFromSNSID(ctx context.Context, snsID int64) (*User, error) {
-	// SELECT * FROM Users WHERE SNSID = 'snsID'
-	query := datastore.NewQuery("User").Filter("SNSID =", snsID)
-	count, err := query.Count(ctx)
-	if err != nil {
-		return nil, errors.New("Unable query count. " + err.Error())
-	}
-	if count == 0 {
-		return nil, nil
-	}
-
-	var ret User
-	itr := query.Run(ctx)
-
-	for {
-		var user User
-		key, err := itr.Next(&user)
-		if err == datastore.Done {
-			break
-		}
-		if err != nil {
-			return nil, err
-		}
-
-		user.ID = key.IntID()
-		ret = user
-	}
-
-	return &ret, nil
 }
 
 func twitterRegister(w http.ResponseWriter, r *http.Request) {
