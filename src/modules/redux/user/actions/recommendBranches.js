@@ -7,6 +7,10 @@ export const addRecommendBranch = (id, userId, recommendBranches, token) => ({
 		prevId: id,
 		nextId: recommendBranches[id].nextId,
 	},
+	patch:{
+		prevId: id,
+		nextId: (id in recommendBranches ? recommendBranches[id].nextId : "0"),
+	},
 	token,
 })
 
@@ -23,7 +27,11 @@ export const addSubRecommendBranch = (parentId, userId, recommendBranches, token
 			parentId: parentId,
 			prevId: last || "0",
 			nextId: "0",
-		}
+		},
+		patch:{
+			prevId: last || "0",
+			nextId: "0",
+		},
 		token,
 	};
 }

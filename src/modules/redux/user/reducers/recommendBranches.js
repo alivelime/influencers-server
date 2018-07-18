@@ -9,14 +9,7 @@ export default (state = {}, action) => {
 			let data = action.data;
 			recommendBranches[data.id] = data;
 
-			// set nextId of prev branch.
-			if (data.prevId !== "0") {
-				recommendBranches[data.prevId].nextId = data.id;
-			}
-			// set prevId of next branch.
-			if (data.nextId !== "0") {
-				recommendBranches[data.nextId].prevId = data.id;
-			}
+			// do not set prev and next branch id. use instead patch on sagas.
 
 			return recommendBranches;
 		}

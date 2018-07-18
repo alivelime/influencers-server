@@ -30,45 +30,25 @@ func getRecommend(w http.ResponseWriter, r *http.Request) {
 	url := web.GetSimpleURL()
 
 	recommend, err := recommends.Get(ctx, url)
-
-	if err := datastore.Get(ctx, key, &recommend); err != nil {
-		http.Error(w, fmt.Sprintf("unable datastore  %s", err), http.StatusNotFound)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusNotFound)
 		return
 	}
 
 	recommend.Link = web.GetAffiliateLink()
-
-	res, err := json.Marshal(recommend)
-	if err != nil {
-		http.Error(w, fmt.Sprintf("Unable to marshal recommend to json: %s", err), http.StatusInternalServerError)
-		return
-	}
-
-	w.Header().Set("Content-Type", "application/json")
-	w.Header().Set("Cache-Control", "no-cache")
-	w.Header().Set("Access-Control-Allow-Origin", "*")
-	io.Copy(w, bytes.NewReader(res))
+	response(w, recommend)
 }
 
 func postRecommend(w http.ResponseWriter, r *http.Request) {
 	var recommend Recommend
 	ctx := appengine.NewContext(r)
 
-	body, err := ioutil.ReadAll(io.LimitReader(r.Body, 1048576)) // 1MiB
-	if err != nil {
-		http.Error(w, fmt.Sprintf("unable read body  %s", err), http.StatusInternalServerError)
-		return
-	}
-	defer r.Body.Close()
-
-	if err := json.Unmarshal(body, &recommend); err != nil {
-		http.Error(w, fmt.Sprintf("unable unmarshal json  %s", err), http.StatusInternalServerError)
+	if ok := readParam(w, r, &recommend); !ok {
 		return
 	}
 
-	web := site.Factory(recommend.URL, affiliate.GetUserTag(0, w, r))
+	web := site.Factory(recommend.URL, affiliate.NoTag)
 	url := web.GetSimpleURL()
-	key := datastore.NewKey(ctx, "Recommend", url, 0, nil)
 
 	data, _ := web.GetMeta(w, r)
 	recommend.URL = url
@@ -77,23 +57,13 @@ func postRecommend(w http.ResponseWriter, r *http.Request) {
 	recommend.Image = data.Image
 	recommend.Description = data.Description
 
-	k, err := datastore.Put(ctx, key, &recommend)
-	if err != nil {
-		http.Error(w, fmt.Sprintf("unable put datastore  %s", err), http.StatusInternalServerError)
+	// put
+	if err := recommends.Put(ctx, &recommend); err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 
-	recommend.URL = k.StringID()
-	res, err := json.Marshal(recommend)
-	if err != nil {
-		http.Error(w, fmt.Sprintf("Unable to marshal comments to json: %s", err), http.StatusInternalServerError)
-		return
-	}
-
-	w.Header().Set("Content-Type", "application/json")
-	w.Header().Set("Cache-Control", "no-cache")
-	w.Header().Set("Access-Control-Allow-Origin", "*")
-	io.Copy(w, bytes.NewReader(res))
+	response(w, recommend)
 }
 
 func HandleRecommends(w http.ResponseWriter, r *http.Request) {

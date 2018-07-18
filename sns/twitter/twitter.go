@@ -9,12 +9,13 @@ import (
 	"strings"
 
 	"google.golang.org/appengine"
-	"google.golang.org/appengine/memcache"
 	"google.golang.org/appengine/urlfetch"
 
 	lib "github.com/dghubble/go-twitter/twitter"
 	"github.com/dghubble/oauth1"
 	endpoint "github.com/dghubble/oauth1/twitter"
+
+	"github.com/alivelime/influs/sessions"
 )
 
 type User struct {
@@ -79,17 +80,9 @@ func GetAuthURL(ctx context.Context, redirectTo string) (string, error) {
 		return "", err
 	}
 
-	memcache.Set(ctx, &memcache.Item{
-		Key:        prefixTwitterRequest + requestToken,
-		Value:      []byte(requestSecret),
-		Expiration: time.Duration(5) * time.Second,
-	})
+	sessions.SetCache(ctx, prefixTwitterRequest+requestToken, requestSecret)
 	if len(redirectTo) > 0 {
-		memcache.Set(ctx, &memcache.Item{
-			Key:        prefixLoginRedirectURL + requestToken,
-			Value:      []byte(redirectTo),
-			Expiration: time.Duration(5) * time.Second,
-		})
+		sessions.SetCache(ctx, prefixLoginRedirectURL+requestToken, redirectTo)
 	}
 	authorizationURL, err := config.AuthorizationURL(requestToken)
 	if err != nil {
@@ -108,30 +101,26 @@ func GetCallbackURL(r *http.Request) (string, error) {
 		return "parse auth callback error.", err
 	}
 
-	cache, err := memcache.Get(ctx, prefixTwitterRequest+requestToken)
+	requestSecret, err := sessions.GetCache(ctx, prefixTwitterRequest+requestToken)
 	if err != nil {
 		return "request token not found.", err
 	}
 
-	accessToken, accessSecret, err := config.AccessToken(requestToken, string(cache.Value), verifier)
+	accessToken, accessSecret, err := config.AccessToken(requestToken, requestSecret, verifier)
 	if err != nil {
 		return "access token error.", err
 	}
 
-	memcache.Delete(ctx, prefixTwitterRequest+requestToken)
-	memcache.Set(ctx, &memcache.Item{
-		Key:        prefixTwitterToken + accessToken,
-		Value:      []byte(accessSecret),
-		Expiration: time.Duration(1440) * time.Second,
+	sessions.Set(ctx, sessions.Session{
+		SNSType: Twitter,
+		Token:   prefixTwitterToken + accessToken,
+		Secret:  accessSecret,
 	})
 
 	var redirectTo string
-	cache, err = memcache.Get(ctx, prefixLoginRedirectURL+requestToken)
+	redirecTo, err = sessions.GetCache(ctx, prefixLoginRedirectURL+requestToken)
 	if err != nil {
 		redirectTo = base64.StdEncoding.EncodeToString([]byte(getRedirectDefaultURL()))
-	} else {
-		// cache value is base64 encoded.
-		redirectTo = string(cache.Value)
 	}
 
 	url := getLoginCallbackURL() +
@@ -156,7 +145,7 @@ func GetVerify(r *http.Request, accessToken string, secret string) (User, error)
 		return ret, errors.New("twitter verify credentails failed.." + err.Error())
 	}
 
-	ret.ID = user.ID
+	ret.ID = user.ID // this means sns id
 	ret.Type = Twitter
 	ret.Name = user.Name + "@" + user.ScreenName
 	ret.Avatar = user.ProfileImageURLHttps

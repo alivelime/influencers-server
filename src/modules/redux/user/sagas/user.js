@@ -78,6 +78,7 @@ export function* loadRecommendData(action) {
 			if (typeof token === "string" && token.length > 0) {
 				yield put({type: "ADD_RECOMMEND_BRANCH_REQUEST",
 					token: action.token,
+					patch: {prevId:"0", nextId:"0"},
 					data: {
 						name: "新しいリスト",
 						userId: action.id,

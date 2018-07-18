@@ -99,7 +99,7 @@ const mergeProps = (state, {dispatch}, props) => ({
 				kind: "information",
 			},
 			recommendBranches: state.recommendBranches,
-		}));
+		}, state.session.token));
 
 		dispatch(actions.uncheckAll());
 		dispatch(reset('reviewForm')); 

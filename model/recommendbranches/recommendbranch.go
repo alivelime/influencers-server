@@ -33,7 +33,7 @@ func Put(ctx context.Context, recommendBranch *RecommendBranch) error {
 	return nil
 }
 
-func GetRecommendBranchesByUserID(ctx context.Context, userID int64) (map[int64]RecommendBranch, error) {
+func GetUserRecommendBranches(ctx context.Context, userID int64) (map[int64]RecommendBranch, error) {
 	// SELECT * FROM RecommendBranches WHERE UserID = 'userId' ORDER BY Priority
 	// do not use 'priority prop and sort' but use link list. because link list is better than priotiry sort.
 	query := datastore.NewQuery(Kind).Filter("UserID =", userId)

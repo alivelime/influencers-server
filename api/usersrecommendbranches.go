@@ -12,6 +12,8 @@ import (
 
 	"google.golang.org/appengine"
 	"google.golang.org/appengine/datastore"
+
+	"github.com/alivelime/influs/model/recommendbranches"
 )
 
 func getUserRecommendBranches(w http.ResponseWriter, r *http.Request) {
@@ -21,7 +23,7 @@ func getUserRecommendBranches(w http.ResponseWriter, r *http.Request) {
 	if !ok {
 		return
 	}
-	recommendBranches := recommendbranches.GetRecommendBranchesByUserID(ctx, userId)
+	recommendBranches := recommendbranches.GetUserRecommendBranches(ctx, userId)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return

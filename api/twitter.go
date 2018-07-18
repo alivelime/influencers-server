@@ -16,7 +16,8 @@ import (
 	"google.golang.org/appengine/datastore"
 
 	"github.com/alivelime/influs/auth"
-	"github.com/alivelime/influs/model/user"
+	"github.com/alivelime/influs/model/users"
+	"github.com/alivelime/influs/sessions"
 	"github.com/alivelime/influs/sns/twitter"
 )
 
@@ -44,69 +45,59 @@ func getTwitterCallback(w http.ResponseWriter, r *http.Request) {
 func getTwitterVerify(w http.ResponseWriter, r *http.Request) {
 	ctx := appengine.NewContext(r)
 
-	ok, token, secret := auth.CheckLogin(w, r)
+	session, ok := auth.CheckLogin(w, r)
 	if !ok {
+		http.Error(w, "secret token not found.", http.StatusUnauthorized)
 		return
 	}
 
-	data, err := twitter.GetVerify(r, token, secret)
+	twitterUser, err := twitter.GetVerify(r, session.Token, session.Secret)
 	if err != nil {
 		http.Error(w, fmt.Sprintf("Cannot auth twitter token: ,%s", err), http.StatusInternalServerError)
 		return
 	}
 
 	// check if user registration.
-	user, err := GetUserFromSNSID(ctx, data.ID, data.Type)
+	user, err := users.GetUserBySNSID(ctx, twitterUser.ID, twitterUser.Type)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 
 	var ret User
-	if user == nil {
-		ret.ID = 0
-	} else {
+	if user != nil {
 		ret = *user
 	}
-	ret.SNSID = data.ID
-	ret.SNSType = data.Type
-	ret.Name = data.Name
-	ret.Avatar = data.Avatar
-	ret.Image = data.Image
-	ret.Color = data.Color
-	ret.SNSURL = data.URL
-	ret.SNSPower = data.Followers
+	ret.SNSID = twitterUser.ID
+	ret.SNSType = twitterUser.Type
+	ret.Name = twitterUser.Name
+	ret.Avatar = twitterUser.Avatar
+	ret.Image = twitterUser.Image
+	ret.Color = twitterUser.Color
+	ret.SNSURL = twitterUser.URL
+	ret.SNSPower = twitterUser.Followers
 
-	res, err := json.Marshal(ret)
-	if err != nil {
-		http.Error(w, fmt.Sprintf("Unable to marshal session verify: %s", err), http.StatusInternalServerError)
-		return
-	}
+	sessions.Set(ctx, sessions.Session{
+		User:   ret,
+		Token:  token,
+		Secret: secret,
+	})
 
-	w.Header().Set("Content-Type", "application/json")
-	w.Header().Set("Cache-Control", "no-cache")
-	w.Header().Set("Access-Control-Allow-Origin", "*")
-	io.Copy(w, bytes.NewReader(res))
-
+	response(w, ret)
 }
 
 func twitterRegister(w http.ResponseWriter, r *http.Request) {
 	ctx := appengine.NewContext(r)
 
-	ok, token, secret := auth.CheckLogin(w, r)
+	session, ok := auth.CheckLogin(w, r)
 	if !ok {
-		return
-	}
-
-	data, err := twitter.GetVerify(r, token, secret)
-	if err != nil {
-		http.Error(w, fmt.Sprintf("Cannot auth twitter token: ,%s", err), http.StatusInternalServerError)
+		http.Error(w, "secret token not found.", http.StatusUnauthorized)
 		return
 	}
 
 	// check if user registration.
 	{
-		user, err := getUserFromSNSID(ctx, data.ID)
+		user, err := users.GetUserBySNSID(ctx, session.User.SNSID, session.User.SNSType)
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
@@ -117,37 +108,18 @@ func twitterRegister(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
-	var user User
-	user.SNSID = data.ID
-	user.SNSType = data.Type
-	user.Name = data.Name
-	user.Avatar = data.Avatar
-	user.Image = data.Image
-	user.Color = data.Color
-	user.SNSURL = data.URL
-	user.SNSPower = data.Followers
+	user := session.User
 	user.CreatedAt = time.Now()
 	user.UpdatedAt = time.Now()
 
-	key := datastore.NewIncompleteKey(ctx, "User", nil)
-	k, err := datastore.Put(ctx, key, &user)
-	if err != nil {
+	if err := users.Put(ctx, &user); err != nil {
 		http.Error(w, fmt.Sprintf("unable put datastore  %s", err), http.StatusInternalServerError)
 		return
 	}
 
-	user.ID = k.IntID()
-	res, err := json.Marshal(user)
-	if err != nil {
-		http.Error(w, fmt.Sprintf("Unable to marshal register user: %s", err), http.StatusInternalServerError)
-		return
-	}
-
-	w.Header().Set("Content-Type", "application/json")
-	w.Header().Set("Cache-Control", "no-cache")
-	w.Header().Set("Access-Control-Allow-Origin", "*")
-	io.Copy(w, bytes.NewReader(res))
-
+	session.User = user
+	sessions.Set(ctx, session)
+	resposen(w, user)
 }
 
 func HandleTwitterAuth(w http.ResponseWriter, r *http.Request) {

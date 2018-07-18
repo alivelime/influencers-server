@@ -26,3 +26,6 @@ type NagesenMessage struct {
 	Amount  float64 `json:"amount" datastore:",noindex"`
 	Message string  `json:"message" datastore:",noindex"`
 }
+
+type Empty struct {
+}

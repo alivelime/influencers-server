@@ -37,7 +37,7 @@ func getUserAffiliate(w http.ResponseWriter, r *http.Request) {
 func patchAffiliate(w http.ResponseWriter, r *http.Request) {
 	ctx := appengine.NewContext(r)
 
-	session, ok := auth.CheckLoginAndGetSession(w, r)
+	session, ok := auth.CheckLogin(w, r)
 	if !ok {
 		return
 	}
@@ -47,13 +47,13 @@ func patchAffiliate(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	// is mime?
-	if userId != session.userId {
+	if userId != session.User.ID {
 		http.Error(w, fmt.Sprintf("user id is different form your. i %d d %d", userId, session.UserID), http.StatusBadRequest)
 		return
 	}
 
 	// read and patch
-	affiliate := affiliates.Get(ctx, userId)
+	affiliate, _ := affiliates.Get(ctx, userId)
 	if ok := readParam(w, r, &affiliate); !ok {
 		return
 	}

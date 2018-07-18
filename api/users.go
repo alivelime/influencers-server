@@ -45,6 +45,7 @@ func postUser(w http.ResponseWriter, r *http.Request, id int64) {
 	if ok := readParam(w, r, &user); !ok {
 		return
 	}
+	user.ID = id
 
 	if err := users.Put(ctx, &user); err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -57,7 +58,7 @@ func postUser(w http.ResponseWriter, r *http.Request, id int64) {
 func patchUser(w http.ResponseWriter, r *http.Request) {
 	ctx := appengine.NewContext(r)
 
-	session, ok := auth.CheckLoginAndGetSession(w, r)
+	session, ok := auth.CheckLogin(w, r)
 	if !ok {
 		return
 	}
@@ -67,13 +68,18 @@ func patchUser(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	// is mime?
-	if id != session.userId {
+	if id != session.User.ID {
 		http.Error(w, fmt.Sprintf("user id is different form your. i %d d %d", id, user.ID), http.StatusBadRequest)
 		return
 	}
 
 	// read and patch
-	user := users.Get(userId)
+	user, err := users.Get(userId)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusNotFound)
+		return
+	}
+
 	if ok := readParam(w, r, &user); !ok {
 		return
 	}

@@ -7,6 +7,8 @@ import (
 
 	"google.golang.org/appengine"
 	"google.golang.org/appengine/memcache"
+
+	"github.com/alivelime/influs/sessions"
 )
 
 func getAdminKey() string {
@@ -14,7 +16,7 @@ func getAdminKey() string {
 }
 
 // follow RFC6750
-func CheckLogin(w http.ResponseWriter, r *http.Request) (ok bool, token string, secret string) {
+func CheckLogin(w http.ResponseWriter, r *http.Request) (session sessions.Session, ok bool) {
 	ctx := appengine.NewContext(r)
 
 	// check header.
@@ -36,19 +38,18 @@ func CheckLogin(w http.ResponseWriter, r *http.Request) (ok bool, token string, 
 		return
 	}
 
-	// check token is enable
-	cache, err := memcache.Get(ctx, token)
+	session, err := session.Get(token)
 	if err != nil {
-		http.Error(w, "secret token not found.", http.StatusUnauthorized)
-		return false, "", ""
+		http.Error(w, err.Error(), http.StatusUnauthorized)
+		return
 	}
 
+	// check token is enable
 	ok = true
-	secret = string(cache.Value)
 	return
 }
 
-func CheckAdmin(w http.ResponseWriter, r *http.Request) (ok bool, token string) {
+func CheckAdmin(w http.ResponseWriter, r *http.Request) (token string, ok bool) {
 	ctx := appengine.NewContext(r)
 
 	// check header.
@@ -77,6 +78,5 @@ func CheckAdmin(w http.ResponseWriter, r *http.Request) (ok bool, token string) 
 	}
 
 	ok = true
-	secret = string(cache.Value)
 	return
 }

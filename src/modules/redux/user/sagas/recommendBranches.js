@@ -5,10 +5,20 @@ export function* add(action) {
 	const res = yield call(postAPI, `/api/recommend-branches`, action.data, action.token);
 	if (Object.keys(res).length > 0) {
 		yield put({type: "ADD_RECOMMEND_BRANCH_SUCCEEDED", data: res});
-		return res;
+
+		let patch = [];
+		if (action.patch.prevId !== "0") {
+			patch.push({id: action.patch.prevId, nextId: res.id});
+		}
+		if (action.patch.nextId !== "0") {
+			patch.push({id: action.patch.nextId, prevId: res.id});
+		}
+		if (patch.length > 0) {
+			yield put({type: "UPDATE_RECOMMEND_BRANCHES_REQUEST", patch});
+		}
+
 	} else {
 		yield put({type: "ADD_RECOMMEND_BRANCH_FAILED", data: res});
-		return {};
 	}
 
 	return {};
@@ -45,9 +55,8 @@ export function* updateMulti(action) {
 	yield put({type: "UPDATE_RECOMMEND_BRANCHES_SUCCEEDED", data: res});
 }
 export function* deleteMulti(action) {
-	action.ids.forEach(async (id) => {
-		// call one by one. do not call concurrency. data will be broken.
-		await call(deleteAPI, `/api/recommend-branches/${id}`, token);
+	action.ids.forEach((id) => {
+		call(deleteAPI, `/api/recommend-branches/${id}`, token);
 	});
 	yield put({type: "DELETE_RECOMMEND_BRANCH_SUCCEEDED", ids: action.ids});
 }

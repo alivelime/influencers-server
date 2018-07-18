@@ -14,90 +14,97 @@ import (
 
 	"google.golang.org/appengine"
 	"google.golang.org/appengine/datastore"
+
+	"github.com/alivelime/influs/auth"
+	"github.com/alivelime/influs/model/reviews"
 )
 
 func getReview(w http.ResponseWriter, r *http.Request) {
 	ctx := appengine.NewContext(r)
 
 	var review Review
-	id, err := strconv.ParseInt(mux.Vars(r)["id"], 10, 64)
+	id, ok := getPathParamInt64(w, r, "id")
+	if !ok {
+		return
+	}
+
+	review, err := reviews.Get(ctx, id)
 	if err != nil {
-		http.Error(w, fmt.Sprintf("review id is invalid %s", err), http.StatusInternalServerError)
-		return
-	}
-	key := datastore.NewKey(ctx, "Review", "", id, nil)
-	review.ID = id
-
-	if err := datastore.Get(ctx, key, &review); err != nil {
-		http.Error(w, fmt.Sprintf("unable datastore  %s", err), http.StatusNotFound)
+		http.Error(w, err.Error(), http.StatusNotFound)
 		return
 	}
 
-	res, err := json.Marshal(review)
-	if err != nil {
-		http.Error(w, fmt.Sprintf("Unable to marshal comments to json: %s", err), http.StatusInternalServerError)
-		return
-	}
-
-	w.Header().Set("Content-Type", "application/json")
-	w.Header().Set("Cache-Control", "no-cache")
-	w.Header().Set("Access-Control-Allow-Origin", "*")
-	io.Copy(w, bytes.NewReader(res))
+	response(w, review)
 }
 
 func postReview(w http.ResponseWriter, r *http.Request) {
 	var review Review
 	ctx := appengine.NewContext(r)
 
-	body, err := ioutil.ReadAll(io.LimitReader(r.Body, 1048576)) // 1MiB
+	session, err := auth.CheckLogin(w, r)
 	if err != nil {
-		http.Error(w, fmt.Sprintf("unable read body  %s", err), http.StatusInternalServerError)
-		return
-	}
-	defer r.Body.Close()
-
-	if err := json.Unmarshal(body, &review); err != nil {
-		http.Error(w, fmt.Sprintf("unable unmarshal json  %s", err), http.StatusInternalServerError)
 		return
 	}
 
-	review.CreatedAt = time.Now()
-
-	key := datastore.NewKey(ctx, "Review", "", 0, nil)
-	k, err := datastore.Put(ctx, key, &review)
-	if err != nil {
-		http.Error(w, fmt.Sprintf("unable put datastore  %s", err), http.StatusInternalServerError)
+	if ok := readParam(w, r, &review); !ok {
 		return
 	}
 
-	review.ID = k.IntID()
-	res, err := json.Marshal(review)
-	if err != nil {
-		http.Error(w, fmt.Sprintf("Unable to marshal comments to json: %s", err), http.StatusInternalServerError)
+	// validation
+	if review.UserID == 0 {
+		http.Error(w, fmt.Sprintf("validation error: user id is required. "), http.StatusBadRequest)
+		return
+	}
+	// is mine?
+	if session.User.ID != review.UserID {
+		http.Error(w,
+			fmt.Sprintf("Not allow to post onother users .You %d, Param %d", session.UserID, recommendBranch.UserID),
+			http.StatusBadRequest)
 		return
 	}
 
-	w.Header().Set("Content-Type", "application/json")
-	w.Header().Set("Cache-Control", "no-cache")
-	w.Header().Set("Access-Control-Allow-Origin", "*")
-	io.Copy(w, bytes.NewReader(res))
+	// put
+	if err := reviews.Put(ctx, &review); err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	response(w, review)
 }
 
 func deleteReview(w http.ResponseWriter, r *http.Request) {
 	ctx := appengine.NewContext(r)
-	id, err := strconv.ParseInt(mux.Vars(r)["id"], 10, 64)
+
+	session, err := auth.CheckLogin(w, r)
 	if err != nil {
-		http.Error(w, fmt.Sprintf("review id is invalid %s", err), http.StatusInternalServerError)
 		return
 	}
 
-	key := datastore.NewKey(ctx, "Review", "", id, nil)
-
-	if err := datastore.Delete(ctx, key); err != nil {
-		http.Error(w, fmt.Sprintf("unable  datastore  %s", err), http.StatusNotFound)
+	id, ok := getPathParamInt64(w, r, "id")
+	if !ok {
 		return
 	}
 
+	review, err := reviews.Get(ctx, id)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusNotFound)
+		return
+	}
+
+	// is mine?
+	if session.User.ID != review.UserID {
+		http.Error(w,
+			fmt.Sprintf("Not allow to delete onother users .You %d, Param %d", session.UserID, review.UserID),
+			http.StatusBadRequest)
+		return
+	}
+
+	if err := reviews.Delete(ctx, id); err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	response(w, Empty{})
 }
 
 func HandleReviews(w http.ResponseWriter, r *http.Request) {

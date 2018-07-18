@@ -4,7 +4,7 @@ import (
 	"context"
 	"net/http"
 
-	"github.com/alivelime/influs/model/affiliates"
+	model "github.com/alivelime/influs/model/affiliates"
 )
 
 type Tag struct {
