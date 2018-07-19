@@ -14,7 +14,7 @@ export function* add(action) {
 			patch.push({id: action.patch.nextId, prevId: res.id});
 		}
 		if (patch.length > 0) {
-			yield put({type: "UPDATE_RECOMMEND_BRANCHES_REQUEST", patch});
+			yield put({type: "UPDATE_RECOMMEND_BRANCHES_REQUEST", patch, token: action.token});
 		}
 
 	} else {

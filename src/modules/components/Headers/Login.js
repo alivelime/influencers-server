@@ -30,13 +30,13 @@ function Header(props) {
 					<Typography variant="title" color="inherit" className={classes.flex} >
             <Link to='/'>インフルず</Link>
           </Typography>
-					<Link to={`/users/${this.props.session.user.id}`}>
-						<Avatar src={this.props.session.user.avatar} />
+					<Link to={`/users/${props.session.user.id}`}>
+						<Avatar src={props.session.user.avatar} />
 					</Link>
 					<Button
 						color="primary"
 						variant="contained"
-						onClick={this.props.logout}
+						onClick={props.logout}
 					>logout</Button>
 				</Toolbar>
 			</AppBar>

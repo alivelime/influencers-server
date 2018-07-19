@@ -5,6 +5,10 @@ import { withStyles } from '@material-ui/core/styles';
 import Avatar from '@material-ui/core/Avatar';
 import Typography from '@material-ui/core/Typography';
 import Paper from '@material-ui/core/Paper';
+import Collapse from '@material-ui/core/Collapse';
+import IconButton from '@material-ui/core/IconButton';
+import ExpandLess from '@material-ui/icons/ExpandLess';
+import ExpandMore from '@material-ui/icons/ExpandMore';
 
 import Link from 'modules/components/Link';
 
@@ -19,10 +23,18 @@ const styleSheet = theme => ({
 	image: {
 		width: "100%",
 	},
+	icon: {
+		marginLeft: "auto",
+		width: '1.6em',
+		height: '1.6em',
+	},
 });
 
 class Profile extends React.Component {
 
+	state = {
+		isOpen: !this.props.isMine,
+	};
 	componentDidMount() {
 		this.props.loadUser();
 	}
@@ -43,17 +55,25 @@ class Profile extends React.Component {
 					<Link to={data.link} variant="primary">
 						<Typography variant="display1">{data.name}さん</Typography>
 					</Link>
+					<IconButton
+						className={classes.icon}
+						onClick={() => {this.setState({isOpen: !this.state.isOpen})}}
+					>
+						{this.state.isOpen ? <ExpandLess className={classes.icon}/> : <ExpandMore className={classes.icon}/>}
+					</IconButton>
 				</div>
-				{this.props.isMine
-					? <My
-						data={this.props.data}
-						updateUser={this.props.updateUser}
-						deleteUser={this.props.deleteUser}
-						loadAffiliate={this.props.loadAffiliate}
-						updateAffiliate={this.props.updateAffiliate}
-					/>
-					: <Other data={this.props.data}/>
-				}
+				<Collapse in={this.state.isOpen} tomeout="auto">
+					{this.props.isMine
+						? <My
+							data={this.props.data}
+							updateUser={this.props.updateUser}
+							deleteUser={this.props.deleteUser}
+							loadAffiliate={this.props.loadAffiliate}
+							updateAffiliate={this.props.updateAffiliate}
+						/>
+						: <Other data={this.props.data}/>
+					}
+				</Collapse>
 			</Paper>
 		);
 	}

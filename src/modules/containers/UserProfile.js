@@ -19,7 +19,7 @@ const mergeProps = (state, {dispatch}, props) => ({
 	updateAffiliate: data => dispatch(updateAffiliate(props.id, data, state.session.token)),
 
 	data: state.user,
-	isMine: (state.user.id === state.session.user.id),
+	isMine: (state.session.user.id !== undefined && state.user.id === state.session.user.id),
 });
 export default connect(
   mapStateToProps,

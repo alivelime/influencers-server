@@ -50,6 +50,7 @@ func patchUserAffiliate(w http.ResponseWriter, r *http.Request) {
 	if ok := readParam(w, r, &affiliate); !ok {
 		return
 	}
+	affiliate.UserID = userId
 	if err := affiliates.Put(ctx, &affiliate); err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return

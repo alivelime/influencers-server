@@ -6,16 +6,19 @@ import Typography from '@material-ui/core/Typography';
 import Paper from '@material-ui/core/Paper';
 
 const styleSheet = theme => ({
+	content: {
+		padding: theme.spacing.unit * 2,
+	},
 });
 
 class Profile extends React.Component {
 
 	render() {
-		const { data } = this.props;
+		const { classes, data } = this.props;
 
 		return (
-			<Paper>
-				<Typography variant="body2">{data.memo}</Typography>
+			<Paper className={classes.content}>
+				<Typography variant="body1">{data.memo}</Typography>
 			</Paper>
 		);
 	}

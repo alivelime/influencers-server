@@ -31,28 +31,33 @@ class RecommendTree extends React.Component {
 
 		return (
 			<div className={classes.root}>
-				<div className={classes.content}>
-					<ReviewForm
-						recommendBranchId={"0"}
-						userId={this.props.userId}
-						iineId={this.props.iineId}
-						searchParent
+				{this.props.isMine &&
+					<div className={classes.content}>
+						<ReviewForm
+							recommendBranchId={"0"}
+							userId={this.props.userId}
+							iineId={this.props.iineId}
+							searchParent
+						/>
+					</div>
+				}
+				{this.props.isMine &&
+					<RecommendToolbox 
+						addRecommendBranch={this.props.addRecommendBranch}
+						addSubRecommendBranch={this.props.addSubRecommendBranch}
+						deleteRecommendBranches={this.props.deleteRecommendBranches}
+						moveUpRecommendBranch={this.props.moveUpRecommendBranch}
+						moveDownRecommendBranch={this.props.moveDownRecommendBranch}
+						moveRecommendBranches={this.props.moveRecommendBranches}
 					/>
-				</div>
-				<RecommendToolbox 
-					addRecommendBranch={this.props.addRecommendBranch}
-					addSubRecommendBranch={this.props.addSubRecommendBranch}
-					deleteRecommendBranches={this.props.deleteRecommendBranches}
-					moveUpRecommendBranch={this.props.moveUpRecommendBranch}
-					moveDownRecommendBranch={this.props.moveDownRecommendBranch}
-					moveRecommendBranches={this.props.moveRecommendBranches}
-				/>
+				}
 				{(this.props.dataLoaded) 
 					? (
 							<List component='nav' className={classes.list}>
 								<RecommendList
 									id={this.props.recommendBranchId}
 									open={this.props.open}
+									isMine={this.props.isMine}
 								/>
 							</List>
 						)

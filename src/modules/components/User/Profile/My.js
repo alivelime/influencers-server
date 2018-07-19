@@ -27,8 +27,8 @@ class MyProfile extends React.Component {
 	  },
 		memo: this.props.data.memo,
 		link: this.props.data.link,
-		amazonjp: this.props.data.affiliate.amazonjp,
-		iherbjp: this.props.data.affiliate.iherbjp,
+		amazonjp: this.props.data.affiliate.amazonjp || '',
+		iherbjp: this.props.data.affiliate.iherbjp || '',
 	};
 
 	handleChange = name => event => {

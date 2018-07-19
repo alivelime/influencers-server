@@ -9,6 +9,7 @@ const mapStateToProps = state => ({
 	reviews: state.reviews,
 	recommends: state.recommends,
 	checker: state.checker,
+	token: state.session.token,
 });
 const mapDispatchToProps = dispatch => ({ dispatch });
 const mergeProps = (state, {dispatch}, props) => {
@@ -41,7 +42,7 @@ const mergeProps = (state, {dispatch}, props) => {
 					: dispatch(actions.checkRecommendBranch(props.id)))
 			}
 	,
-	handleSubmit: name => {dispatch(actions.updateRecommendBranch({id: props.id, name: name}))},
+	handleSubmit: name => {dispatch(actions.updateRecommendBranch({id: props.id, name: name}, state.token))},
 	isOpen: props.id !== "0" && state.recommendBranches[props.id].isOpen,
 	isChecked: isChecked,
 }
@@ -128,7 +129,7 @@ function getChildren(state, parentId, dispatch) {
 		}
 
 		if (patchIds.length > 0) {
-			dispatch(actions.updateRecommendBranches(patchIds.map(id => recommendBranches[id])));
+			dispatch(actions.updateRecommendBranches(patchIds.map(id => recommendBranches[id]), state.token));
 		}
 	} else {
 		// if recommend branch is empty.

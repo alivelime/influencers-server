@@ -17,6 +17,9 @@ export default (state = {state: '', user: {}, token: ''}, action) => {
 		case 'LEAVE_USER_SUCCEEDED':
 			return {state: '', user: {}, token: ''}
 
+		case 'LOGOUT':
+			return {state: '', user: {}, token: ''}
+
 		default:
 			return state;
 	}
