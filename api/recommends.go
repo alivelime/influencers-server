@@ -1,20 +1,12 @@
 package api
 
 import (
-	"bytes"
-	"encoding/base64"
-	"encoding/json"
 	"fmt"
-	"io"
-	"io/ioutil"
 	"net/http"
 
-	"github.com/gorilla/mux"
-
 	"google.golang.org/appengine"
-	"google.golang.org/appengine/datastore"
 
-	"github.com/alivelime/influs/model/affiliates"
+	"github.com/alivelime/influs/affiliate"
 	"github.com/alivelime/influs/model/recommends"
 	"github.com/alivelime/influs/site"
 )
@@ -40,7 +32,7 @@ func getRecommend(w http.ResponseWriter, r *http.Request) {
 }
 
 func postRecommend(w http.ResponseWriter, r *http.Request) {
-	var recommend Recommend
+	var recommend recommends.Recommend
 	ctx := appengine.NewContext(r)
 
 	if ok := readParam(w, r, &recommend); !ok {

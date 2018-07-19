@@ -47,7 +47,7 @@ export function* updateMulti(action) {
 	yield Promise.all(
 		action.data.map((data) => {
 			return (async () => {
-				res.push(await patchAPI(`/api/recommend-branches/${data.id}`, data, token));
+				res.push(await patchAPI(`/api/recommend-branches/${data.id}`, data, action.token));
 			})()
 		})
 	);
@@ -56,7 +56,7 @@ export function* updateMulti(action) {
 }
 export function* deleteMulti(action) {
 	action.ids.forEach((id) => {
-		call(deleteAPI, `/api/recommend-branches/${id}`, token);
+		call(deleteAPI, `/api/recommend-branches/${id}`, action.token);
 	});
 	yield put({type: "DELETE_RECOMMEND_BRANCH_SUCCEEDED", ids: action.ids});
 }

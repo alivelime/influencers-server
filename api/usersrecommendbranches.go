@@ -1,17 +1,10 @@
 package api
 
 import (
-	"bytes"
-	"encoding/json"
 	"fmt"
-	"io"
 	"net/http"
-	"strconv"
-
-	"github.com/gorilla/mux"
 
 	"google.golang.org/appengine"
-	"google.golang.org/appengine/datastore"
 
 	"github.com/alivelime/influs/model/recommendbranches"
 )
@@ -23,7 +16,7 @@ func getUserRecommendBranches(w http.ResponseWriter, r *http.Request) {
 	if !ok {
 		return
 	}
-	recommendBranches := recommendbranches.GetUserRecommendBranches(ctx, userId)
+	recommendBranches, err := recommendbranches.GetUserRecommendBranches(ctx, userId)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return

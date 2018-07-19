@@ -1,17 +1,10 @@
 package api
 
 import (
-	"bytes"
-	"encoding/json"
 	"fmt"
-	"io"
 	"net/http"
-	"strconv"
-
-	"github.com/gorilla/mux"
 
 	"google.golang.org/appengine"
-	"google.golang.org/appengine/datastore"
 
 	"github.com/alivelime/influs/auth"
 	"github.com/alivelime/influs/model/affiliates"
@@ -34,7 +27,7 @@ func getUserAffiliate(w http.ResponseWriter, r *http.Request) {
 	response(w, affiliate)
 }
 
-func patchAffiliate(w http.ResponseWriter, r *http.Request) {
+func patchUserAffiliate(w http.ResponseWriter, r *http.Request) {
 	ctx := appengine.NewContext(r)
 
 	session, ok := auth.CheckLogin(w, r)
@@ -48,7 +41,7 @@ func patchAffiliate(w http.ResponseWriter, r *http.Request) {
 	}
 	// is mime?
 	if userId != session.User.ID {
-		http.Error(w, fmt.Sprintf("user id is different form your. i %d d %d", userId, session.UserID), http.StatusBadRequest)
+		http.Error(w, fmt.Sprintf("user id is different form your. i %d d %d", userId, session.User.ID), http.StatusBadRequest)
 		return
 	}
 

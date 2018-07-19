@@ -1,20 +1,13 @@
 package api
 
 import (
-	"encoding/json"
 	"fmt"
-	"io"
-	"io/ioutil"
 	"net/http"
-	"strconv"
-	"time"
 
 	"google.golang.org/appengine"
-	"google.golang.org/appengine/datastore"
 
 	"github.com/alivelime/influs/auth"
 	"github.com/alivelime/influs/model/users"
-	"github.com/alivelime/influs/sns/twitter"
 )
 
 func getUser(w http.ResponseWriter, r *http.Request) {
@@ -35,13 +28,13 @@ func getUser(w http.ResponseWriter, r *http.Request) {
 }
 
 func postUser(w http.ResponseWriter, r *http.Request, id int64) {
-	if ok, _, _ := auth.CheckAdmin(w, r); !ok {
+	if ok := auth.CheckAdmin(w, r); !ok {
 		return
 	}
 
 	ctx := appengine.NewContext(r)
 
-	var user User
+	var user users.User
 	if ok := readParam(w, r, &user); !ok {
 		return
 	}
@@ -69,12 +62,12 @@ func patchUser(w http.ResponseWriter, r *http.Request) {
 	}
 	// is mime?
 	if id != session.User.ID {
-		http.Error(w, fmt.Sprintf("user id is different form your. i %d d %d", id, user.ID), http.StatusBadRequest)
+		http.Error(w, fmt.Sprintf("user id is different form your. i %d d %d", id, session.User.ID), http.StatusBadRequest)
 		return
 	}
 
 	// read and patch
-	user, err := users.Get(userId)
+	user, err := users.Get(ctx, id)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusNotFound)
 		return

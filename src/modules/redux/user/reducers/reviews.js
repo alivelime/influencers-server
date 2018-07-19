@@ -4,7 +4,7 @@ export default (state = {}, action) => {
 			Object.keys(action.reviews).forEach((id) => {
 				action.reviews[id]["meta"] = action.recommends[action.reviews[id].evidence];
 			});
-			return action.reviews;
+			return action.reviews || state;
 
 		case 'ADD_REVIEW_SUCCEEDED':
 			return {...state, [action.review.id]: action.review};

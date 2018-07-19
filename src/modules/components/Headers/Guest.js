@@ -2,6 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { withStyles } from '@material-ui/core/styles';
 
+import Button from '@material-ui/core/Typography';
 import Typography from '@material-ui/core/Typography';
 import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
@@ -18,7 +19,7 @@ const styles = {
   },
 };
 
-class Header extends React.Componen {
+class Header extends React.Component {
 	state = {
 		open: false,
 	};
@@ -35,6 +36,7 @@ class Header extends React.Componen {
 							<Link to='/'>インフルず</Link>
 						</Typography>
 						<Button
+							color="primary"
 							onClick={() => {this.setState({open: true})}}
 						>SIGN/LOG IN</Button>
 						<Login

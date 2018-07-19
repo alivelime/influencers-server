@@ -1,7 +1,9 @@
 package sessions
 
 import (
+	"context"
 	"encoding/json"
+	"time"
 
 	"google.golang.org/appengine/memcache"
 
@@ -14,7 +16,7 @@ type Session struct {
 	Secret string
 }
 
-func Set(s session.Session) {
+func Set(ctx context.Context, s Session) {
 	str, _ := json.Marshal(s)
 	memcache.Set(ctx, &memcache.Item{
 		Key:        s.Token,
@@ -22,24 +24,27 @@ func Set(s session.Session) {
 		Expiration: time.Duration(1440) * time.Minute,
 	})
 }
-func Get(token string) (session.Session, error) {
-	var s session.Session
+func Get(ctx context.Context, token string) (Session, error) {
+	var s Session
 	cache, err := memcache.Get(ctx, token)
 	if err != nil {
 		return s, err
 	}
-	err = json.Unmarshal(string(str.Value), &s)
+	err = json.Unmarshal(cache.Value, &s)
 	return s, err
 }
 
-func SetCache(ctx, key string, value string) {
+func SetCache(ctx context.Context, key string, value string) {
 	memcache.Set(ctx, &memcache.Item{
 		Key:        key,
 		Value:      []byte(value),
 		Expiration: time.Duration(5) * time.Minute,
 	})
 }
-func GetCache(ctx context.Context, key string) (string, err) {
+func GetCache(ctx context.Context, key string) (string, error) {
 	cache, err := memcache.Get(ctx, key)
-	return string(cache.Value), err
+	if err != nil {
+		return "", err
+	}
+	return string(cache.Value), nil
 }

@@ -13,6 +13,7 @@ import Other from 'modules/components/User/Profile/Other';
 
 const styleSheet = theme => ({
 	header: {
+		display: "flex",
 		padding: theme.spacing.unit * 2,
 	},
 	image: {
@@ -36,8 +37,10 @@ class Profile extends React.Component {
 					<img src={data.image} alt="profile" className={classes.image} />
 				</a>
 				<div className={classes.header}>
-					<Link to={data.link} variant="primary">
+					<Link to={data.snsUrl} variant="primary">
 						<Avatar src={data.avatar} />
+					</Link>
+					<Link to={data.link} variant="primary">
 						<Typography variant="display1">{data.name}さん</Typography>
 					</Link>
 				</div>
@@ -46,6 +49,8 @@ class Profile extends React.Component {
 						data={this.props.data}
 						updateUser={this.props.updateUser}
 						deleteUser={this.props.deleteUser}
+						loadAffiliate={this.props.loadAffiliate}
+						updateAffiliate={this.props.updateAffiliate}
 					/>
 					: <Other data={this.props.data}/>
 				}

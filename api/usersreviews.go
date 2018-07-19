@@ -1,17 +1,10 @@
 package api
 
 import (
-	"bytes"
-	"encoding/json"
 	"fmt"
-	"io"
 	"net/http"
-	"strconv"
-
-	"github.com/gorilla/mux"
 
 	"google.golang.org/appengine"
-	"google.golang.org/appengine/datastore"
 
 	"github.com/alivelime/influs/model/reviews"
 )

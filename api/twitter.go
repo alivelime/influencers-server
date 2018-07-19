@@ -1,19 +1,11 @@
 package api
 
 import (
-	"bytes"
-	"context"
-	"encoding/json"
-	"errors"
 	"fmt"
-	"io"
 	"net/http"
 	"time"
 
-	"github.com/gorilla/mux"
-
 	"google.golang.org/appengine"
-	"google.golang.org/appengine/datastore"
 
 	"github.com/alivelime/influs/auth"
 	"github.com/alivelime/influs/model/users"
@@ -25,7 +17,7 @@ func getTwitterAuth(w http.ResponseWriter, r *http.Request) {
 	ctx := appengine.NewContext(r)
 
 	// redirectTo is base64 encoded. but no need to decode.
-	redirectTo := mux.Vars(r)["to"]
+	redirectTo, _ := getPathParamString(w, r, "to", false)
 	url, err := twitter.GetAuthURL(ctx, redirectTo)
 	if err != nil {
 		http.Error(w, fmt.Sprintf("Cannot auth twitter: %s", err), http.StatusInternalServerError)
@@ -64,26 +56,27 @@ func getTwitterVerify(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	var ret User
-	if user != nil {
-		ret = *user
+	user.SNSID = twitterUser.ID
+	user.SNSType = twitterUser.Type
+	user.Name = twitterUser.Name
+	user.Avatar = twitterUser.Avatar
+	user.Image = twitterUser.Image
+	user.Color = twitterUser.Color
+	user.SNSURL = twitterUser.URL
+	user.SNSPower = twitterUser.Followers
+
+	// update if user exists.
+	if user.ID != 0 {
+		_ = users.Put(ctx, &user)
 	}
-	ret.SNSID = twitterUser.ID
-	ret.SNSType = twitterUser.Type
-	ret.Name = twitterUser.Name
-	ret.Avatar = twitterUser.Avatar
-	ret.Image = twitterUser.Image
-	ret.Color = twitterUser.Color
-	ret.SNSURL = twitterUser.URL
-	ret.SNSPower = twitterUser.Followers
 
 	sessions.Set(ctx, sessions.Session{
-		User:   ret,
-		Token:  token,
-		Secret: secret,
+		User:   user,
+		Token:  session.Token,
+		Secret: session.Secret,
 	})
 
-	response(w, ret)
+	response(w, user)
 }
 
 func twitterRegister(w http.ResponseWriter, r *http.Request) {
@@ -102,7 +95,7 @@ func twitterRegister(w http.ResponseWriter, r *http.Request) {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
-		if user != nil {
+		if user.ID != 0 {
 			http.Error(w, fmt.Sprintf("user %d has already registerd.", user.ID), http.StatusForbidden)
 			return
 		}
@@ -119,7 +112,7 @@ func twitterRegister(w http.ResponseWriter, r *http.Request) {
 
 	session.User = user
 	sessions.Set(ctx, session)
-	resposen(w, user)
+	response(w, user)
 }
 
 func HandleTwitterAuth(w http.ResponseWriter, r *http.Request) {

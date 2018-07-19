@@ -5,7 +5,6 @@ import (
 	"errors"
 	"fmt"
 
-	"google.golang.org/appengine"
 	"google.golang.org/appengine/datastore"
 )
 
@@ -33,7 +32,7 @@ func Put(ctx context.Context, recommendBranch *RecommendBranch) error {
 	return nil
 }
 
-func GetUserRecommendBranches(ctx context.Context, userID int64) (map[int64]RecommendBranch, error) {
+func GetUserRecommendBranches(ctx context.Context, userId int64) (map[int64]RecommendBranch, error) {
 	// SELECT * FROM RecommendBranches WHERE UserID = 'userId' ORDER BY Priority
 	// do not use 'priority prop and sort' but use link list. because link list is better than priotiry sort.
 	query := datastore.NewQuery(Kind).Filter("UserID =", userId)
@@ -44,7 +43,7 @@ func GetUserRecommendBranches(ctx context.Context, userID int64) (map[int64]Reco
 	}
 
 	// do not use GetALL. Because it has 1000 limit.
-	recommendBranches = make(map[int64]RecommendBranch, count)
+	recommendBranches := make(map[int64]RecommendBranch, count)
 	itr := query.Run(ctx)
 
 	for {
@@ -63,4 +62,12 @@ func GetUserRecommendBranches(ctx context.Context, userID int64) (map[int64]Reco
 	}
 
 	return recommendBranches, nil
+}
+
+func Delete(ctx context.Context, id int64) error {
+	key := datastore.NewKey(ctx, Kind, "", id, nil)
+	if err := datastore.Delete(ctx, key); err != nil {
+		return errors.New(fmt.Sprintf("unable delete recommend branch.%d %s", id, err))
+	}
+	return nil
 }

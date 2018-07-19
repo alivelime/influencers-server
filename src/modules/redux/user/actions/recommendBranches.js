@@ -42,27 +42,27 @@ export const deleteRecommendBranches = (ids, token) => ({
 	token,
 })
 
-export const moveUpRecommendBranch = (id, state, token) => {
-	const prevId = state.recommendBranches[id].prevId;
+export const moveUpRecommendBranch = (id, recommendBranches, token) => {
+	const prevId = recommendBranches[id].prevId;
 	if (prevId !== "0") {
-		return moveDownRecommendBranch(prevId, state, token);
+		return moveDownRecommendBranch(prevId, recommendBranches, token);
 	}
 	return {type:null};
 }
 
-export const moveDownRecommendBranch = (id, state, token) => {
-	let recommendBranches = Object.assign({}, state.recommendBranches);
+export const moveDownRecommendBranch = (id, _recommendBranches, token) => {
+	let recommendBranches = Object.assign({}, _recommendBranches);
 	let patchArray = [];
 
 	const B = id;
-	const A = state.recommendBranches[B].prevId;
-	const C = state.recommendBranches[B].nextId;
+	const A = _recommendBranches[B].prevId;
+	const C = _recommendBranches[B].nextId;
 
 	// id is bottom.
 	if (C === "0") {
 		return {type:null};
 	}
-	const D = state.recommendBranches[C].nextId;
+	const D = _recommendBranches[C].nextId;
 
 	// set prev id
 	if (A !== "0") {
@@ -100,7 +100,7 @@ export const moveDownRecommendBranch = (id, state, token) => {
 	return {
 		type: 'UPDATE_RECOMMEND_BRANCHES_REQUEST',
 		data: patchArray,
-		token, token,
+		token,
 	}
 
 };
@@ -108,37 +108,37 @@ export const moveDownRecommendBranch = (id, state, token) => {
 // make update patch -> response change recommendBranches.
 // 
 // but this function should be in reducer... and dispatch patch data??
-export const moveRecommendBranches = (ids, to, state, token) => {
+export const moveRecommendBranches = (ids, to, recommendBranches, token) => {
 	let patches = {};
 
-	let last = Object.keys(state.recommendBranches).find((id) => {
-		return state.recommendBranches[id].parentId === to && state.recommendBranches[id].nextId === "0";
+	let last = Object.keys(recommendBranches).find((id) => {
+		return recommendBranches[id].parentId === to && recommendBranches[id].nextId === "0";
 	});
 
 	ids.forEach((id) => {
 		if (last === id) { console.log("skip " + id + " is last."); return;}
 
-		if (last in state.recommendBranches) {
+		if (last in recommendBranches) {
 			if (!(last in patches)) {
-				patches[last] = Object.assign({}, state.recommendBranches[last]);
+				patches[last] = Object.assign({}, recommendBranches[last]);
 			}
 			patches[last].nextId = id;
 		}
 		
 		// remove from old branch.
-		const prevId = state.recommendBranches[id].prevId;
-		if (prevId in state.recommendBranches) {
+		const prevId = recommendBranches[id].prevId;
+		if (prevId in recommendBranches) {
 			if (!(prevId in patches)) {
-				patches[prevId] = Object.assign({}, state.recommendBranches[prevId]);
+				patches[prevId] = Object.assign({}, recommendBranches[prevId]);
 			}
-			patches[prevId].nextId = state.recommendBranches[id].nextId;
+			patches[prevId].nextId = recommendBranches[id].nextId;
 		}
-		const nextId = state.recommendBranches[id].nextId;
-		if (nextId in state.recommendBranches) {
+		const nextId = recommendBranches[id].nextId;
+		if (nextId in recommendBranches) {
 			if (!(nextId in patches)) {
-				patches[nextId] = Object.assign({}, state.recommendBranches[nextId]);
+				patches[nextId] = Object.assign({}, recommendBranches[nextId]);
 			}
-			patches[nextId].prevId = state.recommendBranches[id].prevId;
+			patches[nextId].prevId = recommendBranches[id].prevId;
 		}
 
 		// set new data.

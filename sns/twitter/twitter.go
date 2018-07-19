@@ -112,13 +112,12 @@ func GetCallbackURL(r *http.Request) (string, error) {
 	}
 
 	sessions.Set(ctx, sessions.Session{
-		SNSType: Twitter,
-		Token:   prefixTwitterToken + accessToken,
-		Secret:  accessSecret,
+		Token:  prefixTwitterToken + accessToken,
+		Secret: accessSecret,
 	})
 
 	var redirectTo string
-	redirecTo, err = sessions.GetCache(ctx, prefixLoginRedirectURL+requestToken)
+	redirectTo, err = sessions.GetCache(ctx, prefixLoginRedirectURL+requestToken)
 	if err != nil {
 		redirectTo = base64.StdEncoding.EncodeToString([]byte(getRedirectDefaultURL()))
 	}

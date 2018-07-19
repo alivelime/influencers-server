@@ -40,7 +40,7 @@ func NewIherb(url string, tag affiliate.Tag) (p *Iherb) {
 	p.name = "iherb"
 	p.product, p.id = GetPID(url)
 	p.url = MakeSimpleURL(url, p.product, p.id)
-	p.affiliateTag = tag.Iherb
+	p.affiliateTag = tag.Iherbjp
 
 	return p
 }

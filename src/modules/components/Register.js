@@ -56,7 +56,7 @@ class Register extends React.Component {
 							</TableRow>
 							<TableRow>
 								<TableCell>Avatar</TableCell>
-								<TableCell><Avatar src={this.props.session.user.avator} /></TableCell>
+								<TableCell><Avatar src={this.props.session.user.avatar} /></TableCell>
 							</TableRow>
 							<TableRow>
 								<TableCell>Image</TableCell>

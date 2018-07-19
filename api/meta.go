@@ -1,20 +1,14 @@
 package api
 
 import (
-	"bytes"
-	"encoding/base64"
-	"encoding/json"
 	"fmt"
-	"io"
 	"net/http"
 
-	"github.com/gorilla/mux"
-
 	"google.golang.org/appengine"
-	"google.golang.org/appengine/datastore"
 
 	"github.com/alivelime/influs/affiliate"
 	"github.com/alivelime/influs/meta"
+	"github.com/alivelime/influs/model/recommends"
 	"github.com/alivelime/influs/site"
 )
 

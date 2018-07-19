@@ -1,7 +1,7 @@
 export default (state = {}, action) => {
 	switch (action.type) {
 		case 'LOAD_USER_RECOMMEND_DATA_SUCCEEDED':
-			return action.recommendBranches;
+			return action.recommendBranches || state;
 
 		case 'ADD_RECOMMEND_BRANCH_SUCCEEDED':
 		{

@@ -46,6 +46,10 @@ export function* updateAffiliate(action) {
 
 	if (Object.keys(res).length > 0) {
 		yield put({type: "UPDATE_USER_AFFILIATE_SUCCEEDED", data: res});
+
+		// update recommends
+		let recommends = yield call(getAPI, `/api/users/${action.id}/recommends`);
+		yield put({type: "LOAD_USER_RECOMMEND_DATA_SUCCEEDED", recommends});
 	} else {
 		yield put({type: "UPDATE_USER_AFFILIATE_FAILED"});
 	}
@@ -75,7 +79,7 @@ export function* loadRecommendData(action) {
 				yield put({type: "CLOSE_ALL_RECOMMEND_BRANCHES"});
 			}
 		} else {
-			if (typeof token === "string" && token.length > 0) {
+			if (typeof action.token === "string" && action.token.length > 0) {
 				yield put({type: "ADD_RECOMMEND_BRANCH_REQUEST",
 					token: action.token,
 					patch: {prevId:"0", nextId:"0"},

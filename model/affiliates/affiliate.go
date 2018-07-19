@@ -3,16 +3,14 @@ package affiliates
 import (
 	"context"
 	"errors"
-	"fmt"
 
-	"google.golang.org/appengine"
 	"google.golang.org/appengine/datastore"
 )
 
 const Kind = "Affiliate"
 
 func Get(ctx context.Context, userId int64) (affiliate Affiliate, err error) {
-	key := datastore.NewKey(ctx, Kind, "", id, nil)
+	key := datastore.NewKey(ctx, Kind, "", userId, nil)
 
 	if err = datastore.Get(ctx, key, &affiliate); err != nil {
 		return

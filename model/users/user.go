@@ -3,12 +3,9 @@ package users
 import (
 	"context"
 	"errors"
-	"fmt"
+	"time"
 
-	"google.golang.org/appengine"
 	"google.golang.org/appengine/datastore"
-
-	"github.com/alivelime/influs/sns"
 )
 
 const Kind = "User"
@@ -38,7 +35,7 @@ func Put(ctx context.Context, user *User) error {
 	return nil
 }
 
-func GetUserBySNSID(ctx context.Context, snsID int64, snsType SNSType) (User, error) {
+func GetUserBySNSID(ctx context.Context, snsID int64, snsType string) (User, error) {
 	var ret User
 
 	// SELECT * FROM Users WHERE SNSID = 'snsID' and SNSType = 'snsType'
@@ -48,7 +45,7 @@ func GetUserBySNSID(ctx context.Context, snsID int64, snsType SNSType) (User, er
 		return ret, errors.New("Unable query count. " + err.Error())
 	}
 	if count == 0 {
-		return ret, errors.New(fmt.Sprinf("User not found. id: %d, type: %s", snsID, snsType.String()))
+		return ret, nil
 	}
 
 	itr := query.Run(ctx)
@@ -67,10 +64,6 @@ func GetUserBySNSID(ctx context.Context, snsID int64, snsType SNSType) (User, er
 			user.ID = key.IntID()
 			ret = user
 		}
-	}
-
-	if ret.ID == 0 {
-		return ret, errors.New(fmt.Sprinf("User not found. id: %d, type: %s", snsID, snsType.String()))
 	}
 
 	return ret, nil

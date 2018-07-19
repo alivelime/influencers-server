@@ -1,19 +1,10 @@
 package api
 
 import (
-	"bytes"
-	"encoding/json"
 	"fmt"
-	"io"
-	"io/ioutil"
 	"net/http"
-	"strconv"
-	"time"
-
-	"github.com/gorilla/mux"
 
 	"google.golang.org/appengine"
-	"google.golang.org/appengine/datastore"
 
 	"github.com/alivelime/influs/auth"
 	"github.com/alivelime/influs/model/reviews"
@@ -22,7 +13,7 @@ import (
 func getReview(w http.ResponseWriter, r *http.Request) {
 	ctx := appengine.NewContext(r)
 
-	var review Review
+	var review reviews.Review
 	id, ok := getPathParamInt64(w, r, "id")
 	if !ok {
 		return
@@ -38,11 +29,11 @@ func getReview(w http.ResponseWriter, r *http.Request) {
 }
 
 func postReview(w http.ResponseWriter, r *http.Request) {
-	var review Review
+	var review reviews.Review
 	ctx := appengine.NewContext(r)
 
-	session, err := auth.CheckLogin(w, r)
-	if err != nil {
+	session, ok := auth.CheckLogin(w, r)
+	if !ok {
 		return
 	}
 
@@ -58,7 +49,7 @@ func postReview(w http.ResponseWriter, r *http.Request) {
 	// is mine?
 	if session.User.ID != review.UserID {
 		http.Error(w,
-			fmt.Sprintf("Not allow to post onother users .You %d, Param %d", session.UserID, recommendBranch.UserID),
+			fmt.Sprintf("Not allow to post onother users .You %d, Param %d", session.User.ID, review.UserID),
 			http.StatusBadRequest)
 		return
 	}
@@ -75,8 +66,8 @@ func postReview(w http.ResponseWriter, r *http.Request) {
 func deleteReview(w http.ResponseWriter, r *http.Request) {
 	ctx := appengine.NewContext(r)
 
-	session, err := auth.CheckLogin(w, r)
-	if err != nil {
+	session, ok := auth.CheckLogin(w, r)
+	if !ok {
 		return
 	}
 
@@ -94,7 +85,7 @@ func deleteReview(w http.ResponseWriter, r *http.Request) {
 	// is mine?
 	if session.User.ID != review.UserID {
 		http.Error(w,
-			fmt.Sprintf("Not allow to delete onother users .You %d, Param %d", session.UserID, review.UserID),
+			fmt.Sprintf("Not allow to delete onother users .You %d, Param %d", session.User.ID, review.UserID),
 			http.StatusBadRequest)
 		return
 	}

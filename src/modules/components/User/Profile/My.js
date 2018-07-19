@@ -2,6 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { withStyles } from '@material-ui/core/styles';
 
+import Typography from '@material-ui/core/Typography';
 import TextField from '@material-ui/core/TextField';
 import Paper from '@material-ui/core/Paper';
 import List from '@material-ui/core/List';
@@ -14,7 +15,7 @@ const styleSheet = theme => ({
 class MyProfile extends React.Component {
 
 	componentWillMount() {
-		this.props.loadUserAffiliate();
+		this.props.loadAffiliate();
 	}
 
 	state = {
@@ -30,7 +31,7 @@ class MyProfile extends React.Component {
 		iherbjp: this.props.data.affiliate.iherbjp,
 	};
 
-	handleChange = (name) => event {
+	handleChange = name => event => {
 		this.setState({
 			changed: {...this.state.changed, [name]: true},
 			[name]: event.target.value,
@@ -63,8 +64,8 @@ class MyProfile extends React.Component {
 							fullWidth
 							placeholder="ホームページのURL"
 							value={this.state.link}
-							onChange={this.handleChange('link'}
-							onBlur={this.handleBlur('link', this.props.updateUser}
+							onChange={this.handleChange('link')}
+							onBlur={this.handleBlur('link', this.props.updateUser)}
 						/>
 					</ListItem>
 					<ListItem>
@@ -84,6 +85,7 @@ class MyProfile extends React.Component {
 								onChange={this.handleChange('iherbjp')}
 								onBlur={this.handleBlur('iherb', this.props.updateAffiliate)}
 							/>
+						</Paper>
 					</ListItem>
 				</List>
 			</Paper>

@@ -1,18 +1,10 @@
 package api
 
 import (
-	"context"
-	"encoding/json"
 	"fmt"
-	"io"
-	"io/ioutil"
 	"net/http"
-	"strconv"
-
-	"github.com/gorilla/mux"
 
 	"google.golang.org/appengine"
-	"google.golang.org/appengine/datastore"
 
 	"github.com/alivelime/influs/auth"
 	"github.com/alivelime/influs/model/recommendbranches"
@@ -36,11 +28,11 @@ func getRecommendBranch(w http.ResponseWriter, r *http.Request) {
 }
 
 func postRecommendBranch(w http.ResponseWriter, r *http.Request, id int64) {
-	var recommendBranch RecommendBranch
+	var recommendBranch recommendbranches.RecommendBranch
 	ctx := appengine.NewContext(r)
 
-	session, err := auth.CheckLogin(w, r)
-	if err != nil {
+	session, ok := auth.CheckLogin(w, r)
+	if !ok {
 		return
 	}
 
@@ -57,7 +49,7 @@ func postRecommendBranch(w http.ResponseWriter, r *http.Request, id int64) {
 	// is mine?
 	if session.User.ID != recommendBranch.UserID {
 		http.Error(w,
-			fmt.Sprintf("Not allow to post onother users .You %d, Param %d", session.UserID, recommendBranch.UserID),
+			fmt.Sprintf("Not allow to post onother users .You %d, Param %d", session.User.ID, recommendBranch.UserID),
 			http.StatusBadRequest)
 		return
 	}
@@ -83,10 +75,16 @@ func patchRecommendBranch(w http.ResponseWriter, r *http.Request) {
 	if !ok {
 		return
 	}
-	recommendBranch := recommendbranches.Get(ctx, id)
+	recommendBranch, err := recommendbranches.Get(ctx, id)
+	if err != nil {
+		http.Error(w, fmt.Sprintf("recommend branch %d is not found.", id), http.StatusNotFound)
+		return
+	}
 	// is mime?
 	if session.User.ID != recommendBranch.UserID {
-		http.Error(w, fmt.Sprintf("user id is different form your. i %d d %d", userId, session.UserID), http.StatusBadRequest)
+		http.Error(w,
+			fmt.Sprintf("user id is different form your. i %d d %d", recommendBranch.UserID, session.User.ID),
+			http.StatusBadRequest)
 		return
 	}
 
@@ -114,14 +112,20 @@ func deleteRecommendBranch(w http.ResponseWriter, r *http.Request) {
 	if !ok {
 		return
 	}
-	recommendBranch := recommendbranches.Get(ctx, id)
+	recommendBranch, err := recommendbranches.Get(ctx, id)
+	if err != nil {
+		http.Error(w, fmt.Sprintf("recommend branch %d is not found.", id), http.StatusNotFound)
+		return
+	}
 	// is mime?
 	if session.User.ID != recommendBranch.UserID {
-		http.Error(w, fmt.Sprintf("user id is different form your. i %d d %d", userId, session.UserID), http.StatusBadRequest)
+		http.Error(w,
+			fmt.Sprintf("user id is different form your. i %d d %d", recommendBranch.UserID, session.User.ID),
+			http.StatusBadRequest)
 		return
 	}
 
-	if err := recommendBranches.Delete(ctx, id); err != nil {
+	if err := recommendbranches.Delete(ctx, id); err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}

@@ -2,7 +2,7 @@ package affiliate
 
 import (
 	"context"
-	"net/http"
+	"os"
 
 	model "github.com/alivelime/influs/model/affiliates"
 )
@@ -12,7 +12,7 @@ type Tag struct {
 	Iherbjp  string
 }
 
-const NoTag = Tag{}
+var NoTag = Tag{}
 
 func GetSystemTag() Tag {
 	return Tag{
@@ -22,17 +22,26 @@ func GetSystemTag() Tag {
 }
 
 func GetUserTag(ctx context.Context, userId int64) Tag {
+	defaultTag := GetSystemTag()
 	if userId == 0 {
-		return GetSystemTag()
+		return defaultTag
 	}
 
 	tag, err := model.Get(ctx, userId)
 	if err != nil {
-		return GetSystemTag()
+		return defaultTag
 	}
 
-	return Tag{
-		Amazonjp: tag.Amazonjp,
-		IHerbjp:  tag.Iherbjp,
+	var ret Tag
+	if len(tag.Amazonjp) == 0 {
+		ret.Amazonjp = defaultTag.Amazonjp
+	} else {
+		ret.Amazonjp = tag.Amazonjp
 	}
+	if len(tag.Iherbjp) == 0 {
+		ret.Iherbjp = defaultTag.Iherbjp
+	} else {
+		ret.Iherbjp = tag.Iherbjp
+	}
+	return ret
 }

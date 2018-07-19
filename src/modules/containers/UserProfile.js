@@ -1,6 +1,6 @@
 import { connect } from 'react-redux'
 
-import { loadUser, updateUser, deleteUser } from 'modules/redux/user/actions'
+import { loadUser, updateUser, deleteUser, loadAffiliate, updateAffiliate } from 'modules/redux/user/actions'
 import Profile from 'modules/components/User/Profile';
 
 const mapStateToProps = state => ({
@@ -15,8 +15,8 @@ const mergeProps = (state, {dispatch}, props) => ({
 	updateUser: data => dispatch(updateUser(props.id, data, state.session.token)),
 	deleteUser: () => dispatch(deleteUser(props.id, state.session.token)),
 
-	loadAffiliate: () => dispatch(loadUserAffiliate(props.id)),
-	updateAffiliate: data => dispatch(updateUserAffiliate(props.id, data, state.session.token)),
+	loadAffiliate: () => dispatch(loadAffiliate(props.id)),
+	updateAffiliate: data => dispatch(updateAffiliate(props.id, data, state.session.token)),
 
 	data: state.user,
 	isMine: (state.user.id === state.session.user.id),

@@ -1,5 +1,9 @@
 package reviews
 
+import (
+	"time"
+)
+
 type Review struct {
 	ID                int64     `json:"id" datastore:"-"`
 	UserID            int64     `json:"userId"`

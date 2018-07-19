@@ -6,7 +6,6 @@ import (
 	"strings"
 
 	"google.golang.org/appengine"
-	"google.golang.org/appengine/memcache"
 
 	"github.com/alivelime/influs/sessions"
 )
@@ -32,13 +31,13 @@ func CheckLogin(w http.ResponseWriter, r *http.Request) (session sessions.Sessio
 	}
 
 	// check token exists
-	token = strings.TrimLeft(scheme, "Bearer ")
+	token := strings.TrimLeft(scheme, "Bearer ")
 	if len(token) == 0 {
 		http.Error(w, "Authenticate header error.", http.StatusUnauthorized)
 		return
 	}
 
-	session, err := session.Get(token)
+	session, err := sessions.Get(ctx, token)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusUnauthorized)
 		return
@@ -49,34 +48,31 @@ func CheckLogin(w http.ResponseWriter, r *http.Request) (session sessions.Sessio
 	return
 }
 
-func CheckAdmin(w http.ResponseWriter, r *http.Request) (token string, ok bool) {
-	ctx := appengine.NewContext(r)
-
+func CheckAdmin(w http.ResponseWriter, r *http.Request) bool {
 	// check header.
 	scheme := r.Header.Get("Authenticate")
 	if len(scheme) == 0 {
 		w.Header().Set("WWW-Authenticate", "Bearer realm=\"\"")
 		http.Error(w, "no Authenticat header.e", http.StatusUnauthorized)
-		return
+		return false
 	}
 	if !strings.Contains(scheme, "Bearer ") {
 		http.Error(w, "Authenticate header error.", http.StatusBadRequest)
-		return
+		return false
 	}
 
 	// check token exists
-	token = strings.TrimLeft(scheme, "Bearer ")
+	token := strings.TrimLeft(scheme, "Bearer ")
 	if len(token) == 0 {
 		http.Error(w, "Authenticate header error.", http.StatusUnauthorized)
-		return
+		return false
 	}
 
 	// check token is enable
 	if token != getAdminKey() {
 		http.Error(w, "Admin only.", http.StatusUnauthorized)
-		return false, "", ""
+		return false
 	}
 
-	ok = true
-	return
+	return true
 }

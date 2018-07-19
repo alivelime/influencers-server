@@ -27,8 +27,8 @@ func Get(ctx context.Context, id string) (recommend Recommend, err error) {
 }
 
 func Put(ctx context.Context, recommend *Recommend) error {
-	key := datastore.NewKey(ctx, Kind, recommend.url, 0, nil)
-	k, err := datastore.Put(ctx, key, recommend)
+	key := datastore.NewKey(ctx, Kind, recommend.URL, 0, nil)
+	_, err := datastore.Put(ctx, key, recommend)
 	if err != nil {
 		return err
 	}
@@ -36,14 +36,18 @@ func Put(ctx context.Context, recommend *Recommend) error {
 	return nil
 }
 
-func GetUserRecommends(ctx context.Context, userID int64) (map[string]Recommend, error) {
+func GetUserRecommends(ctx context.Context, userId int64) (map[string]Recommend, error) {
 
 	// SELECT * FROM Recommens INNER JOIN Reviews ON recommendId WHERE UserId = 'userId' GROUP BY recommendId
 	ret := map[string]Recommend{}
 
 	// group by recommendId
 	recommendIds := map[string]bool{} // recommendIds["url"]
-	for _, v := range reviews.GetUserReviews(ctx, userId) {
+	userReviews, err := reviews.GetUserReviews(ctx, userId)
+	if err != nil {
+		return ret, errors.New(fmt.Sprintf("Unable to Get User Reviews: %d %s", userId, err))
+	}
+	for _, v := range userReviews {
 		recommendIds[v.RecommendID] = true
 		if len(v.Evidence) > 0 {
 			recommendIds[v.Evidence] = true

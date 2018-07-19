@@ -3,7 +3,7 @@ export const loadUser = id => ({
 	id,
 });
 
-export const loadUserAffiliate = id => ({
+export const loadAffiliate = id => ({
 	type: 'LOAD_USER_AFFILIATE_REQUEST',
 	id,
 });
@@ -20,7 +20,7 @@ export const updateUser = (id, data, token) => ({
 	token,
 })
 
-export const updateUserAffiliate = (id, data, token) => ({
+export const updateAffiliate = (id, data, token) => ({
 	type: 'UPDATE_USER_AFFILIATE_REQUEST',
 	id,
 	data,

@@ -4,8 +4,8 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"time"
 
-	"google.golang.org/appengine"
 	"google.golang.org/appengine/datastore"
 )
 
@@ -37,18 +37,18 @@ func Put(ctx context.Context, review *Review) error {
 }
 
 func Delete(ctx context.Context, id int64) error {
-	key := datastore.NewKey(ctx, "Review", "", id, nil)
+	key := datastore.NewKey(ctx, Kind, "", id, nil)
 	if err := datastore.Delete(ctx, key); err != nil {
-		http.Error(w, fmt.Sprintf("unable delete review. %s", err), http.StatusNotFound)
-		return
+		return errors.New(fmt.Sprintf("unable delete review. %s", err))
 	}
+	return nil
 }
 
-func GetUserReviews(ctx context.Context, userID int64) (map[int64]Review, error) {
+func GetUserReviews(ctx context.Context, userId int64) (map[int64]Review, error) {
 	var ret map[int64]Review
 
 	// SELECT * FROM Reviews WHERE UserID = 'userId' ORDER BY createdAt
-	query := datastore.NewQuery("Review").Filter("UserID =", userId)
+	query := datastore.NewQuery(Kind).Filter("UserID =", userId)
 	count, err := query.Count(ctx)
 	if err != nil {
 		return ret, errors.New(fmt.Sprintf("unable query count  %s", err))

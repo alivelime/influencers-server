@@ -45,7 +45,7 @@ func NewAmazon(url string, tag affiliate.Tag) (p *Amazon) {
 	p.name = "amazon"
 	p.asin = GetASIN(url)
 	p.url = MakeSimpleURL(url, p.asin)
-	p.affiliateTag = tag.Amazon
+	p.affiliateTag = tag.Amazonjp
 
 	return p
 }

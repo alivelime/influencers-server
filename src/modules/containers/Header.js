@@ -5,9 +5,7 @@ import Header from 'modules/components/Headers/Header';
 
 const mapStateToProps = state => ({
 	login: state.session.login,
-	name: state.session.screenName,
-	avator: state.session.avator,
-	userId: state.session.userId,
+	user: state.session.user,
 });
 const mapDispatchToProps = (dispatch, props) => ({
 	logout: dispatch(logout()),
