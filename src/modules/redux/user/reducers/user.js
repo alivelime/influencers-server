@@ -8,7 +8,7 @@ export default (state = {}, action) => {
 		case 'LOAD_USER_AFFILIATE_SUCCEEDED':
 			return {...state, affiliate: action.data};
 		case 'LOAD_USER_FAILED':
-			return {};
+			return {id: "0", name: "no data"};
 		case 'UPDATE_USER_REQUEST':
 			return state;
 		case 'UPDATE_USER_SUCCEEDED':

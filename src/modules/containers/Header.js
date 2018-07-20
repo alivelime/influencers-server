@@ -1,10 +1,9 @@
 import { connect } from 'react-redux'
 import { logout } from 'modules/redux/user/actions'
 
-import Header from 'modules/components/Headers/Header';
+import Header from 'modules/components/Header';
 
 const mapStateToProps = state => ({
-	user: state.session.user,
 	isLogin: state.session.state === "login",
 	session: state.session,
 });

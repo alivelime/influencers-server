@@ -5,21 +5,20 @@ import Profile from 'modules/components/User/Profile';
 
 const mapStateToProps = state => ({
 	user: state.user,
-	session: state.session,
+	token: state.session.token,
+	isMine: (state.session.user.id !== undefined && state.user.id === state.session.user.id),
 });
 const mapDispatchToProps = dispatch => ({ dispatch });
 const mergeProps = (state, {dispatch}, props) => ({
 	...props,
 
 	loadUser: () => dispatch(loadUser(props.id)),
-	updateUser: data => dispatch(updateUser(props.id, data, state.session.token)),
-	deleteUser: () => dispatch(deleteUser(props.id, state.session.token)),
 
+	// for login user.
+	updateUser: data => dispatch(updateUser(props.id, data, state.token)),
+	deleteUser: () => dispatch(deleteUser(props.id, state.token)),
 	loadAffiliate: () => dispatch(loadAffiliate(props.id)),
-	updateAffiliate: data => dispatch(updateAffiliate(props.id, data, state.session.token)),
-
-	data: state.user,
-	isMine: (state.session.user.id !== undefined && state.user.id === state.session.user.id),
+	updateAffiliate: data => dispatch(updateAffiliate(props.id, data, state.token)),
 });
 export default connect(
   mapStateToProps,
