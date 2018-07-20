@@ -5,8 +5,8 @@ import List from '@material-ui/core/List';
 import CircularProgress from '@material-ui/core/CircularProgress';
 
 import ReviewForm from 'modules/containers/IiyoReviewForm';
-import RecommendList from 'modules/containers/RecommendList';
-import RecommendToolbox from 'modules/components/RecommendToolbox';
+import RecommendBranch from 'modules/containers/RecommendBranch';
+import RecommendToolbox from 'modules/containers/RecommendToolbox';
 
 const styleSheet = theme => ({
 	root: {
@@ -42,22 +42,13 @@ class RecommendTree extends React.Component {
 					</div>
 				}
 				{this.props.isMine &&
-					<RecommendToolbox 
-						addRecommendBranch={this.props.addRecommendBranch}
-						addSubRecommendBranch={this.props.addSubRecommendBranch}
-						deleteRecommendBranches={this.props.deleteRecommendBranches}
-						moveUpRecommendBranch={this.props.moveUpRecommendBranch}
-						moveDownRecommendBranch={this.props.moveDownRecommendBranch}
-						moveRecommendBranches={this.props.moveRecommendBranches}
-					/>
+					<RecommendToolbox />
 				}
 				{(this.props.dataLoaded) 
 					? (
 							<List component='nav' className={classes.list}>
-								<RecommendList
+								<RecommendBranch
 									id={this.props.recommendBranchId}
-									open={this.props.open}
-									isMine={this.props.isMine}
 								/>
 							</List>
 						)

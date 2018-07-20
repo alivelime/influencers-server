@@ -5,23 +5,60 @@ import RecommendBranch from 'modules/components/RecommendBranch';
 
 // for performance reference http://anect.hatenablog.com/entry/2018/04/05/124654
 const mapStateToProps = state => ({
+	checker: state.checker,
 	token: state.session.token,
-	isMine: (state.session.user.id !== undefined && state.user.id === state.session.user.id),
 
 	recommendBranches: state.recommendBranches,
 });
 const mapDispatchToProps = dispatch => ({ dispatch });
-const mergeProps = (state, {dispatch}, props) => ({
-	...props,
+const mergeProps = (state, {dispatch}, props) => {
+	const reviews = getReviewList(state, props.id);
+	const isChecked = (reviews.length > 0) 
+		? state.checker.recommendIds.includes(props.id)
+		: state.checker.recommendBranchIds.includes(props.id);
 
-	childIds: getChildren(state.recommendBranches, props.id, dispatch, state.token),
-});
+	return {
+		...props,
+
+		isChecked: isChecked,
+		reviewIds: props.getReviewIds(props.id),
+		found: props.found || props.search(props.id),
+
+		...props,
+
+		name: (props.id === "0" ? '' : state.recommendBranches[props.id].name),
+
+		children: getChildren(state, props.id, dispatch),
+		reviews: reviews,
+		recommend: reviews.length > 0 ? state.recommends[reviews[0].recommendId] : null,
+
+		handleCollapse: () => {state.recommendBranches[props.id].isOpen
+			? dispatch(actions.closeRecommendBranch(props.id))
+			: dispatch(actions.openRecommendBranch(props.id))
+		},
+		handleCheck: props.parentIsChecked 
+			? () => {}
+			: () => {
+				(reviews.length > 0)
+					? (isChecked
+						? dispatch(actions.uncheckRecommend(props.id)) 
+						: dispatch(actions.checkRecommend( props.id, reviews[0].recommendId)))
+					: (isChecked 
+						? dispatch(actions.uncheckRecommendBranch(props.id)) 
+						: dispatch(actions.checkRecommendBranch(props.id)))
+				}
+		,
+		handleSubmit: name => {dispatch(actions.updateRecommendBranch({id: props.id, name: name}, state.token))},
+		isOpen: props.id !== "0" && state.recommendBranches[props.id].isOpen,
+		isChecked: isChecked,
+	}
+};
 
 /*
  * this.state.recommendBranches, recommends, reviews is one level list.
  * do not make complex as nested object.
  */
-function getChildren(_recommendBranches, parentId, dispatch, token) {
+function getChildren(_recommendBranches, parentId, dispatch) {
 	// deep copy state.recommendBranches
 	let recommendBranches = {};
 	Object.keys(_recommendBranches).forEach((id) => {
@@ -97,8 +134,8 @@ function getChildren(_recommendBranches, parentId, dispatch, token) {
 			});
 		}
 
-		if (patchIds.length > 0 && token) {
-			dispatch(actions.updateRecommendBranches(patchIds.map(id => recommendBranches[id]), token));
+		if (patchIds.length > 0) {
+			dispatch(actions.updateRecommendBranches(patchIds.map(id => recommendBranches[id]), state.token));
 		}
 	} else {
 		// if recommend branch is empty.
@@ -109,10 +146,19 @@ function getChildren(_recommendBranches, parentId, dispatch, token) {
 	return children;
 }
 
+function getReviewList(_reviews, recommendBranchId) {
+	return Object.keys(state.reviews).filter((id) => {
+		return _reviews[id].recommendBranchId === recommendBranchId;
+	})
+	.map(id => _reviews[id])
+	.sort((a, b) => {return b.createdAt - a.createdAt});
+}
+
 export default connect(
 	mapStateToProps,
 	mapDispatchToProps,
 	mergeProps
 )(RecommendBranch);
+
 
 

@@ -36,36 +36,16 @@ const styleSheet = theme => ({
 });
 
 class RecommendBranch extends React.Component {
-	state = {
-		name: this.props.name,
-		changeFlag: false,
-	};
-	
-	handleChange = event => {
-		this.setState({
-			changeFlag: true,
-			name: event.target.value,
-		});
-	};
-	handleOnBlur = this.handleSubmit;
-	handleSubmit = event => {
-		event.preventDefault();
-		if (this.state.changeFlag) {
-			this.props.handleSubmit(this.state.name);
-			this.setState({changeFlag: false});
-		}
-	};
 
 	render() {
-		const { classes } = this.props;
 
-		const children = this.props.children.map((id) => {
+		const { classes } = this.props;
+		const children = this.props.childIds.map((id) => {
 			return (
-				<RecommendList
+				<RecommendBranch
 					id={id}
 					key={id}
-					open={this.props.open}
-					parentIsChecked={this.props.isChecked || this.props.parentIsChecked}
+					parentIsChecked={this.props.parentIsChecked}
 				/>
 			);
 		});
@@ -74,66 +54,25 @@ class RecommendBranch extends React.Component {
 			return children;
 		}
 
-		const reviews = this.props.reviews.map((review) => {
-			return (
-				<ListItem key={review.id} className={classes.review} >
-					<Review data={review} />
-				</ListItem>
-			);
-		});
-
 		return (
-			<div>
-				<ListItem
-					className={classNames(classes.root, (this.props.isChecked ? classes.checked : classes.unchecked))}
-				>
-					<Checkbox
-						checked={this.props.isChecked}
-						onClick={this.props.handleCheck}
-						tabIndex={-1}
-						disabled={this.props.parentIsChecked}
-						disableRipple
-					/>
-					{(!this.props.recommend) 
-						? (
-								<TextField
-									id={this.props.id}
-									placeholder="リスト名"
-									fullWidth
-									value={this.state.name}
-									onChange={this.handleChange}
-									onBlur={this.handleSubmit}
-								/>
-							)
-						: (
-								<Recommend data={this.props.recommend} enableLink />
-							)
-					}
-					{(children.length > 0 || reviews.length > 0) &&
-						(
-							<IconButton onClick={this.props.handleCollapse}>
-								{this.props.isOpen ? <ExpandLess className={classes.icon}/> : <ExpandMore className={classes.icon}/>}
-							</IconButton>
-						)
-					}
+			<ListItem
+				className={classNames(classes.root, (this.props.isChecked ? classes.checked : classes.unchecked))}
+			>
+				<ListItem>
+					<RecommendBranchName
+						id={this.props.id}
+						parentIsChecked={this.props.parentIsChecked}
+						childLength={this.props.childIds.length}
+					>
 				</ListItem>
-				{(children.length > 0 || reviews.length > 0) &&
-					(
-						<Collapse in={this.props.isOpen} tomeout="auto">
-							<List
-								component="div"
-								disablePadding
-								className={(this.props.isChecked ? classes.checked : classes.unchecked)}
-							>
-								<div className={classes.container}>
-									{children}
-									{reviews}
-								</div>
-							</List>
-						</Collapse>
-					)
-				}
-			</div>
+				<ListItem>
+					<Collapse in={this.props.isOpen} tomeout="auto" className={classes.container}>
+						<List component='nav' className={classes.list}>
+								{children}
+								<ReviewList recommendBranchId={props.id} />
+						</List>
+					</Collapse>
+				</ListItem>
 		);
 	}
 }
