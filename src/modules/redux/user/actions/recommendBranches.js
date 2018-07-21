@@ -2,6 +2,7 @@ export const addRecommendBranch = (id, userId, recommendBranches, token) => ({
 	type: 'ADD_RECOMMEND_BRANCH_REQUEST',
 	data: {
 		name: "新しいリスト",
+		recommendId: "",
 		userId: userId,
 		parentId: recommendBranches[id].parentId,
 		prevId: id,
@@ -14,7 +15,7 @@ export const addRecommendBranch = (id, userId, recommendBranches, token) => ({
 	token,
 })
 
-export const addSubRecommendBranch = (parentId, userId, recommendBranches, token) => {
+export const addSubRecommendBranch = (parentId, userId, recommendId, recommendBranches, token) => {
 	const last = Object.keys(recommendBranches).find((id) => {
 		return (recommendBranches[id].parentId === parentId && recommendBranches[id].nextId === "0");
 	});
@@ -23,6 +24,7 @@ export const addSubRecommendBranch = (parentId, userId, recommendBranches, token
 		type: 'ADD_RECOMMEND_BRANCH_REQUEST',
 		data: {
 			name: "新しいリスト",
+			recommendId: recommendId,
 			userId: userId,
 			parentId: parentId,
 			prevId: last || "0",

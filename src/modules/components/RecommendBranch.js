@@ -7,12 +7,12 @@ import Checkbox from '@material-ui/core/Checkbox';
 import TextField from '@material-ui/core/TextField';
 import Collapse from '@material-ui/core/Collapse';
 import List from '@material-ui/core/List';
+
 import IconButton from '@material-ui/core/IconButton';
 import ExpandLess from '@material-ui/icons/ExpandLess';
 import ExpandMore from '@material-ui/icons/ExpandMore';
 
 import RecommendList from 'modules/containers/RecommendList';
-import Recommend from 'modules/components/Recommend';
 import Review from 'modules/components/Review';
 
 const styleSheet = theme => ({
@@ -23,10 +23,6 @@ const styleSheet = theme => ({
 		backgroundColor: theme.palette.secondary[100],
 	},
 	unchecked: {
-	},
-	icon: {
-		width: '1.6em',
-		height: '1.6em',
 	},
 	container:{
 		paddingLeft: '2em',
@@ -58,21 +54,36 @@ class RecommendBranch extends React.Component {
 			<ListItem
 				className={classNames(classes.root, (this.props.isChecked ? classes.checked : classes.unchecked))}
 			>
-				<ListItem>
-					<RecommendBranchName
-						id={this.props.id}
-						parentIsChecked={this.props.parentIsChecked}
-						childLength={this.props.childIds.length}
-					>
-				</ListItem>
-				<ListItem>
-					<Collapse in={this.props.isOpen} tomeout="auto" className={classes.container}>
-						<List component='nav' className={classes.list}>
-								{children}
-								<ReviewList recommendBranchId={props.id} />
-						</List>
-					</Collapse>
-				</ListItem>
+				{this.props.isMine &&
+					<Checkbox
+						checked={this.props.isChecked}
+						onClick={this.props.handleCheck}
+						tabIndex={-1}
+						disabled={this.props.parentIsChecked}
+						disableRipple
+					/>
+				}
+				<RecommendBranchName
+					id={this.props.id}
+					parentIsChecked={this.props.parentIsChecked || this.props.isChecked}
+					childLength={this.props.childIds.length}
+				>
+				{(this.props.recommendId || this.props.childIds.length > 0) &&
+					<IconButton onClick={this.props.handleCollapse}>
+						{this.props.isOpen ? <ExpandLess className={classes.icon}/> : <ExpandMore className={classes.icon}/>}
+					</IconButton>
+				}
+			</ListItem>
+			<ListItem
+				className={classNames(classes.root, (this.props.isChecked ? classes.checked : classes.unchecked))}
+			>
+				<Collapse in={this.props.isOpen} tomeout="auto" className={classes.container}>
+					<List component='nav' className={classes.list}>
+						{children}
+						<ReviewList recommendBranchId={props.id} />
+					</List>
+				</Collapse>
+			</ListItem>
 		);
 	}
 }

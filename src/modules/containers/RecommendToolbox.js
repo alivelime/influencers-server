@@ -29,7 +29,7 @@ const mergeProps = (state, {dispatch}, props) => ({
 			? () => {
 				// insert sub last branch.
 				const parentId = state.checker.recommendBranchIds[0];
-				dispatch(actions.addSubRecommendBranch(parentId, props.userId, state.recommendBranches, state.token))}
+				dispatch(actions.addSubRecommendBranch(parentId, props.userId, '', state.recommendBranches, state.token))}
 			: null
 	,
   deleteRecommendBranches:

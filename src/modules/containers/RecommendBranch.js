@@ -8,14 +8,38 @@ const mapStateToProps = state => ({
 	token: state.session.token,
 	isMine: (state.session.user.id !== undefined && state.user.id === state.session.user.id),
 
+	isChecked: state.checker.recommendIds.includes(props.id)
+					|| state.checker.recommendBranchIds.includes(props.id),
+
 	recommendBranches: state.recommendBranches,
 });
 const mapDispatchToProps = dispatch => ({ dispatch });
-const mergeProps = (state, {dispatch}, props) => ({
+const mergeProps = (state, {dispatch}, props) => {
+	console.log("RecommendBranch mergeProps "+props.id);
+	return {
 	...props,
 
 	childIds: getChildren(state.recommendBranches, props.id, dispatch, state.token),
-});
+	isOpen: props.id !== "0" && state.recommendBranches[props.id].isOpen,
+	recommendId: props.id !== "0" && state.recommendBranches[props.id].recommendId,
+
+	handleCollapse: state.isOpen
+		? () => {dispatch(actions.closeRecommendBranch(props.id))}
+		: () => {dispatch(actions.openRecommendBranch(props.id))}
+	,
+	handleCheck: props.parentIsChecked 
+		? () => {}
+		: () => {
+			state.recommendId
+				? (state.isChecked
+					? dispatch(actions.uncheckRecommend(props.id)) 
+					: dispatch(actions.checkRecommend(props.id, state.recommendId)))
+				: (state.isChecked 
+					? dispatch(actions.uncheckRecommendBranch(props.id)) 
+					: dispatch(actions.checkRecommendBranch(props.id)))
+			}
+	,
+};
 
 /*
  * this.state.recommendBranches, recommends, reviews is one level list.

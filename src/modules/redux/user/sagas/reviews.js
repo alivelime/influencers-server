@@ -5,6 +5,8 @@ export function* add(action) {
 
 	// add recommend and evidence.
 	let res = {recommend: null, review: null, evidence: null, addRecommendBranch: null};
+	let patch = []; // for addSubRecommendBranch
+
 	// do not replace put 'ADD_RECOMMEND_REQUEST' because need to apply result all at once.
 	res.recommend = yield call(postAPI, `/api/recommends`, action.recommend);
 	if (action.evidence && action.evidence.length > 0) {
@@ -13,17 +15,16 @@ export function* add(action) {
 
 	let addFlag = action.isRecommend ? false : true;
 	if (addFlag) {
-		const last = Object.keys(action.recommendBranches).find((id) => {
-			return (action.recommendBranches[id].parentId === action.recommendBranchId && action.recommendBranches[id].nextId === "0");
-		});
-		res.addRecommendBranch = yield call(postAPI, `/api/recommend-branches`, {
-			name: action.review.recommendId,
-			userId: action.review.userId,
-			parentId: action.recommendBranchId,
-			prevId: last || "0",
-			nextId: "0",
-		}, action.token);
+		const param = actions.addSubrecommend(
+			action.recommendBranchId,
+			action.review.userId,
+			action.review.recommendId, 
+			action.recommendBranches);
+
+		res.addRecommendBranch = yield call(postAPI, `/api/recommend-branches`, param.data, action.token);
 		action.review.recommendBranchId = res.addRecommendBranch.id;
+		patch.push({id: param.patch.prevId, nextId: res.addRecommendBranch.id});
+
 	} else {
 		action.review.recommendBranchId = action.recommendBranchId;
 	}
@@ -43,6 +44,10 @@ export function* add(action) {
 		evidence: res.evidence,
 		addRecommendBranch: res.addRecommendBranch,
 	});
+
+	if (patch.length > 0) {
+		yield put({type: "UPDATE_RECOMMEND_BRANCHES_REQUEST", patch, token: action.token});
+	}
 }
 
 
