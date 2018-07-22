@@ -10,8 +10,8 @@ import IconButton from '@material-ui/core/IconButton';
 import ExpandLess from '@material-ui/icons/ExpandLess';
 import ExpandMore from '@material-ui/icons/ExpandMore';
 
-import Link from 'modules/components/Link';
 
+import Link from 'modules/components/Link';
 import My from 'modules/components/User/Profile/My';
 import Other from 'modules/components/User/Profile/Other';
 
@@ -40,20 +40,22 @@ class Profile extends React.Component {
 	}
 
 	render() {
-		const { data, classes } = this.props;
-		if (Object.keys(data).length === 0) return null; 
+		const { user, classes } = this.props;
+		if (!user || Object.keys(user).length === 0) return null; 
 
 		return (
 			<Paper>
-				<a href={data.snsUrl}>
-					<img src={data.image} alt="profile" className={classes.image} />
+				<a href={user.snsUrl}>
+					{user.image && user.image.length > 0 &&
+						<img src={user.image} alt="profile" className={classes.image} />
+					}
 				</a>
 				<div className={classes.header}>
-					<Link to={data.snsUrl} variant="primary">
-						<Avatar src={data.avatar} />
+					<Link to={user.snsUrl} variant="primary">
+						<Avatar src={user.avatar} />
 					</Link>
-					<Link to={data.link} variant="primary">
-						<Typography variant="display1">{data.name}さん</Typography>
+					<Link to={user.link} variant="primary">
+						<Typography variant="display1">{user.name}さん</Typography>
 					</Link>
 					<IconButton
 						className={classes.icon}
@@ -65,13 +67,13 @@ class Profile extends React.Component {
 				<Collapse in={this.state.isOpen} tomeout="auto">
 					{this.props.isMine
 						? <My
-							data={this.props.data}
+							user={this.props.user}
 							updateUser={this.props.updateUser}
 							deleteUser={this.props.deleteUser}
 							loadAffiliate={this.props.loadAffiliate}
 							updateAffiliate={this.props.updateAffiliate}
 						/>
-						: <Other data={this.props.data}/>
+						: <Other user={this.props.user}/>
 					}
 				</Collapse>
 			</Paper>

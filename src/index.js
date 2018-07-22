@@ -2,7 +2,7 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
 import { Provider } from 'react-redux'
-import { createStore, applyMiddleware } from 'redux'
+import { createStore, applyMiddleware, compose } from 'redux'
 import createSagaMiddleware from 'redux-saga'
 
 import ReactGA from 'modules/classes/ReactGA';
@@ -24,10 +24,12 @@ import userReducer from 'modules/redux/user/reducers'
 import userSaga from 'modules/redux/user/sagas';
 
 const sagaMiddleware = createSagaMiddleware()
+const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
 const store = createStore(
   userReducer,
+	 composeEnhancers(
   applyMiddleware(sagaMiddleware)
-)
+));
 sagaMiddleware.run(userSaga);
 
 class App extends React.Component {

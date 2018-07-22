@@ -18,7 +18,6 @@ export default (state = {isRecommend: false, recommendBranchId: "0"}, action) =>
 			return {...state, isRecommend: false, recommendBranchId: "0"};
 
 		case 'SET_RECOMMEND_BRANCH_ID':
-			console.log(action.id);
 			return {...state, isRecommend: action.id !== "0" && action.isRecommend, recommendBranchId: action.id };
 
 		default:

@@ -9,8 +9,12 @@ const mapStateToProps = state => ({
 	isMine: (state.session.user.id !== undefined && state.user.id === state.session.user.id),
 });
 const mapDispatchToProps = dispatch => ({ dispatch });
-const mergeProps = (state, {dispatch}, props) => ({
+const mergeProps = (state, {dispatch}, props) => {
+	console.log('UserPrifile mergeProps ' + props.id);
+	return	{
 	...props,
+	user: state.user,
+	isMine: state.isMine,
 
 	loadUser: () => dispatch(loadUser(props.id)),
 
@@ -19,7 +23,7 @@ const mergeProps = (state, {dispatch}, props) => ({
 	deleteUser: () => dispatch(deleteUser(props.id, state.token)),
 	loadAffiliate: () => dispatch(loadAffiliate(props.id)),
 	updateAffiliate: data => dispatch(updateAffiliate(props.id, data, state.token)),
-});
+}};
 export default connect(
   mapStateToProps,
   mapDispatchToProps,

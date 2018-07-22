@@ -9,9 +9,8 @@ const mapStateToProps = (state, props) => ({
 	isMine: (state.session.user.id !== undefined && state.user.id === state.session.user.id),
 
 	name: state.recommendBranches[props.id].name,
-	recommend: state.recommendBranches[props.id].recommendId
-		? state.reviews[state.recommendBranches[props.id].recommendId] 
-		: null,
+	recommendId: state.recommendBranches[props.id].recommendId,
+	recommends: state.recommends,
 });
 const mapDispatchToProps = dispatch => ({ dispatch });
 const mergeProps = (state, {dispatch}, props) => {
@@ -19,6 +18,11 @@ const mergeProps = (state, {dispatch}, props) => {
 
 	return {
 		...props,
+		isMine: state.isMine,
+		name: state.name,
+		recommend: state.recommendId
+		? state.recommends[state.recommendId]
+		: null,
 
 		handleSubmit: name => {dispatch(actions.updateRecommendBranch({id: props.id, name: name}, state.token))},
 	}
@@ -28,8 +32,5 @@ export default connect(
 	mapStateToProps,
 	mapDispatchToProps,
 	mergeProps
-)(RecommendBranch);
-
-
-
+)(RecommendBranchName);
 

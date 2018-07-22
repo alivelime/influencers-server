@@ -1,5 +1,8 @@
+// import {debug} from 'config'
 
-export default (state = {state: '', user: {}, token: ''}, action) => {
+const empty = {state: 'login', user: {}, token: ''};
+
+export default (state = empty, action) => {
 	switch (action.type) {
 		case 'FETCH_LOGIN_USER_SUCCEEDED':
 			return {

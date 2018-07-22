@@ -49,8 +49,8 @@ export function* updateAffiliate(action) {
 
 		// update recommends
 		let recommends = yield call(getAPI, `/api/users/${action.id}/recommends`);
-		if (Object.Keys(recommends).length > 0) {
-			yield put({type: "LOAD_USER_RECOMMEND_DATA_SUCCEEDED", data: recommends});
+		if (Object.keys(recommends).length > 0) {
+			yield put({type: "LOAD_USER_RECOMMEND_DATA_SUCCEEDED", recommends});
 		}
 	} else {
 		yield put({type: "UPDATE_USER_AFFILIATE_FAILED"});

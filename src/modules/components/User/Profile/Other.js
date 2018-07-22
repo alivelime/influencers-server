@@ -14,11 +14,11 @@ const styleSheet = theme => ({
 class Profile extends React.Component {
 
 	render() {
-		const { classes, data } = this.props;
+		const { classes, user } = this.props;
 
 		return (
 			<Paper className={classes.content}>
-				<Typography variant="body1">{data.memo}</Typography>
+				<Typography variant="body1">{user.memo}</Typography>
 			</Paper>
 		);
 	}

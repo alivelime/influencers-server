@@ -21,6 +21,7 @@ export default (state = {}, action) => {
 
 			let recommendBranches = Object.assign({}, state);
 			recommendBranches[action.addRecommendBranch.id] = {...action.addRecommendBranch, isOpen: true};
+			recommendBranches[action.patch.id] = Object.assign({}, state[action.patch.id], action.patch);
 
 			return recommendBranches;
 		}

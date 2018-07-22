@@ -6,11 +6,6 @@ export const addReview = (recommendBranchId, isRecommend, {review, recommend, ev
 	recommend,
 	evidence,
 	recommendBranches,
-})
-
-export const addEvidence = (data, token) => ({
-	type: 'ADD_RECOMMEND_REQUEST',
-	data,
 	token,
 })
 

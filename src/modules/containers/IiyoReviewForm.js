@@ -28,6 +28,8 @@ const searchRecommendBranchIds = (reviews, url) => {
 // for performance reference http://anect.hatenablog.com/entry/2018/04/05/124654
 const selector = formValueSelector('reviewForm');
 const mapStateToProps = state => ({
+	token: state.session.token,
+
 	recommendBranchId: state.reviewForm.recommendBranchId,
 	isRecommend: state.reviewForm.isRecommend,
 
@@ -99,7 +101,7 @@ const mergeProps = (state, {dispatch}, props) => ({
 				kind: "information",
 			},
 			recommendBranches: state.recommendBranches,
-		}, state.session.token));
+		}, state.token));
 
 		dispatch(actions.uncheckAll());
 		dispatch(reset('reviewForm')); 

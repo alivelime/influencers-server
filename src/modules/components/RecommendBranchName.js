@@ -2,11 +2,15 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { withStyles } from '@material-ui/core/styles';
 
+import Typography from '@material-ui/core/Typography';
 import TextField from '@material-ui/core/TextField';
 
 import Recommend from 'modules/components/Recommend';
 
 const styleSheet = theme => ({
+	content: {
+		flex: 1,
+	},
 });
 
 class RecommendBranchName extends React.Component {
@@ -21,7 +25,6 @@ class RecommendBranchName extends React.Component {
 			name: event.target.value,
 		});
 	};
-	handleOnBlur = this.handleSubmit;
 	handleSubmit = event => {
 		event.preventDefault();
 		if (this.state.changeFlag) {
@@ -37,7 +40,7 @@ class RecommendBranchName extends React.Component {
 			return <Recommend data={this.props.recommend} enableLink />
 		} else {
 			if (this.props.isMine) {
-				<TextField
+				return <TextField
 					id={this.props.id}
 					placeholder="リスト名"
 					fullWidth
@@ -46,7 +49,7 @@ class RecommendBranchName extends React.Component {
 					onBlur={this.handleSubmit}
 				/>
 			} else {
-				return <Typogranphy variant="title">{this.props.name}</Typography>
+				return <div className={classes.content}>}<Typography variant="title">{this.props.name}</Typography></div>
 			}
 		}
 	}

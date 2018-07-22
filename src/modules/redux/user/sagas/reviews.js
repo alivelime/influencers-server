@@ -1,21 +1,22 @@
 import { call, put } from 'redux-saga/effects'
-import { postAPI, deleteAPI } from 'modules/utils/Request';
+import { postAPI, deleteAPI, patchAPI } from 'modules/utils/Request';
+import * as actions from 'modules/redux/user/actions';
 
 export function* add(action) {
 
 	// add recommend and evidence.
 	let res = {recommend: null, review: null, evidence: null, addRecommendBranch: null};
-	let patch = []; // for addSubRecommendBranch
+	let patch = null; // for addSubRecommendBranch
 
 	// do not replace put 'ADD_RECOMMEND_REQUEST' because need to apply result all at once.
 	res.recommend = yield call(postAPI, `/api/recommends`, action.recommend);
-	if (action.evidence && action.evidence.length > 0) {
+	if (action.evidence) {
 		res.evidence = yield call(postAPI, `/api/recommends`, action.evidence);
 	}
 
 	let addFlag = action.isRecommend ? false : true;
 	if (addFlag) {
-		const param = actions.addSubrecommend(
+		const param = actions.addSubRecommendBranch(
 			action.recommendBranchId,
 			action.review.userId,
 			action.review.recommendId, 
@@ -23,8 +24,7 @@ export function* add(action) {
 
 		res.addRecommendBranch = yield call(postAPI, `/api/recommend-branches`, param.data, action.token);
 		action.review.recommendBranchId = res.addRecommendBranch.id;
-		patch.push({id: param.patch.prevId, nextId: res.addRecommendBranch.id});
-
+		patch = {id: param.patch.prevId, nextId: res.addRecommendBranch.id};
 	} else {
 		action.review.recommendBranchId = action.recommendBranchId;
 	}
@@ -38,16 +38,17 @@ export function* add(action) {
 		return;
 	}
 
+	if (patch) {
+		yield call(patchAPI, `/api/recommend-branches/${patch.id}`, patch, action.token);
+	}
+
 	yield put({type: "ADD_REVIEW_SUCCEEDED",
 		review: res.review,
 		recommend: res.recommend,
 		evidence: res.evidence,
 		addRecommendBranch: res.addRecommendBranch,
+		patch,
 	});
-
-	if (patch.length > 0) {
-		yield put({type: "UPDATE_RECOMMEND_BRANCHES_REQUEST", patch, token: action.token});
-	}
 }
 
 

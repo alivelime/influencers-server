@@ -4,7 +4,6 @@ import { withStyles } from '@material-ui/core/styles';
 import classNames from 'classnames';
 import ListItem from '@material-ui/core/ListItem';
 import Checkbox from '@material-ui/core/Checkbox';
-import TextField from '@material-ui/core/TextField';
 import Collapse from '@material-ui/core/Collapse';
 import List from '@material-ui/core/List';
 
@@ -12,8 +11,9 @@ import IconButton from '@material-ui/core/IconButton';
 import ExpandLess from '@material-ui/icons/ExpandLess';
 import ExpandMore from '@material-ui/icons/ExpandMore';
 
-import RecommendList from 'modules/containers/RecommendList';
-import Review from 'modules/components/Review';
+import RecommendList from 'modules/containers/RecommendBranch';
+import RecommendBranchName from 'modules/containers/RecommendBranchName';
+import ReviewList from 'modules/containers/ReviewList';
 
 const styleSheet = theme => ({
 	root: {
@@ -29,61 +29,72 @@ const styleSheet = theme => ({
 		paddingTop: theme.spacing.unit * 0.5,
 		paddingBottom: theme.spacing.unit * 0.5,
 	},
+	list: {
+		width: "100%",
+	},
 });
 
 class RecommendBranch extends React.Component {
 
 	render() {
+		console.log('render recommendbranch '+this.props.id);
 
 		const { classes } = this.props;
 		const children = this.props.childIds.map((id) => {
 			return (
-				<RecommendBranch
+				<RecommendList
 					id={id}
 					key={id}
-					parentIsChecked={this.props.parentIsChecked}
+					parentIsChecked={this.props.isChecked || this.props.parentIsChecked}
 				/>
 			);
 		});
 
 		if (this.props.id === "0") {
-			return children;
+			return (
+				<List component='nav' className={classes.list}>
+					{children}
+				</List>
+			);
 		}
 
 		return (
-			<ListItem
-				className={classNames(classes.root, (this.props.isChecked ? classes.checked : classes.unchecked))}
-			>
-				{this.props.isMine &&
-					<Checkbox
-						checked={this.props.isChecked}
-						onClick={this.props.handleCheck}
-						tabIndex={-1}
-						disabled={this.props.parentIsChecked}
-						disableRipple
-					/>
-				}
-				<RecommendBranchName
-					id={this.props.id}
-					parentIsChecked={this.props.parentIsChecked || this.props.isChecked}
-					childLength={this.props.childIds.length}
+			<List component='nav' className={classes.list}>
+				<ListItem
+					className={classNames(classes.root, (this.props.isChecked ? classes.checked : classes.unchecked))}
 				>
+					{this.props.isMine &&
+						<Checkbox
+							checked={this.props.isChecked}
+							onClick={this.props.handleCheck}
+							tabIndex={-1}
+							disabled={this.props.parentIsChecked}
+							disableRipple
+						/>
+					}
+					<RecommendBranchName
+						id={this.props.id}
+						childLength={this.props.childIds.length}
+					/>
+					{(this.props.recommendId || this.props.childIds.length > 0) &&
+						<IconButton onClick={this.props.handleCollapse}>
+							{this.props.isOpen ? <ExpandLess className={classes.icon}/> : <ExpandMore className={classes.icon}/>}
+						</IconButton>
+					}
+				</ListItem>
 				{(this.props.recommendId || this.props.childIds.length > 0) &&
-					<IconButton onClick={this.props.handleCollapse}>
-						{this.props.isOpen ? <ExpandLess className={classes.icon}/> : <ExpandMore className={classes.icon}/>}
-					</IconButton>
+					<ListItem
+						className={classNames(classes.root, (this.props.isChecked ? classes.checked : classes.unchecked))}
+					>
+						<List component='nav' className={classes.list}>
+							<Collapse in={this.props.isOpen} tomeout="auto" className={classes.container}>
+								{children}
+								<ReviewList recommendBranchId={this.props.id} />
+							</Collapse>
+						</List>
+					</ListItem>
 				}
-			</ListItem>
-			<ListItem
-				className={classNames(classes.root, (this.props.isChecked ? classes.checked : classes.unchecked))}
-			>
-				<Collapse in={this.props.isOpen} tomeout="auto" className={classes.container}>
-					<List component='nav' className={classes.list}>
-						{children}
-						<ReviewList recommendBranchId={props.id} />
-					</List>
-				</Collapse>
-			</ListItem>
+			</List>
 		);
 	}
 }

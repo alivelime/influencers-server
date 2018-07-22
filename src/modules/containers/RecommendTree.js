@@ -7,11 +7,13 @@ import RecommendTree from 'modules/components/RecommendTree';
 const mapStateToProps = state => ({
 	token: state.session.token,
 	isMine: (state.session.user.id !== undefined && state.user.id === state.session.user.id),
+	recommendBranches: state.recommendBranches,
 });
 const mapDispatchToProps = dispatch => ({ dispatch });
 
 const mergeProps = (state, {dispatch}, props) => ({
 	...props,
+	isMine: state.isMine,
 
 	loadRecommendData: () => dispatch(actions.loadUserRecommendData(props.userId, state.token)),
 	dataLoaded: Object.keys(state.recommendBranches).length > 0,

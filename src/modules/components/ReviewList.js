@@ -17,6 +17,7 @@ class ReviewList extends React.Component {
 				<ListItem key={review.id} className={classes.review} >
 					<Review
 						data={review}
+						isMine={this.props.isMine}
 						myUserId={this.props.myUserId}
 					/>
 				</ListItem>

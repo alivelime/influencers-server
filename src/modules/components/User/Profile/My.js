@@ -16,20 +16,26 @@ class MyProfile extends React.Component {
 
 	componentWillMount() {
 		this.props.loadAffiliate();
+		this.initState(this.props);
+	}
+	componentDidUpdate(prevProps) {
+		if (this.props !== prevProps) {
+			this.initState(this.props);
+		}
 	}
 
-	state = {
+	initState = props => this.setState({
 		changed: {
 			memo: false,
 			link: false,
 			amazonjp: false,
 			hherbjp: false,
 	  },
-		memo: this.props.data.memo,
-		link: this.props.data.link,
-		amazonjp: this.props.data.affiliate.amazonjp || '',
-		iherbjp: this.props.data.affiliate.iherbjp || '',
-	};
+		memo: props.user.memo,
+		link: props.user.link,
+		amazonjp: props.user.affiliate.amazonjp || '',
+		iherbjp: props.user.affiliate.iherbjp || '',
+	});
 
 	handleChange = name => event => {
 		this.setState({
@@ -83,7 +89,7 @@ class MyProfile extends React.Component {
 								placeholder="iHerb.jp"
 								value={this.state.iherbjp}
 								onChange={this.handleChange('iherbjp')}
-								onBlur={this.handleBlur('iherb', this.props.updateAffiliate)}
+								onBlur={this.handleBlur('iherbjp', this.props.updateAffiliate)}
 							/>
 						</Paper>
 					</ListItem>

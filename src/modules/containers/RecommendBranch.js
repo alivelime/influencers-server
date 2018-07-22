@@ -4,7 +4,7 @@ import * as actions from 'modules/redux/user/actions';
 import RecommendBranch from 'modules/components/RecommendBranch';
 
 // for performance reference http://anect.hatenablog.com/entry/2018/04/05/124654
-const mapStateToProps = state => ({
+const mapStateToProps = (state, props) => ({
 	token: state.session.token,
 	isMine: (state.session.user.id !== undefined && state.user.id === state.session.user.id),
 
@@ -12,16 +12,20 @@ const mapStateToProps = state => ({
 					|| state.checker.recommendBranchIds.includes(props.id),
 
 	recommendBranches: state.recommendBranches,
+	recommendId: props.id !== "0" && state.recommendBranches[props.id].recommendId,
+	isOpen: props.id !== "0" && state.recommendBranches[props.id].isOpen,
 });
 const mapDispatchToProps = dispatch => ({ dispatch });
 const mergeProps = (state, {dispatch}, props) => {
 	console.log("RecommendBranch mergeProps "+props.id);
 	return {
 	...props,
+	isMine: state.isMine,
+	isChecked: state.isChecked,
+	recommendId: state.recommendId,
+	isOpen: state.isOpen,
 
 	childIds: getChildren(state.recommendBranches, props.id, dispatch, state.token),
-	isOpen: props.id !== "0" && state.recommendBranches[props.id].isOpen,
-	recommendId: props.id !== "0" && state.recommendBranches[props.id].recommendId,
 
 	handleCollapse: state.isOpen
 		? () => {dispatch(actions.closeRecommendBranch(props.id))}
@@ -39,6 +43,7 @@ const mergeProps = (state, {dispatch}, props) => {
 					: dispatch(actions.checkRecommendBranch(props.id)))
 			}
 	,
+	};
 };
 
 /*

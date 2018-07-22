@@ -56,7 +56,6 @@ Link.defaultProps = {
 
 Link.propTypes = {
   className: PropTypes.string,
-  to: PropTypes.string.isRequired,
   prefetch: PropTypes.bool,
   variant: PropTypes.oneOf(['default', 'primary', 'secondary', 'button']),
 };

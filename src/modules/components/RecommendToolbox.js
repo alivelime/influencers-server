@@ -25,9 +25,6 @@ const styleSheet = theme => ({
 	enable: {
 		color: theme.palette.secondary.main,
 	},
-	enableIiyo: {
-		color: theme.palette.secondary.main,
-	},
 	enableDelete: {
 		color: theme.palette.error.main,
 	},
