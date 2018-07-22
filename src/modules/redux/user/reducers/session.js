@@ -1,6 +1,6 @@
 // import {debug} from 'config'
 
-const empty = {state: 'login', user: {}, token: ''};
+const empty = {state: '', user: {}, token: ''};
 
 export default (state = empty, action) => {
 	switch (action.type) {
