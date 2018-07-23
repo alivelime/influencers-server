@@ -2,10 +2,12 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { withStyles } from '@material-ui/core/styles';
 import classNames from 'classnames';
+
+import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
+import Paper from '@material-ui/core/Paper';
 import Checkbox from '@material-ui/core/Checkbox';
 import Collapse from '@material-ui/core/Collapse';
-import List from '@material-ui/core/List';
 
 import IconButton from '@material-ui/core/IconButton';
 import ExpandLess from '@material-ui/icons/ExpandLess';
@@ -31,6 +33,9 @@ const styleSheet = theme => ({
 	},
 	list: {
 		width: "100%",
+	},
+	content: {
+		backgroundColor: 'inherit',
 	},
 });
 
@@ -60,28 +65,30 @@ class RecommendBranch extends React.Component {
 
 		return (
 			<List component='nav' className={classes.list}>
-				<ListItem
-					className={classNames(classes.root, (this.props.isChecked ? classes.checked : classes.unchecked))}
-				>
-					{this.props.isMine &&
-						<Checkbox
-							checked={this.props.isChecked}
-							onClick={this.props.handleCheck}
-							tabIndex={-1}
-							disabled={this.props.parentIsChecked}
-							disableRipple
+				<Paper className={classes.content}>
+					<ListItem
+						className={classNames(classes.root, (this.props.isChecked ? classes.checked : classes.unchecked))}
+					>
+						{this.props.isMine &&
+							<Checkbox
+								checked={this.props.isChecked}
+								onClick={this.props.handleCheck}
+								tabIndex={-1}
+								disabled={this.props.parentIsChecked}
+								disableRipple
+							/>
+						}
+						<RecommendBranchName
+							id={this.props.id}
+							childLength={this.props.childIds.length}
 						/>
-					}
-					<RecommendBranchName
-						id={this.props.id}
-						childLength={this.props.childIds.length}
-					/>
-					{(this.props.recommendId || this.props.childIds.length > 0) &&
-						<IconButton onClick={this.props.handleCollapse}>
-							{this.props.isOpen ? <ExpandLess className={classes.icon}/> : <ExpandMore className={classes.icon}/>}
-						</IconButton>
-					}
-				</ListItem>
+						{(this.props.recommendId || this.props.childIds.length > 0) &&
+							<IconButton onClick={this.props.handleCollapse}>
+								{this.props.isOpen ? <ExpandLess className={classes.icon}/> : <ExpandMore className={classes.icon}/>}
+							</IconButton>
+						}
+					</ListItem>
+				</Paper>
 				{(this.props.recommendId || this.props.childIds.length > 0) &&
 					<ListItem
 						className={classNames(classes.root, (this.props.isChecked ? classes.checked : classes.unchecked))}

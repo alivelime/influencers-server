@@ -10,6 +10,8 @@ import Recommend from 'modules/components/Recommend';
 const styleSheet = theme => ({
 	content: {
 		flex: 1,
+		marginLeft: theme.spacing.unit * 2,
+		marginRight: theme.spacing.unit * 2,
 	},
 });
 

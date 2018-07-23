@@ -22,6 +22,9 @@ const styleSheet = theme => ({
 	},
 	card: {
 		display: 'flex',
+		justifyContent: 'center',
+		alignItems: 'center',
+
 		paddingLeft: theme.spacing.unit * 3,
 		width: "100%",
 		backgroundColor: 'inherit',
@@ -39,6 +42,7 @@ const styleSheet = theme => ({
 	},
 	iconBox: {
 		flex: 0,
+		padding: theme.spacing.unit * 1,
 	},
 });
 

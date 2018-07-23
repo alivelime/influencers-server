@@ -77,11 +77,12 @@ func GetUserRecommends(ctx context.Context, userId int64) (map[string]Recommend,
 			}
 
 			if e == datastore.ErrNoSuchEntity {
+				return ret, errors.New(fmt.Sprintf("no such id %s", e))
 				// empty
 				continue
 			}
 
-			return ret, errors.New(fmt.Sprintf("Unable to GetMulti Recommend: %s", err))
+			return ret, errors.New(fmt.Sprintf("Unable to GetMulti Recommend: %s", e))
 		}
 
 	}
@@ -89,12 +90,10 @@ func GetUserRecommends(ctx context.Context, userId int64) (map[string]Recommend,
 	// id and affiliate tag.
 	affiliateTag := affiliate.GetUserTag(ctx, userId)
 	for k, v := range keys {
-		if tempRecommends[k].Kind != "" {
-			web := site.Factory(v.StringID(), affiliateTag)
-			tempRecommends[k].URL = v.StringID()
-			tempRecommends[k].Link = web.GetAffiliateLink()
-			ret[v.StringID()] = tempRecommends[k]
-		}
+		web := site.Factory(v.StringID(), affiliateTag)
+		tempRecommends[k].URL = v.StringID()
+		tempRecommends[k].Link = web.GetAffiliateLink()
+		ret[v.StringID()] = tempRecommends[k]
 	}
 	return ret, nil
 }

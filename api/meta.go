@@ -25,10 +25,21 @@ func getMeta(w http.ResponseWriter, r *http.Request) {
 	url := web.GetSimpleURL()
 
 	recommend, err := recommends.Get(ctx, url)
-	if err != nil {
+	if err != nil || recommend.Title == "" {
 		// no cache. get meta data.
 		if data, err = web.GetMeta(w, r); err != nil {
 			http.Error(w, fmt.Sprintf("Cannot Fetch API: %s", err), http.StatusInternalServerError)
+			return
+		}
+
+		// cache
+		recommend.URL = url
+		recommend.Link = web.GetAffiliateLink()
+		recommend.Title = data.Title
+		recommend.Image = data.Image
+		recommend.Description = data.Description
+		if err := recommends.Put(ctx, &recommend); err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
 	} else {

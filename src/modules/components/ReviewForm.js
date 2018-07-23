@@ -35,7 +35,7 @@ const siteLabel = (preview) => {
 	if (!preview || !preview.site) return null;
 
 	switch(preview.site) {
-		case "amazon": return "AmazonJapanです。アフィリタグは自動的に挿入されます。";
+		case "amazon": return "AmazonJapanです。アフィリタグは自動的に挿入されます。(APIの制限のためプレビューが出ない場合がありますが、登録はできます。)";
 		case "iherb": return "iHerbへのリンクです。アフィリタグは自動的に挿入されます。";
 		case "niconico": return "ニコニコ動画のリンクです。生放送のリンクはデータ取得できません。";
 		default:
@@ -99,7 +99,7 @@ class ReviewForm extends React.Component {
 									<Field
 										component={TextField}
 										name="url"
-										placeholder="オススメしたいもの(URL)"
+										placeholder="オススメしたいURL(短縮URL非対応)"
 										fullWidth
 										onChange={this.props.handleURLChange}
 										validate={[validation.errorIfEmpty, validation.errorIfNotURL]}
