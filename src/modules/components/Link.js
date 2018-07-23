@@ -33,9 +33,7 @@ function Link(props) {
   const { classes, variant, to, children } = props;
 	let component;
 	if (!to || to.length === 0) {
-		return (	
-			<div>{children}</div>
-		);
+		return children;
 	} else if (to.startsWith('http')) {
 		return (
 			<ReactGA.OutboundLink

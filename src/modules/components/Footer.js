@@ -33,6 +33,8 @@ const styleSheet = theme => ({
   },
   version: {
     marginTop: theme.spacing.unit,
+		marginLeft: 'auto',
+		marginRight: 'auto',
   },
 });
 
@@ -56,30 +58,27 @@ function Footer(props) {
                 <Link to="https://twitter.com/alivelime">Twitter</Link>
               </li>
               <li className={classes.listItem}>
-                <Link to="/vision">
-									Vision
-                </Link>
+                <Link to="https://github.com/alivelime/influs/issues">bug report</Link>
               </li>
             </ul>
           </Grid>
           <Grid item xs={12} sm={6}>
             <ul className={classes.list}>
               <li className={classes.listItem}>
-                <Link to="/contact">Contact us</Link>
+                <Link to="/terms">Terms</Link>
               </li>
               <li className={classes.listItem}>
-                <Link to="/roadmap">Roadmap</Link>
+                <Link to="/vision">Vision</Link>
               </li>
               <li className={classes.listItem}>
-                <Link to="/">Team</Link>
+                <Link to="">Team</Link>
               </li>
             </ul>
           </Grid>
         </Grid>
       </Typography>
       <Typography className={classes.version} gutterBottom noWrap>
-        Copyrights 
-				<Link to="https://tokishirazu.co.jp">ときしらず LLC</Link>
+        Copyrights <Link to="">ときしらず LLC</Link>
       </Typography>
     </footer>
 		</div>

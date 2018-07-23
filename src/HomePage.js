@@ -61,9 +61,6 @@ const styles = theme => ({
 });
 
 class HomePage extends React.Component {
-	state = {
-		open: false,
-	};
 
 	render() {
 		const { classes } = this.props;
@@ -100,18 +97,15 @@ class HomePage extends React.Component {
 						</Typography>
 					</div>
 					<div className={classes.buttons}>
-						<Button
-							className={classes.button}
-							variant="raised"
-							color="primary"
-							onClick={() => {this.setState({open: true})}}
-						>
-							{'SIGN/LOG IN'}
-						</Button>
-						<Login
-							open={this.state.open}
-							onClose={() => {this.setState({open: false})}}
-						/>
+						<Login>
+							<Button
+								className={classes.button}
+								variant="raised"
+								color="primary"
+							>
+								{'SIGN IN/LOG IN'}
+							</Button>
+						</Login>
 					</div>
 					<Divider />
 					<div className={classes.content}>

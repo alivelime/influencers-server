@@ -13,23 +13,17 @@ const styles = theme => ({
 });
 
 class Header extends React.Component {
-	state = {
-		open: false,
-	};
 
 	render () {
 		const { classes } = this.props;
 		return (
 			<div className={classes.flexbox}>
-				<Button
-					variant="contained"
-					color="primary"
-					onClick={() => {this.setState({open: true})}}
-				>{`LOGIN / SIGNIN`}</Button>
-				<Login
-					open={this.state.open}
-					onClose={() => {this.setState({open: false})}}
-				/>
+				<Login redirect={this.props.location.pathname} >
+					<Button
+						variant="contained"
+						color="primary"
+					>{`SIGN IN/LOG IN`}</Button>
+				</Login>
 			</div>
 		);
 	}

@@ -1,4 +1,6 @@
 
+export const MY_PAGE = '__MY_PAGE__';
+
 export const debug = {
 	session : {
 		twitter1: {

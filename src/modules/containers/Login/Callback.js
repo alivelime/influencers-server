@@ -4,6 +4,7 @@ import { Redirect } from "react-router-dom";
 
 import Register from 'modules/components/Register';
 import * as actions from 'modules/redux/user/actions'
+import { MY_PAGE } from 'config';
 
 const mapStateToProps = state => ({
 	session: state.session,
@@ -35,8 +36,15 @@ class Callback extends React.Component {
 		}
 
 		if (session.state === "login") {
+			let to = redirect ?  window.atob(redirect) : null;
+			const mypage = `/users/${this.props.session.user.id}`
+			if (!to || to === '/') {
+				to = mypage;
+			} else {
+				to = to.replace(MY_PAGE, mypage);
+			}
 			return (
-				<Redirect to={redirect ? window.atob(redirect) : `/users/${this.props.session.user.id}`} />
+				<Redirect to={to} />
 			);
 		}
 	}

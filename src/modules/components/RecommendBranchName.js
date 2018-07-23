@@ -49,7 +49,7 @@ class RecommendBranchName extends React.Component {
 					onBlur={this.handleSubmit}
 				/>
 			} else {
-				return <div className={classes.content}>}<Typography variant="title">{this.props.name}</Typography></div>
+				return <div className={classes.content}><Typography variant="title">{this.props.name}</Typography></div>
 			}
 		}
 	}

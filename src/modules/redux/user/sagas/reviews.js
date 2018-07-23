@@ -10,7 +10,7 @@ export function* add(action) {
 
 	// do not replace put 'ADD_RECOMMEND_REQUEST' because need to apply result all at once.
 	res.recommend = yield call(postAPI, `/api/recommends`, action.recommend);
-	if (action.evidence) {
+	if (action.evidence.url.length > 0) {
 		res.evidence = yield call(postAPI, `/api/recommends`, action.evidence);
 	}
 

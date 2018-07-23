@@ -10,7 +10,7 @@ import Callback from 'modules/containers/Login/Callback';
 import HomePage from 'HomePage';
 import User from 'User';
 import Recommend from 'Recommend';
-import Contact from 'Contact';
+import Terms from 'Terms';
 import Vision from 'Vision';
 import Header from 'modules/containers/Header';
 import Footer from 'modules/components/Footer';
@@ -38,7 +38,7 @@ class App extends React.Component {
 			<Provider store={store} >
 				<Router>
 					<div>
-						<Header />
+						<Route path='/' component={Header} />
 						<Switch>
 							<Route exact path='/' component={withTracker(HomePage)} />
 							<Route exact path='/login/callback/sns/:sns/token/:token/redirect/' component={withTracker(Callback)} />
@@ -49,7 +49,7 @@ class App extends React.Component {
 							<Route exact path='/recommends/:id' component={withTracker(Recommend)} />
 							<Route exact path='/recommends/:id/userId/:userId' component={withTracker(Recommend)} />
 							<Route exact path='/vision' component={withTracker(Vision)} />
-							<Route exact path='/contact' component={withTracker(Contact)} />
+							<Route exact path='/terms' component={withTracker(Terms)} />
 							<Route component={withTracker(NotFound)} />
 						</Switch>
 						<Footer />

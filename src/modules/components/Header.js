@@ -29,11 +29,11 @@ function Header(props) {
 			>
 				<Toolbar>
 					<Typography variant="title" color="inherit" className={classes.flex} >
-            <Link to='/'>インフルず</Link>
+            <Link to='/'>インフルず(β)</Link>
           </Typography>
 					{props.isLogin 
 						? <Login session={props.session} logout={props.logout}/> 
-						: <Guest />
+						: <Guest location={props.location}/>
 					} 
 				</Toolbar>
 			</AppBar>

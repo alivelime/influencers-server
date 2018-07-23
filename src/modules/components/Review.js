@@ -10,7 +10,10 @@ import CardMedia from '@material-ui/core/CardMedia';
 import IconButton from '@material-ui/core/IconButton';
 import ThumbUp from '@material-ui/icons/ThumbUp';
 
+import Login from 'modules/components/Login';
 import Link from 'modules/components/Link';
+
+import { MY_PAGE } from 'config';
 
 const styleSheet = theme => ({
 	image: {
@@ -70,13 +73,21 @@ class Review extends React.Component {
 						日付 : {this.props.data.createdAt.toLocaleDateString()}
 					</Typography>
 				</CardContent>
-				{this.props.myUserId && !this.props.isMine &&
+				{!this.props.isMine &&
 					<div className={classes.iconBox}>
-						<Link to={`/users/${this.props.myUserId}/iine/${this.props.data.id}`} target="new" rel="noopener noreferrer">
-							<IconButton>
-								<ThumbUp className={classes.icon} />
-							</IconButton>
-						</Link>
+						{this.props.myUserId ? (
+							<Link to={`/users/${this.props.myUserId}/iine/${this.props.data.id}`}>
+								<IconButton>
+									<ThumbUp className={classes.icon} />
+								</IconButton>
+							</Link>
+						) : (
+							<Login redirect={`${MY_PAGE}/iine/${this.props.data.id}`}>
+								<IconButton>
+									<ThumbUp className={classes.icon} />
+								</IconButton>
+							</Login>
+						)}
 					</div>
 				}
 			</Card>

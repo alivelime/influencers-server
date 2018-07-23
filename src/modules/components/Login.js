@@ -8,6 +8,8 @@ import DialogTitle from '@material-ui/core/DialogTitle';
 import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
 
+import {base64encode} from 'modules/utils/Request';
+
 const styles = theme => ({
 	div: {
     flex: '0 0 auto',
@@ -27,35 +29,41 @@ const styles = theme => ({
 
 class Login extends React.Component {
 	state = {
-		twitterURL: '',
+		open: false,
 	};
 
 	componentDidMount = () => {
 
 	};
-	handleClose = () => {
-		this.props.onClose();
-	};
 
 	render() {
 		const { classes } = this.props;
 		return (
-      <Dialog onClose={this.handleClose} aria-labelledby="login-dialog" open={this.props.open}>
-				<DialogTitle id="login-dialog">連携するサービスを選んでください</DialogTitle>
-				<div className={classes.div}>
-					<List>
-						<ListItem>
-							<Button
-								variant="raised"
-								size="large"
-								color="primary"
-								href={process.env.REACT_APP_TWITTER_AUTH}
-								className={classes.twitter}
-							>twitter</Button>
-						</ListItem>
-					</List>
-				</div>
-			</Dialog>
+			<div>
+				<div onClick={() => {this.setState({open: true})}}>{this.props.children}</div>
+				<Dialog
+					aria-labelledby="login-dialog"
+					open={this.state.open}
+					onClose={() => {this.setState({open: false})}}
+				>
+					<DialogTitle id="login-dialog">連携するサービスを選んでください</DialogTitle>
+					<div className={classes.div}>
+						<List>
+							<ListItem>
+								<Button
+									variant="raised"
+									size="large"
+									color="primary"
+									href={`${process.env.REACT_APP_TWITTER_AUTH}`
+										+ (this.props.redirect ? '/redirect/' + base64encode(this.props.redirect) : '')
+									}
+									className={classes.twitter}
+								>twitter</Button>
+							</ListItem>
+						</List>
+					</div>
+				</Dialog>
+			</div>
 		);
 	}
 }
