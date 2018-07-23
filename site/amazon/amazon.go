@@ -81,7 +81,9 @@ func (p *Amazon) GetMeta(w http.ResponseWriter, r *http.Request) (meta.Meta, err
 	//Parse result
 	aws := new(amazonproduct.ItemLookupResponse)
 	err = xml.Unmarshal([]byte(result), aws)
-	if err != nil {
+	if err != nil || !aws.Items.Request.IsValid {
+		data.URL = p.url
+		data.Title = "error " + err.Error()
 		return data, err
 	}
 	item := aws.Items.Item

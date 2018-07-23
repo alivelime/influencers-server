@@ -4,6 +4,8 @@ import classNames from 'classnames';
 import { NavLink } from 'react-router-dom';
 import { withStyles } from '@material-ui/core/styles';
 
+import ReactGA from 'react-ga';
+
 const styles = theme => ({
   root: {
     textDecoration: 'none',
@@ -36,11 +38,15 @@ function Link(props) {
 		);
 	} else if (to.startsWith('http')) {
 		return (
-			<a href={to}
-				 className={classNames(classes.root, classes[variant])}
-				 target="new"
-				 rel="noopener noreferrer"
-			 {...props} >{children}</a>
+			<ReactGA.OutboundLink
+				className={classNames(classes.root, classes[variant])}
+        eventLabel="outbound"
+        to={to}
+				rel="noopener noreferrer"
+        target="_blank"
+			>
+				{children}
+      </ReactGA.OutboundLink>		
 		);
 	} else if(to.length > 0) {
 		return (

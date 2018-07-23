@@ -46,7 +46,6 @@ class Review extends React.Component {
 
 		let meta = {url: '', title: '', image: '', description: ''}
 
-		console.log(this.props.data);
 		if (this.props.data.meta) {
 			meta = this.props.data.meta;
 		}

@@ -5,7 +5,7 @@ import { Provider } from 'react-redux'
 import { createStore, applyMiddleware, compose } from 'redux'
 import createSagaMiddleware from 'redux-saga'
 
-import ReactGA from 'modules/classes/ReactGA';
+import withTracker from 'modules/components/withTracker';
 import Callback from 'modules/containers/Login/Callback';
 import HomePage from 'HomePage';
 import User from 'User';
@@ -36,21 +36,21 @@ class App extends React.Component {
 	render() {
 		return (
 			<Provider store={store} >
-				<Router onUpdate={ReactGA.doPageTracking}>
+				<Router>
 					<div>
 						<Header />
 						<Switch>
-							<Route exact path='/' component={HomePage} />
-							<Route exact path='/login/callback/sns/:sns/token/:token/redirect/' component={Callback} />
-							<Route exact path='/login/callback/sns/:sns/token/:token/redirect/:redirect' component={Callback} />
-							<Route exact path='/users/:id' component={User} />
-							<Route exact path='/users/:id/recommend-branches/:recommendBranchId' component={User} />
-							<Route exact path='/users/:id/iine/:iineId' component={User} />
-							<Route exact path='/recommends/:id' component={Recommend} />
-							<Route exact path='/recommends/:id/userId/:userId' component={Recommend} />
-							<Route exact path='/vision' component={Vision} />
-							<Route exact path='/contact' component={Contact} />
-							<Route component={NotFound} />
+							<Route exact path='/' component={withTracker(HomePage)} />
+							<Route exact path='/login/callback/sns/:sns/token/:token/redirect/' component={withTracker(Callback)} />
+							<Route exact path='/login/callback/sns/:sns/token/:token/redirect/:redirect' component={withTracker(Callback)} />
+							<Route exact path='/users/:id' component={withTracker(User)} />
+							<Route exact path='/users/:id/recommend-branches/:recommendBranchId' component={withTracker(User)} />
+							<Route exact path='/users/:id/iine/:iineId' component={withTracker(User)} />
+							<Route exact path='/recommends/:id' component={withTracker(Recommend)} />
+							<Route exact path='/recommends/:id/userId/:userId' component={withTracker(Recommend)} />
+							<Route exact path='/vision' component={withTracker(Vision)} />
+							<Route exact path='/contact' component={withTracker(Contact)} />
+							<Route component={withTracker(NotFound)} />
 						</Switch>
 						<Footer />
 					</div>
