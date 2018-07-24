@@ -15,8 +15,10 @@ const styleSheet = theme => ({
 		justifyContent: 'center',
 	},
 	content: {
-    paddingBottom: theme.spacing.unit * 1,
-    paddingTop: theme.spacing.unit * 1,
+		width: '100%',
+		marginTop: theme.spacing.unit * 1,
+		marginBottom: theme.spacing.unit * 1,
+		padding: theme.spacing.unit * 1,
     maxWidth: theme.spacing.unit * 160,
 	},
 	pre: {
@@ -31,19 +33,26 @@ class Terms extends React.Component {
 
 		return (
 			<div className={classes.root}>
-				<div className={classes.content}>
-					<Typography
-						variant="headline"
-						component="h2"
-						gutterBottom
-					>
-						利用規約
-					</Typography>
-				</div>
+				<Typography
+					variant="headline"
+					component="h2"
+					gutterBottom
+				>
+					利用規約
+				</Typography>
+				<Paper className={classes.content}>
+					<Typography variant="title">概要</Typography>
+					<ul>
+						<li>現在は当サイトはベータ版です。</li>
+						<li>現在は無料でサービスを利用できます。</li>
+						<li>当サイトを利用して生じたいかなる損害に対しても責任を負いません。</li>
+						<li>個人のアフィリエイトタグを設定しない場合、システムのタグが適用されます。</li>
+					</ul>
+				</Paper>
 				<Paper className={classes.content}>
 					<Typography variant="body2">
-					<pre className={classes.pre}>{`
-この利用規約（以下，「本規約」といいます。）は，合同会社ときしらず（以下，「当社」といいます。）がこのウェブサイト上で提供するサービス（以下，「本サービス」といいます。）の利用条件を定めるものです。登録ユーザーの皆さま（以下，「ユーザー」といいます。）には，本規約に従って，本サービスをご利用いただきます。
+					<pre className={classes.pre}>
+{`この利用規約（以下，「本規約」といいます。）は，合同会社ときしらず（以下，「当社」といいます。）がこのウェブサイト上で提供するサービス（以下，「本サービス」といいます。）の利用条件を定めるものです。登録ユーザーの皆さま（以下，「ユーザー」といいます。）には，本規約に従って，本サービスをご利用いただきます。
 
 第1条（適用）
 本規約は，ユーザーと当社との間の本サービスの利用に関わる一切の関係に適用されるものとします。

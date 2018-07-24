@@ -10,8 +10,9 @@ import Callback from 'modules/containers/Login/Callback';
 import HomePage from 'HomePage';
 import User from 'User';
 import Recommend from 'Recommend';
-import Terms from 'Terms';
 import Vision from 'Vision';
+import Terms from 'Terms';
+import Policy from 'Policy';
 import Header from 'modules/containers/Header';
 import Footer from 'modules/components/Footer';
 import NotFound from 'NotFound';
@@ -50,6 +51,7 @@ class App extends React.Component {
 							<Route exact path='/recommends/:id/userId/:userId' component={withTracker(Recommend)} />
 							<Route exact path='/vision' component={withTracker(Vision)} />
 							<Route exact path='/terms' component={withTracker(Terms)} />
+							<Route exact path='/policy' component={withTracker(Policy)} />
 							<Route component={withTracker(NotFound)} />
 						</Switch>
 						<Footer />

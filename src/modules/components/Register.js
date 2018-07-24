@@ -70,7 +70,9 @@ class Register extends React.Component {
 							checked={this.state.checked}
 							onClick={() => {this.setState({checked: !this.state.checked})}}
 					/>
-					<a href="/terms" target="_blank">利用規約</a>に同意する。
+					<a href="/terms" target="_blank">利用規約</a>と
+					<a href="/policy" target="_blank">プライバシーポリシー</a>に
+					同意する。
 				</div>
 				<Button
 					variant="contained"

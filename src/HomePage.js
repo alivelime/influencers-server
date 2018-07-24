@@ -6,7 +6,6 @@ import Button from '@material-ui/core/Button';
 import Divider from '@material-ui/core/Divider';
 
 import Login from 'modules/components/Login';
-import Link from 'modules/components/Link';
 
 const styles = theme => ({
   hero: {
@@ -116,7 +115,6 @@ class HomePage extends React.Component {
 						>
 						「この広告消せないかな?」<br />
 						そんなふとした想いからこのサイトは始まりました。<br />
-						<Link to='/vision'>私たちのビジョン</Link>
 						</Typography>
 					</div>
 				</div>

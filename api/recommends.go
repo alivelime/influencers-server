@@ -46,7 +46,6 @@ func postRecommend(w http.ResponseWriter, r *http.Request) {
 		data, _ := web.GetMeta(w, r)
 		recommend.URL = url
 		recommend.Kind = param.Kind
-		recommend.Link = web.GetAffiliateLink()
 		recommend.Title = data.Title
 		recommend.Image = data.Image
 		recommend.Description = data.Description
@@ -68,6 +67,7 @@ func postRecommend(w http.ResponseWriter, r *http.Request) {
 			}
 		}
 	}
+	recommend.Link = web.GetAffiliateLink()
 
 	response(w, recommend)
 }

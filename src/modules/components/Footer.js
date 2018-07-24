@@ -22,6 +22,10 @@ const styleSheet = theme => ({
 		backgroundColor: theme.palette.secondary[50],
     color: theme.palette.type === 'light' ? theme.palette.primary.dark : theme.palette.primary.main,
 	},
+	table: {
+		marginTop: theme.spacing.unit * 1,
+		marginBottom: theme.spacing.unit * 1,
+	},
   list: {
     margin: 0,
     paddingLeft: 0,
@@ -33,8 +37,7 @@ const styleSheet = theme => ({
   },
   version: {
     marginTop: theme.spacing.unit,
-		marginLeft: 'auto',
-		marginRight: 'auto',
+		textAlign: 'center',
   },
 });
 
@@ -47,7 +50,7 @@ function Footer(props) {
 			<Typography variant="title">
 				「これいいよ!」で繋がろう! インフルず
 			</Typography>
-      <Typography variant="subheading" component="div">
+      <Typography variant="subheading" component="div" className={classes.table}>
         <Grid container>
           <Grid item xs={12} sm={6}>
             <ul className={classes.list}>
@@ -65,13 +68,13 @@ function Footer(props) {
           <Grid item xs={12} sm={6}>
             <ul className={classes.list}>
               <li className={classes.listItem}>
-                <Link to="/terms">Terms</Link>
-              </li>
-              <li className={classes.listItem}>
                 <Link to="/vision">Vision</Link>
               </li>
               <li className={classes.listItem}>
-                <Link to="">Team</Link>
+                <Link to="/terms">Terms</Link>
+              </li>
+              <li className={classes.listItem}>
+                <Link to="/policy">Privacy Policy</Link>
               </li>
             </ul>
           </Grid>
