@@ -8,7 +8,10 @@ import CardContent from '@material-ui/core/CardContent';
 import CardMedia from '@material-ui/core/CardMedia';
 
 import IconButton from '@material-ui/core/IconButton';
+import Badge from '@material-ui/core/Badge';
 import ThumbUp from '@material-ui/icons/ThumbUp';
+import CallMerge from '@material-ui/icons/CallMerge';
+import CallSplit from '@material-ui/icons/CallSplit';
 
 import Login from 'modules/components/Login';
 import Link from 'modules/components/Link';
@@ -34,6 +37,11 @@ const styleSheet = theme => ({
 		height: '1.6em',
 		color: theme.palette.secondary.main,
 	},
+	iconDisable: {
+		width: '1.6em',
+		height: '1.6em',
+		color: theme.palette.grey[500],
+	},
 	content: {
 		flex: 1,
 	},
@@ -44,6 +52,9 @@ const styleSheet = theme => ({
 		flex: 0,
 		padding: theme.spacing.unit * 1,
 	},
+	margin: {
+    margin: theme.spacing.unit * 2,
+  },
 });
 
 class Review extends React.Component {
@@ -77,6 +88,22 @@ class Review extends React.Component {
 						日付 : {this.props.data.createdAt.toLocaleDateString()}
 					</Typography>
 				</CardContent>
+				{this.props.data.iineId !== "0" &&
+					<div className={classes.iconBox}>
+						<Link to={`/users/${this.props.data.iineUserId}`}>
+							<IconButton>
+								<CallMerge className={classes.icon} />
+							</IconButton>
+						</Link>
+					</div>
+				}
+				{this.props.data.iineCount > 0 &&
+					<div className={classes.iconBox}>
+						<Badge className={classes.margin} badgeContent={Number(this.props.data.iineCount)} color="secondary">
+							<CallSplit className={classes.iconDisable} />
+						</Badge>
+					</div>
+				}
 				{!this.props.isMine &&
 					<div className={classes.iconBox}>
 						{this.props.myUserId ? (

@@ -8,4 +8,11 @@ export function* getPreview(action) {
 	}
 }
 
+export function* fetchIineReview(action) {
+	const res = yield call(getAPI, `/api/reviews/${action.id}`);
+	if (Object.keys(res).length > 0) {
+		const recommend = yield call(getAPI, `/api/recommends/${base64encode(res.recommendId)}`);
+		yield put({type: 'FETCH_IINE_REVIEW_SUCCEEDED', data: res, kind: recommend.kind && 'mono'});
+	}
+}
 

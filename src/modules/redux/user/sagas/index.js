@@ -35,6 +35,7 @@ export default function* userSaga() {
 	yield takeEvery("ADD_REVIEW_REQUEST", reviews.add);
 	yield takeEvery("ADD_RECOMMEND_REQUEST", recommends.add);
 	yield takeEvery("GET_PREVIEW_REQUEST", reviewForm.getPreview);
+	yield takeEvery("FETCH_IINE_REVIEW_REQUEST", reviewForm.fetchIineReview);
 
 }
 

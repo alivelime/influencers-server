@@ -22,6 +22,9 @@ export default (state, action) => {
 		case 'REVIEW_FORM_CLEAR_MEMO':
 			return {...state, values: {...state.values, memo: ''}};
 
+		case 'FETCH_IINE_REVIEW_SUCCEEDED':
+			return {...state, values: {...state.values, url: action.data.recommendId, kind: action.kind}};
+
 		case 'CHECK_RECOMMEND_BRANCH':
 		case 'UNCHECK_RECOMMEND_BRANCH':
 		case 'UNCHECK_ALL':

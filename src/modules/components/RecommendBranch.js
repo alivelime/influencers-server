@@ -28,13 +28,14 @@ const styleSheet = theme => ({
 	},
 	container:{
 		paddingLeft: '2em',
-		paddingTop: theme.spacing.unit * 0.5,
-		paddingBottom: theme.spacing.unit * 0.5,
+		padding:0,
 	},
 	list: {
 		width: "100%",
+		padding:0,
 	},
 	content: {
+		padding:0,
 		backgroundColor: 'inherit',
 	},
 });

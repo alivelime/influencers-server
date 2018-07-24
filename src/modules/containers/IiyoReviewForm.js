@@ -51,9 +51,10 @@ const mergeProps = (state, {dispatch}, props) => ({
 	evidencePreview: (state.evidence in state.recommends)
 		? state.recommends[state.evidence] 
 		: (validation.isURL(state.evidence) ? dispatch(actions.getEvidencePreview(state.evidence)) : null),
+	fetchIineReview: (props.iineId ? () => {dispatch(actions.fetchIineReview(props.iineId))} : Function.prototype),
 
 	recommendBranchName: (state.recommendBranchId === "0")
-		? "トップ(自動選択)"
+		? "トップ(登録済み検索)"
 		: state.isRecommend
 			? (state.recommendBranches[state.recommendBranchId].parentId === "0" 
 				? `トップ${state.recommendBranchId}` 

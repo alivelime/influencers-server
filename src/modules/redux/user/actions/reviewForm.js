@@ -29,4 +29,9 @@ export const clearMemo = url => ({
 	type: 'REVIEW_FORM_CLEAR_MEMO',
 })
 
+export const fetchIineReview = id => ({
+	type: 'FETCH_IINE_REVIEW_REQUEST',
+	id,
+})
+
 

@@ -64,6 +64,10 @@ const styleSheet = theme => ({
 
 class ReviewForm extends React.Component {
 
+	componentDidMount() {
+		this.props.fetchIineReview();
+	}
+
 	render() {
 		const { classes } = this.props;
 

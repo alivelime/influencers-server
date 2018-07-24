@@ -44,8 +44,8 @@ func Delete(ctx context.Context, id int64) error {
 	return nil
 }
 
-func GetUserReviews(ctx context.Context, userId int64) (map[int64]Review, error) {
-	var ret map[int64]Review
+func GetUserReviews(ctx context.Context, userId int64) (map[int64]*Review, error) {
+	var ret map[int64]*Review
 
 	// SELECT * FROM Reviews WHERE UserID = 'userId' ORDER BY createdAt
 	query := datastore.NewQuery(Kind).Filter("UserID =", userId)
@@ -55,7 +55,7 @@ func GetUserReviews(ctx context.Context, userId int64) (map[int64]Review, error)
 	}
 
 	// do not use GetALL. Because it has 1000 limit.
-	ret = make(map[int64]Review, count)
+	ret = make(map[int64]*Review, count)
 	itr := query.Run(ctx)
 
 	for {
@@ -69,8 +69,26 @@ func GetUserReviews(ctx context.Context, userId int64) (map[int64]Review, error)
 		}
 
 		review.ID = key.IntID()
-		ret[review.ID] = review
+		ret[review.ID] = &review
+	}
+
+	for id, review := range ret {
+		review.IineCount = getIineCount(ctx, id)
+
+		if review.IineID != 0 {
+			respect, _ := Get(ctx, review.IineID)
+			review.IineUserID = respect.UserID
+		}
 	}
 
 	return ret, nil
+}
+
+func getIineCount(ctx context.Context, id int64) int {
+	query := datastore.NewQuery(Kind).Filter("IineID =", id)
+	count, err := query.Count(ctx)
+	if err != nil {
+		return -1
+	}
+	return count
 }
