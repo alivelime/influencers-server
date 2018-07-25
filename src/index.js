@@ -9,6 +9,7 @@ import withTracker from 'modules/components/withTracker';
 import Callback from 'modules/containers/Login/Callback';
 import HomePage from 'HomePage';
 import User from 'User';
+import UserTimeline from 'UserTimeline';
 import Recommend from 'Recommend';
 import Vision from 'Vision';
 import Terms from 'Terms';
@@ -28,7 +29,7 @@ const sagaMiddleware = createSagaMiddleware()
 const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
 const store = createStore(
   userReducer,
-	 composeEnhancers(
+	composeEnhancers(
   applyMiddleware(sagaMiddleware)
 ));
 sagaMiddleware.run(userSaga);
@@ -46,6 +47,7 @@ class App extends React.Component {
 							<Route exact path='/login/callback/sns/:sns/token/:token/redirect/:redirect' component={withTracker(Callback)} />
 							<Route exact path='/users/:id' component={withTracker(User)} />
 							<Route exact path='/users/:id/recommend-branches/:recommendBranchId' component={withTracker(User)} />
+							<Route exact path='/users/:id/timeline' component={withTracker(UserTimeline)} />
 							<Route exact path='/users/:id/iine/:iineId' component={withTracker(User)} />
 							<Route exact path='/recommends/:id' component={withTracker(Recommend)} />
 							<Route exact path='/recommends/:id/userId/:userId' component={withTracker(Recommend)} />

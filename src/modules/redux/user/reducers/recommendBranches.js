@@ -9,7 +9,7 @@ export default (state = {}, action) => {
 		{
 			let recommendBranches = Object.assign({}, state);
 			let data = action.data;
-			recommendBranches[data.id] = data;
+			recommendBranches[data.id] = {...data, isOpne: true};
 
 			// do not set prev and next branch id. use instead patch on sagas.
 

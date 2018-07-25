@@ -8,6 +8,7 @@ import (
 
 	"github.com/alivelime/influs/auth"
 	"github.com/alivelime/influs/model/reviews"
+	"github.com/alivelime/influs/model/timelines"
 )
 
 func getReview(w http.ResponseWriter, r *http.Request) {
@@ -53,11 +54,42 @@ func postReview(w http.ResponseWriter, r *http.Request) {
 			http.StatusBadRequest)
 		return
 	}
+	// exists IineID?
+	var respect reviews.Review
+	if review.IineID != 0 {
+		var err error
+		respect, err = reviews.Get(ctx, review.IineID)
+		if err != nil {
+			http.Error(w, fmt.Sprintf("validation error: iine %d does not exist. ", review.IineID), http.StatusBadRequest)
+		}
+		if respect.RecommendID != review.RecommendID {
+			http.Error(w, fmt.Sprintf("validation error: difference from yours %s and iine %s. ",
+				respect.RecommendID, review.RecommendID),
+				http.StatusBadRequest)
+		}
+	}
 
 	// put
 	if err := reviews.Put(ctx, &review); err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
+	}
+
+	// put timeline
+	if review.IineID != 0 {
+		_ = timelines.Put(ctx, &timelines.Timeline{
+			I:     review.UserID,
+			U:     respect.UserID,
+			Event: timelines.Iine,
+			What:  review.ID,
+		})
+	} else {
+		_ = timelines.Put(ctx, &timelines.Timeline{
+			I:     review.UserID,
+			U:     0,
+			Event: timelines.Iiyo,
+			What:  review.ID,
+		})
 	}
 
 	response(w, review)

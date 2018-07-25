@@ -106,6 +106,10 @@ const mergeProps = (state, {dispatch}, props) => ({
 
 		dispatch(actions.uncheckAll());
 		dispatch(reset('reviewForm')); 
+
+		if (props.iineId) {
+			props.history.push(`/users/${props.userId}`);
+		}
 	},
 
 	clearURL: () => dispatch(actions.clearURL()),

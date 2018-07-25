@@ -213,7 +213,7 @@ class ReviewForm extends React.Component {
 							</Grid>
 							<Grid item xs={6} sm={3}> 
 								<Button
-								 disabled={this.props.invalid || this.props.submitting || this.props.pristine}
+									disabled={this.props.invalid || this.props.submitting || this.props.pristine}
 									onClick={this.props.handleSubmit}
 									variant="raised"
 									size="large"

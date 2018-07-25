@@ -36,6 +36,7 @@ class RecommendTree extends React.Component {
 							recommendBranchId={"0"}
 							userId={this.props.userId}
 							iineId={this.props.iineId}
+							history={this.context.router.history}
 							searchParent
 						/>
 					</div>
@@ -62,6 +63,15 @@ class RecommendTree extends React.Component {
 		);
 	}
 
+	static contextTypes = {
+		router: PropTypes.shape({
+				history: PropTypes.shape({
+						push: PropTypes.func.isRequired,
+						replace: PropTypes.func.isRequired,
+						createHref: PropTypes.func.isRequired
+				}).isRequired
+		}).isRequired
+	}
 }
 
 RecommendTree.propTypes = {

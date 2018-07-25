@@ -9,6 +9,7 @@ import recommends from 'modules/redux/user/reducers/recommends';
 import reviews from 'modules/redux/user/reducers/reviews';
 import reviewForm from 'modules/redux/user/reducers/reviewForm';
 import reviewFormPlugin from 'modules/redux/user/reducers/reviewFormPlugin';
+import timeline from 'modules/redux/user/reducers/timeline'
 
 export default combineReducers({
 	session,
@@ -19,4 +20,5 @@ export default combineReducers({
 	reviews,
 	reviewForm,
 	form: formReducer.plugin({reviewForm: reviewFormPlugin}),
+	timeline,
 });

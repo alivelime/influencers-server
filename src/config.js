@@ -1,6 +1,10 @@
 
 export const MY_PAGE = '__MY_PAGE__';
 
+export const TIMELINE_IIYO = "0"
+export const TIMELINE_IINE = "1"
+export const TIMELINE_FOLLOW = "2"
+
 export const debug = {
 	session : {
 		twitter1: {

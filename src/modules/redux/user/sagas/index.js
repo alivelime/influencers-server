@@ -6,6 +6,7 @@ import * as recommendBranches from 'modules/redux/user/sagas/recommendBranches.j
 import * as reviews from 'modules/redux/user/sagas/reviews.js';
 import * as recommends from 'modules/redux/user/sagas/recommends.js';
 import * as reviewForm from 'modules/redux/user/sagas/reviewForm.js';
+import * as timeline from 'modules/redux/user/sagas/timeline.js';
 
 export default function* userSaga() {
 	yield takeEvery("FETCH_LOGIN_USER_REQUEST", session.fetch);
@@ -37,5 +38,6 @@ export default function* userSaga() {
 	yield takeEvery("GET_PREVIEW_REQUEST", reviewForm.getPreview);
 	yield takeEvery("FETCH_IINE_REVIEW_REQUEST", reviewForm.fetchIineReview);
 
+	yield takeEvery("LOAD_TIMELINE_REQUEST", timeline.load);
 }
 

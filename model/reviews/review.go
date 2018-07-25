@@ -11,7 +11,7 @@ import (
 
 const Kind = "Review"
 
-func Get(ctx context.Context, id int64) (review Review, err error) {
+func get(ctx context.Context, id int64) (review Review, err error) {
 	key := datastore.NewKey(ctx, Kind, "", id, nil)
 
 	if err = datastore.Get(ctx, key, &review); err != nil {
@@ -19,6 +19,15 @@ func Get(ctx context.Context, id int64) (review Review, err error) {
 	}
 
 	review.ID = id
+	return
+}
+func Get(ctx context.Context, id int64) (review Review, err error) {
+	review, err = get(ctx, id)
+
+	if review.IineID != 0 {
+		respect, _ := get(ctx, review.IineID)
+		review.IineUserID = respect.UserID
+	}
 	return
 }
 
@@ -30,6 +39,11 @@ func Put(ctx context.Context, review *Review) error {
 	k, err := datastore.Put(ctx, key, review)
 	if err != nil {
 		return err
+	}
+
+	if review.IineID != 0 {
+		respect, _ := get(ctx, review.IineID)
+		review.IineUserID = respect.UserID
 	}
 
 	review.ID = k.IntID()
@@ -76,7 +90,7 @@ func GetUserReviews(ctx context.Context, userId int64) (map[int64]*Review, error
 		review.IineCount = getIineCount(ctx, id)
 
 		if review.IineID != 0 {
-			respect, _ := Get(ctx, review.IineID)
+			respect, _ := get(ctx, review.IineID)
 			review.IineUserID = respect.UserID
 		}
 	}
