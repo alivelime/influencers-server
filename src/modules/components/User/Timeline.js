@@ -33,15 +33,21 @@ const styleSheet = theme => ({
 	},
 	timeline: {
 		display: "flex",
+		alignItems: 'center', 
 		width: "100%",
 		padding: theme.spacing.unit * 2,
 	},
 	flex: {
 		display: 'flex',
+		alignItems: 'center', 
+	},
+	flexMain: {
+		display: 'flex',
+		flex: 1,
 	},
 });
 
-function makeYourMessage(data, users, reviews) {
+function makeMessage(data, users, reviews) {
 	switch (data.event) {
 		case config.TIMELINE_IIYO:
 			// TODO 
@@ -84,6 +90,24 @@ class Timeline extends React.Component {
 			);
 		}
 
+		const makeTimeline = (data) => {
+			return (
+				<ListItem>
+					<Paper className={classes.timeline}>
+						<Link to={`/users/${data.i}`} >
+							<div className={classes.flex} >
+								<Avatar src={timeline.users[data.i].avatar} />
+								<div>{`${timeline.users[data.i].name}さん`}</div>
+							</div>
+						</Link>
+						<div className={classes.flexMain} >
+							が{makeMessage(data, timeline.users, timeline.reviees)}
+						</div>
+					</Paper>
+				</ListItem>
+			);
+		}
+
 		return (
 			<div className={classes.root}>
 				<AppBar position="static" color="default">
@@ -102,28 +126,15 @@ class Timeline extends React.Component {
 			</AppBar>
 				<List component="nav">
 					{this.state.value === 0 && (timeline.data.me.length > 0
-						? timeline.data.me.map(data => {
-							return (
-								<ListItem>
-									<Paper className={classes.timeline}>
-										<Link to={`/users/${data.i}`} >
-											<div className={classes.flex} >
-												<Avatar src={timeline.users[data.i].avatar} />
-												<div>{`${timeline.users[data.i].name}さん`}</div>
-											</div>
-										</Link>
-										<div className={classes.flexMain} >
-											が{makeYourMessage(data, timeline.users, timeline.reviees)}
-										</div>
-									</Paper>
-								</ListItem>
-							)})
+						? timeline.data.me.map(data => makeTimeline(data))
 						:	<p>データがありません。</p>
 					)}
 					{this.state.value === 1 && <p>follower</p>
 					}
-					{this.state.value === 2 && <p>i</p>
-					}
+					{this.state.value === 2 && (timeline.data.i.length > 0
+						? timeline.data.i.map(data => makeTimeline(data))
+						:	<p>データがありません。</p>
+					)}
 				</List>
 			</div>
 		);

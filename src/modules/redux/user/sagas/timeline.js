@@ -27,22 +27,6 @@ export function* load(action) {
 					})()
 				})
 			);
-
-			// timeline i, get "to you" user data.
-			for (let i = 0; i < res.i.length; i++) {
-				const u = res.i[i].u;
-				if (u !== "0") {
-					res.i[i].user = users[u];
-				}
-			}
-
-			// timeline me, get "who do something to me" user data.
-			for (let i = 0; i < res.i.length; i++) {
-				const w = res.i[i].i;
-				if (w !== "0") {
-					res.i[i].user = users[w];
-				}
-			}
 		}
 
 		yield put({type: "LOAD_TIMELINE_SUCCEEDED", data: res, users, reviews});

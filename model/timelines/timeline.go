@@ -10,7 +10,7 @@ import (
 const Kind = "Timeline"
 
 func Put(ctx context.Context, timeline *Timeline) error {
-	if timeline.I == 0 || timeline.U == 0 {
+	if timeline.I == 0 {
 		return errors.New("validation error. timeline needs UserID")
 	}
 

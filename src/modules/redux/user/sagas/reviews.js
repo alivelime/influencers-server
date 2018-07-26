@@ -38,7 +38,7 @@ export function* add(action) {
 		return;
 	}
 
-	if (patch) {
+	if (patch && patch.id !== "0") {
 		yield call(patchAPI, `/api/recommend-branches/${patch.id}`, patch, action.token);
 	}
 

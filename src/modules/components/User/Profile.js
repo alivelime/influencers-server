@@ -3,13 +3,16 @@ import PropTypes from 'prop-types';
 import { withStyles } from '@material-ui/core/styles';
 
 import Avatar from '@material-ui/core/Avatar';
+import Button from '@material-ui/core/Button';
+import Badge from '@material-ui/core/Badge';
 import Typography from '@material-ui/core/Typography';
 import Paper from '@material-ui/core/Paper';
 import Collapse from '@material-ui/core/Collapse';
 import IconButton from '@material-ui/core/IconButton';
 import ExpandLess from '@material-ui/icons/ExpandLess';
 import ExpandMore from '@material-ui/icons/ExpandMore';
-
+import Timeline from '@material-ui/icons/Timeline';
+import Map from '@material-ui/icons/Map';
 
 import Link from 'modules/components/Link';
 import My from 'modules/components/User/Profile/My';
@@ -27,6 +30,21 @@ const styleSheet = theme => ({
 		marginLeft: "auto",
 		width: '1.6em',
 		height: '1.6em',
+	},
+	iconBox: {
+		display: "flex",
+		padding: theme.spacing.unit,
+	},
+	iconBoxLink: {
+		margin: theme.spacing.unit,
+	},
+	button: {
+		minWidth: "60pt",
+		display: "flex",
+		flexDirection: 'column',
+	},
+	buttonText: {
+		fontSize: '0.6em',
 	},
 });
 
@@ -76,6 +94,26 @@ class Profile extends React.Component {
 						: <Other user={this.props.user}/>
 					}
 				</Collapse>
+				<div className={classes.iconBox} >
+					<Link to={`/users/${this.props.id}/timeline`} className={classes.iconBoxLink}>
+						<Badge className={classes.margin} badgeContent={'?'} color="secondary">
+							<Button variant="raised" color="primary" size="small">
+								<div className={classes.button}>
+									<div><Timeline className={classes.icon}/></div>
+									<div className={classes.buttonText}>タイムライン</div>
+								</div>
+							</Button>
+						</Badge>
+					</Link>
+					<Link to={`/users/${this.props.id}`} className={classes.iconBoxLink}>
+						<Button variant="raised" color="primary" size="small">
+							<div className={classes.button}>
+								<div><Map className={classes.icon}/></div>
+								<div className={classes.buttonText}>これいいよ</div>
+							</div>
+						</Button>
+					</Link>
+				</div>
 			</Paper>
 		);
 	}
