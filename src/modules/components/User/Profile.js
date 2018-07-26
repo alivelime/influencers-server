@@ -60,7 +60,7 @@ class Profile extends React.Component {
 		if (this.props.id !== prevProps.id) {
 			this.props.loadUser();
 		}
-		if (this.state !== prevState && this.props.isMine) {
+		if (this.state === prevState && this.props.isMine) {
 			this.setState({isOpne: false});
 		}
 	}

@@ -24,6 +24,7 @@ func get(ctx context.Context, id int64) (review Review, err error) {
 func Get(ctx context.Context, id int64) (review Review, err error) {
 	review, err = get(ctx, id)
 
+	// TODO temp implement. delete later. use REST API instead.
 	if review.IineID != 0 {
 		respect, _ := get(ctx, review.IineID)
 		review.IineUserID = respect.UserID
@@ -41,6 +42,7 @@ func Put(ctx context.Context, review *Review) error {
 		return err
 	}
 
+	// TODO temp implement. delete later. use REST API instead.
 	if review.IineID != 0 {
 		respect, _ := get(ctx, review.IineID)
 		review.IineUserID = respect.UserID
@@ -89,6 +91,7 @@ func GetUserReviews(ctx context.Context, userId int64) (map[int64]*Review, error
 	for id, review := range ret {
 		review.IineCount = getIineCount(ctx, id)
 
+		// TODO temp implement. delete later. use REST API instead.
 		if review.IineID != 0 {
 			respect, _ := get(ctx, review.IineID)
 			review.IineUserID = respect.UserID

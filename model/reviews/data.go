@@ -10,7 +10,7 @@ type Review struct {
 	RecommendBranchID int64     `json:"recommendBranchId" datastore:",noindex"`
 	RecommendID       string    `json:"recommendId" datastore:",noindex"`
 	IineID            int64     `json:"iineId"`
-	IineUserID        int64     `json:"iineUserId" datastore:"-"`
+	IineUserID        int64     `json:"iineUserId" datastore:"-"` // TODO delete later. use rest api instead.
 	IineCount         int       `json:"iineCount" datastore"-"`
 	Evidence          string    `json:"evidence" datastore:",noindex"`
 	Memo              string    `json:"memo" datastore:",noindex"`

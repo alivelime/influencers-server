@@ -28,7 +28,6 @@ class Callback extends React.Component {
 			return (<p>ログインしています</p>)
 		}
 
-		// TODO Terms of use.
 		if (session.state === "register") {
 			return (
 				<Register {...this.props} register={() => {this.props.registerUser(sns, token)}} />

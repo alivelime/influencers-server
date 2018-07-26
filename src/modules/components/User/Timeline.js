@@ -19,6 +19,7 @@ const styleSheet = theme => ({
 	root: {
 		display: 'flex',
 		flexDirection: 'column',
+		flexWrap: 'wrap',
 	},
 	progressDiv: {
 		textAlign: 'center',
@@ -33,6 +34,7 @@ const styleSheet = theme => ({
 	},
 	timeline: {
 		display: "flex",
+		flexWrap: 'wrap',
 		alignItems: 'center', 
 		width: "100%",
 		padding: theme.spacing.unit * 2,
@@ -40,20 +42,55 @@ const styleSheet = theme => ({
 	flex: {
 		display: 'flex',
 		alignItems: 'center', 
+		alignContent: 'center',
 	},
 	flexMain: {
 		display: 'flex',
+		alignItems: 'center', 
+		alignContent: 'center',
 		flex: 1,
+	},
+	thumbnail: {
+		maxHeight: '4em',
+		margin: theme.spacing.unit,
 	},
 });
 
-function makeMessage(data, users, reviews) {
+function makeMessage(classes, data, users, reviews, recommends) {
 	switch (data.event) {
 		case config.TIMELINE_IIYO:
-			// TODO 
-			return `${data.what}を"いいよ"しました。`
+		{
+			const review = reviews[data.what];
+			const recommend = recommends[review.recommendId];
+			return (
+				<div className={classes.flexMain} >
+					{recommend.image && <img src={recommend.image} className={classes.thumbnail} alt="iiyo" /> }
+					<div>
+						<Link to={`/users/${data.i}/recommend-branches/${review.recommendBranchId}`}>
+							{recommend.title}
+						</Link>
+						<span>を"いいよ"しました。</span>
+					</div>
+				</div>
+			);
+		}
 		case config.TIMELINE_IINE:
-			return `${data.what}を"いいね"しました。`
+		{
+			const review = reviews[data.what];
+			const recommend = recommends[review.recommendId];
+			return (
+				<div className={classes.flexMain} >
+					{recommend.image ? <img src={recommend.image} className={classes.thumbnail} alt="iiyo" /> : null}
+					<div>
+						{recommend.title}の"いいよ"に
+						<Link to={`/users/${data.i}/recommend-branches/${review.recommendBranchId}`}>
+							"いいね"
+						</Link>
+						しました。
+					</div>
+				</div>
+			);
+		}
 		case config.TIMELINE_FOLLOW:
 			return `${data.u}さんをフォローしました。`
 		default:
@@ -95,19 +132,33 @@ class Timeline extends React.Component {
 			);
 		}
 
-		const makeTimeline = (data) => {
+		const makeTimeline = (data, i) => {
 			return (
-				<ListItem>
+				<ListItem key={i}>
 					<Paper className={classes.timeline}>
-						<Link to={`/users/${data.i}`} >
-							<div className={classes.flex} >
-								<Avatar src={timeline.users[data.i].avatar} />
-								<div>{`${timeline.users[data.i].name}さん`}</div>
+						{data.i !== this.props.userId &&
+							<div>
+								<Link to={`/users/${data.i}`} >
+									<div className={classes.flex} >
+										<Avatar src={timeline.users[data.i].avatar} />
+										<div>{`${timeline.users[data.i].name}`}</div>
+									</div>
+								</Link>
+								<div>さんが</div>
 							</div>
-						</Link>
-						<div className={classes.flexMain} >
-							が{makeMessage(data, timeline.users, timeline.reviees)}
-						</div>
+						}
+						{data.u !== "0" && data.u !== this.props.userId &&
+							<div>
+								<Link to={`/users/${data.u}`} >
+									<div className={classes.flex} >
+										<Avatar src={timeline.users[data.u].avatar} />
+										<div>{`${timeline.users[data.u].name}`}</div>
+									</div>
+								</Link>
+								<div>さんの</div>
+							</div>
+						}
+						{makeMessage(classes, data, timeline.users, timeline.reviews, timeline.recommends)}
 					</Paper>
 				</ListItem>
 			);
@@ -116,28 +167,28 @@ class Timeline extends React.Component {
 		return (
 			<div className={classes.root}>
 				<AppBar position="static" color="default">
-				<Tabs
-					className={classes.tabs}
-					value={this.state.value}
-					onChange={this.handleChange}
-					indicatorColor="primary"
-					textColor="primary"
-					fullWidth
-				>
-					<Tab className={classes.tab} label="お知らせ" />
-					<Tab className={classes.tab} label="フォロー" disabled/>
-					<Tab className={classes.tab} label="履歴" />
-				</Tabs>
-			</AppBar>
+					<Tabs
+						className={classes.tabs}
+						value={this.state.value}
+						onChange={this.handleChange}
+						indicatorColor="primary"
+						textColor="primary"
+						fullWidth
+					>
+						<Tab className={classes.tab} label="お知らせ" />
+						<Tab className={classes.tab} label="フォロー" disabled/>
+						<Tab className={classes.tab} label="履歴" />
+					</Tabs>
+				</AppBar>
 				<List component="nav">
 					{this.state.value === 0 && (timeline.data.me.length > 0
-						? timeline.data.me.map(data => makeTimeline(data))
+						? timeline.data.me.map(makeTimeline)
 						:	<p>データがありません。</p>
 					)}
 					{this.state.value === 1 && <p>follower</p>
 					}
 					{this.state.value === 2 && (timeline.data.i.length > 0
-						? timeline.data.i.map(data => makeTimeline(data))
+						? timeline.data.i.map(makeTimeline)
 						:	<p>データがありません。</p>
 					)}
 				</List>
