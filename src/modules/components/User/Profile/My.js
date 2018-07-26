@@ -24,6 +24,9 @@ class MyProfile extends React.Component {
 			this.setState(this.initState(this.props));
 		}
 	}
+	componentWillUnmount() {
+		this.props.clearAffiliate();
+	}
 
 	initState = props => ({
 		changed: {

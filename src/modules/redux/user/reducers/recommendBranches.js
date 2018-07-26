@@ -68,6 +68,9 @@ export default (state = {}, action) => {
 			});
 			return ret;
 		}
+		case 'CLEAR_USER_RECOMMEND_DATA':
+			return {};
+
 		// use action instead.
 		case 'MOVE_UP_RECOMMEND_BRANCH_REQUEST':
 		case 'MOVE_DOWN_RECOMMEND_BRANCH_REQUEST':

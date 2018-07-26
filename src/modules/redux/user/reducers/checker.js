@@ -26,6 +26,9 @@ export default (state = {recommendIds: [], recommendBranchIds: []}, action) => {
 		case 'UNCHECK_ALL':
 			return {recommendBranchIds: [], recommendIds: []};
 
+		case 'CLEAR_USER_RECOMMEND_DATA':
+			return {recommendBranchIds: [], recommendIds: []};
+
 		default:
 			return state;
 	}

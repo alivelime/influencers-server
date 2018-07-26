@@ -34,4 +34,8 @@ export const fetchIineReview = id => ({
 	id,
 })
 
+export const clearReviewForm = () => ({
+	type: 'CLEAR_REVIEW_FORM',
+})
+
 

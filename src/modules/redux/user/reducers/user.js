@@ -5,8 +5,12 @@ export default (state = {}, action) => {
 			return state;
 		case 'LOAD_USER_SUCCEEDED':
 			return {...action.data, affiliate: {}};
+		case 'CLEAR_USER':
+			return {};
 		case 'LOAD_USER_AFFILIATE_SUCCEEDED':
 			return {...state, affiliate: action.data};
+		case 'CLEAR_USER_AFFILIATE':
+			return {...state, affiliate: {}};
 		case 'LOAD_USER_FAILED':
 			return {id: "0", name: "no data"};
 		case 'UPDATE_USER_REQUEST':

@@ -115,6 +115,7 @@ const mergeProps = (state, {dispatch}, props) => ({
 	clearURL: () => dispatch(actions.clearURL()),
 	clearEvidence: () => dispatch(actions.clearEvidence()),
 	clearMemo: () => dispatch(actions.clearMemo()),
+	clearReviewForm: () => dispatch(actions.clearReviewForm()),
 });
 
 export default connect(

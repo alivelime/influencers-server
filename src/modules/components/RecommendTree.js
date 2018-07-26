@@ -28,6 +28,9 @@ class RecommendTree extends React.Component {
 			this.props.loadRecommendData();
 		}
 	}
+	componentWillUnmount() {
+		this.props.clearRecommendData();
+	}
 
 	render() {
 		console.log("render recommend tree");

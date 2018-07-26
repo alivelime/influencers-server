@@ -67,6 +67,9 @@ class ReviewForm extends React.Component {
 	componentDidMount() {
 		this.props.fetchIineReview();
 	}
+	componentWillUnmount() {
+		this.props.clearReviewForm();
+	}
 
 	render() {
 		const { classes } = this.props;

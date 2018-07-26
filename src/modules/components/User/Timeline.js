@@ -116,12 +116,15 @@ class Timeline extends React.Component {
 			this.props.loadTimeline();
 		}
 	}
+	componentWillUnmount() {
+		this.props.clearTimeline();
+	}
 
 	render() {
 		const { timeline, classes } = this.props;
 
 		// now loading...
-		if (timeline.state === "loading") {
+		if (timeline.state === "loading" || this.props.user.id === "0") {
 			return (
 				<div className={classes.progressDiv}>
 					<CircularProgress

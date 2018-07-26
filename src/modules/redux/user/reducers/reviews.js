@@ -14,6 +14,9 @@ export default (state = {}, action) => {
 			delete reviews[action.id];
 			return reviews;
 
+		case 'CLEAR_USER_RECOMMEND_DATA':
+			return {};
+
 		default:
 			return state;
 	}

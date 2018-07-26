@@ -28,7 +28,7 @@ function Header(props) {
 			<Link to={`/users/${props.session.user.id}`} className={classes.icon}>
 				<Avatar src={props.session.user.avatar} />
 			</Link>
-			<Link to={`/users/${props.id}/timeline`} className={classes.icon}>
+			<Link to={`/users/${props.session.user.id}/timeline`} className={classes.icon}>
 				<Badge className={classes.margin} badgeContent={'?'} color="secondary">
 					<Button variant="fab" color="primary">
 						<Timeline />

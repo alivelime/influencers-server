@@ -1,6 +1,6 @@
 import { connect } from 'react-redux'
 
-import { loadUser, updateUser, deleteUser, loadAffiliate, updateAffiliate } from 'modules/redux/user/actions'
+import { loadUser, updateUser, clearUser, loadAffiliate, clearAffiliate, updateAffiliate } from 'modules/redux/user/actions'
 import Profile from 'modules/components/User/Profile';
 
 const mapStateToProps = state => ({
@@ -20,8 +20,9 @@ const mergeProps = (state, {dispatch}, props) => {
 
 	// for login user.
 	updateUser: data => dispatch(updateUser(props.id, data, state.token)),
-	deleteUser: () => dispatch(deleteUser(props.id, state.token)),
+	clearUser: () => dispatch(clearUser()),
 	loadAffiliate: () => dispatch(loadAffiliate(props.id)),
+	clearAffiliate: () => dispatch(clearAffiliate()),
 	updateAffiliate: data => dispatch(updateAffiliate(props.id, data, state.token)),
 }};
 export default connect(

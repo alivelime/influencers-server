@@ -3,3 +3,7 @@ export const loadTimeline = id => ({
 	id,
 });
 
+export const clearTimeline = () => ({
+	type: 'CLEAR_TIMELINE',
+});
+

@@ -32,10 +32,6 @@ class Login extends React.Component {
 		open: false,
 	};
 
-	componentDidMount = () => {
-
-	};
-
 	render() {
 		const { classes } = this.props;
 		return (

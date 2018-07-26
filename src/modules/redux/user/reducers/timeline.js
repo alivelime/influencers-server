@@ -6,6 +6,9 @@ export default (state = {state: "loading", users: {}, reviews: {}}, {type, data,
 			return {state: 'succeeded', data, users, reviews, recommends}
 		case 'LOAD_TIMELINE_FAILED':
 			return {state: 'failed', data:{i:[], u:[], follow:[]}}; 
+		case 'CLEAR_TIMELINE':
+			return {state: "loading", users: {}, reviews: {}};
+			
 		default:
 			return state;
 	}

@@ -64,6 +64,9 @@ class Profile extends React.Component {
 			this.setState({isOpne: false});
 		}
 	}
+	componentWillUnmount() {
+		this.props.clearUser();
+	}
 
 	render() {
 		const { user, classes } = this.props;
@@ -95,9 +98,9 @@ class Profile extends React.Component {
 						? <My
 							user={this.props.user}
 							updateUser={this.props.updateUser}
-							deleteUser={this.props.deleteUser}
 							loadAffiliate={this.props.loadAffiliate}
 							updateAffiliate={this.props.updateAffiliate}
+							clearAffiliate={this.props.clearAffiliate}
 						/>
 						: <Other user={this.props.user}/>
 					}

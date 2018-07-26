@@ -3,9 +3,8 @@ export const loadUser = id => ({
 	id,
 });
 
-export const loadAffiliate = id => ({
-	type: 'LOAD_USER_AFFILIATE_REQUEST',
-	id,
+export const clearUser = () => ({
+	type: 'CLEAR_USER',
 });
 
 export const registerUser = data => ({
@@ -19,6 +18,15 @@ export const updateUser = (id, data, token) => ({
 	data,
 	token,
 })
+
+export const loadAffiliate = id => ({
+	type: 'LOAD_USER_AFFILIATE_REQUEST',
+	id,
+});
+
+export const clearAffiliate = () => ({
+	type: 'CLEAR_USER_AFFILIATE',
+});
 
 export const updateAffiliate = (id, data, token) => ({
 	type: 'UPDATE_USER_AFFILIATE_REQUEST',
@@ -37,6 +45,10 @@ export const loadUserRecommendData = (id, token = null) => ({
 	type: 'LOAD_USER_RECOMMEND_DATA_REQUEST',
 	id,
 	token,
+});
+
+export const clearUserRecommendData = () => ({
+	type: 'CLEAR_USER_RECOMMEND_DATA',
 });
 
 

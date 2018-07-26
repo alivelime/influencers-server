@@ -20,6 +20,9 @@ export default (state = {}, action) => {
 			delete recommends[action.url];
 			return recommends;
 
+		case 'CLEAR_USER_RECOMMEND_DATA':
+			return {};
+
 		case 'LOAD_USER_RECOMMEND_DATA_FAILED':
 		default:
 			return state;
