@@ -15,7 +15,7 @@ const mapDispatchToProps = (dispatch, props) => ({
 });
 
 class Callback extends React.Component {
-	componentWillMount() {
+	componentDidMount() {
 	  const { sns, token } = this.props.match.params;
 		this.props.fetchLoginUser(sns, token);
 	}

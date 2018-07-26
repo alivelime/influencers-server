@@ -74,6 +74,11 @@ class Timeline extends React.Component {
 	componentDidMount() {
 		this.props.loadTimeline();
 	}
+	componentDidUpdate(prevProps) {
+		if (this.props.userId !== prevProps.userId) {
+			this.props.loadTimeline();
+		}
+	}
 
 	render() {
 		const { timeline, classes } = this.props;

@@ -14,17 +14,18 @@ const styleSheet = theme => ({
 
 class MyProfile extends React.Component {
 
-	componentWillMount() {
+	constructor(props) {
+		super(props);
+		this.state = this.initState(this.props);
 		this.props.loadAffiliate();
-		this.initState(this.props);
 	}
 	componentDidUpdate(prevProps) {
 		if (this.props !== prevProps) {
-			this.initState(this.props);
+			this.setState(this.initState(this.props));
 		}
 	}
 
-	initState = props => this.setState({
+	initState = props => ({
 		changed: {
 			memo: false,
 			link: false,

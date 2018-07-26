@@ -56,6 +56,14 @@ class Profile extends React.Component {
 	componentDidMount() {
 		this.props.loadUser();
 	}
+	componentDidUpdate(prevProps, prevState) {
+		if (this.props.id !== prevProps.id) {
+			this.props.loadUser();
+		}
+		if (this.state !== prevState && this.props.isMine) {
+			this.setState({isOpne: false});
+		}
+	}
 
 	render() {
 		const { user, classes } = this.props;

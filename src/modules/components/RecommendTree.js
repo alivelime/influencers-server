@@ -20,8 +20,13 @@ const styleSheet = theme => ({
 });
 
 class RecommendTree extends React.Component {
-	componentWillMount() {
+	componentDidMount() {
 		this.props.loadRecommendData();
+	}
+	componentDidUpdate(prevProps) {
+		if (this.props.userId !== prevProps.userId) {
+			this.props.loadRecommendData();
+		}
 	}
 
 	render() {
