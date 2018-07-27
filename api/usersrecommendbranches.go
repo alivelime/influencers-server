@@ -22,6 +22,11 @@ func getUserRecommendBranches(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	if len(recommendBranches) == 0 {
+		http.Error(w, "", http.StatusNotFound)
+		return
+	}
+
 	response(w, recommendBranches)
 }
 

@@ -24,6 +24,11 @@ func getUserRecommends(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	if len(ret) == 0 {
+		http.Error(w, "", http.StatusNotFound)
+		return
+	}
+
 	response(w, ret)
 }
 
