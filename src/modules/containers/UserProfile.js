@@ -25,7 +25,7 @@ const mergeProps = (state, {dispatch}, props) => {
 	loadUserFollower: () => dispatch(actions.loadUserFollower(props.id)),
 	handleFollow: (state.myUserId && !state.isMine
 		? () => {
-				if (state.user.followerIds.includes(state.myUserId)) {
+				if (state.myUserId in state.user.followers) {
 					dispatch(actions.unfollowUser(state.myUserId, state.user.id, state.token));
 				} else {
 					dispatch(actions.followUser(state.myUserId, state.user.id, state.token));
@@ -34,7 +34,7 @@ const mergeProps = (state, {dispatch}, props) => {
 		: Function.prototype
 	),
 	isFollow: (state.myUserId
-		? state.user.followerIds.includes(state.myUserId)
+		? state.myUserId in state.user.followers
 		: false
 	),
 

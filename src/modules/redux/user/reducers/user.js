@@ -1,8 +1,8 @@
 
 const init = {
 	affiliate: {},
-	followIds: [],
-	followerIds: [],
+	follows: {},
+	followers: {},
 };
 export default (state = init, action) => {
 	switch (action.type) {
@@ -27,13 +27,19 @@ export default (state = init, action) => {
 		case 'UPDATE_USER_FAILED':
 			return {...init, id: "0", name: "update error"};
 		case 'LOAD_USER_FOLLOWS_SUCCEEDED':
-			return {...state, followIds: action.data};
+			return {...state, follows: action.data};
+		case 'LOAD_USER_FOLLOWS_FAILED':
+			return {...state, follows: {}};
 		case 'LOAD_USER_FOLLOWERS_SUCCEEDED':
-			return {...state, followerIds: action.data};
+			return {...state, followers: action.data};
+		case 'LOAD_USER_FOLLOWERS_FAILED':
+			return {...state, followers: {}};
 		case 'FOLLOW_USER_SUCCEEDED':
-			return {...state, followerIds: [...state.followerIds, action.id]};
+			return {...state, followers: [...state.followers, action.data]};
 		case 'UNFOLLOW_USER_SUCCEEDED':
-			return {...state, followerIds: state.followerIds.filter(id => id !== action.id)};
+			let users = {...state};
+			delete users[action.id];
+			return users;
 		default:
 			return state;
 	}

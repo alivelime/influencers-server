@@ -61,7 +61,23 @@ export function* loadFollowIds(action) {
 	const res = yield call(getAPI, `/api/users/${action.id}/follows`);
 
 	if (Array.isArray(res)) {
-		yield put({type: "LOAD_USER_FOLLOWS_SUCCEEDED", data: res});
+		let users = {};
+		{
+			let userIds = res;
+			yield Promise.all(
+				userIds.map((id) => {
+					return (async () => {
+						const user = await getAPI(`/api/users/${id}`);
+						if (Object.keys(user).length > 0) {
+							users[id] = user;
+						} else {
+							users[id] = {};
+						}
+					})()
+				})
+			);
+		}
+		yield put({type: "LOAD_USER_FOLLOWS_SUCCEEDED", data: users});
 	} else {
 		yield put({type: "LOAD_USER_FOLLOWS_FAILED"});
 	}
@@ -71,7 +87,23 @@ export function* loadFollowerIds(action) {
 	const res = yield call(getAPI, `/api/users/${action.id}/followers`);
 
 	if (Array.isArray(res)) {
-		yield put({type: "LOAD_USER_FOLLOWERS_SUCCEEDED", data: res});
+		let users = {};
+		{
+			let userIds = res;
+			yield Promise.all(
+				userIds.map((id) => {
+					return (async () => {
+						const user = await getAPI(`/api/users/${id}`);
+						if (Object.keys(user).length > 0) {
+							users[id] = user;
+						} else {
+							users[id] = {};
+						}
+					})()
+				})
+			);
+		}
+		yield put({type: "LOAD_USER_FOLLOWERS_SUCCEEDED", data: users});
 	} else {
 		yield put({type: "LOAD_USER_FOLLOWERS_FAILED"});
 	}

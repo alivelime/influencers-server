@@ -7,8 +7,11 @@ import Button from '@material-ui/core/Button';
 import Badge from '@material-ui/core/Badge';
 import Typography from '@material-ui/core/Typography';
 import Paper from '@material-ui/core/Paper';
+import List from '@material-ui/core/List';
+import ListItem from '@material-ui/core/ListItem';
 import Collapse from '@material-ui/core/Collapse';
 import IconButton from '@material-ui/core/IconButton';
+
 import ExpandLess from '@material-ui/icons/ExpandLess';
 import ExpandMore from '@material-ui/icons/ExpandMore';
 import Timeline from '@material-ui/icons/Timeline';
@@ -63,6 +66,8 @@ class Profile extends React.Component {
 
 	state = {
 		isOpen: !this.props.isMine,
+		followsOpen: false,
+		followersOpen: false,
 	};
 	componentDidMount() {
 		this.props.loadUser();
@@ -72,6 +77,8 @@ class Profile extends React.Component {
 	componentDidUpdate(prevProps, prevState) {
 		if (this.props.id !== prevProps.id) {
 			this.props.loadUser();
+			this.props.loadUserFollow();
+			this.props.loadUserFollower();
 		}
 		if (this.state === prevState && this.props.isMine) {
 			this.setState({isOpne: false});
@@ -151,19 +158,53 @@ class Profile extends React.Component {
 							</div>
 						</Button>
 					}
-					<Button variant="outlined" color="primary" size="small" className={classes.follow} >
+					<Button variant="outlined" color="primary" size="small" className={classes.follow}
+						onClick={() => {this.setState({isFollowsOpen: !this.state.isFollowsOpen})}}
+					>
 						<div className={classes.button}>
-							<div className={classes.number}>{this.props.user.followIds.length}</div>
+							<div className={classes.number}>{Object.keys(this.props.user.follows).length}</div>
 							<div className={classes.buttonText}>フォロー</div>
 						</div>
 					</Button>
-					<Button variant="outlined" color="primary" size="small" className={classes.follow} >
+					<Button variant="outlined" color="primary" size="small" className={classes.follow} 
+						onClick={() => {this.setState({isFollowersOpen: !this.state.isFollowersOpen})}}
+					>
 						<div className={classes.button}>
-							<div className={classes.number}>{this.props.user.followerIds.length}</div>
+							<div className={classes.number}>{Object.keys(this.props.user.followers).length}</div>
 							<div className={classes.buttonText}>フォロワー</div>
 						</div>
 					</Button>
 				</div>
+				<Collapse in={this.state.isFollowsOpen} tomeout="auto">
+					<Typography variant="title">フォロー</Typography>
+					<List>
+					{Object.keys(this.props.user.follows).map(id => {
+						return (
+								<ListItem>
+									<Link to={`/users/${id}`} variant="primary" className={classes.iconBox}>
+										<Avatar src={user.follows[id].avatar} />
+										<Typography variant="subhead">{user.follows[id].name}さん</Typography>
+									</Link>
+							</ListItem>
+						)
+						})}
+					</List>
+				</Collapse>
+				<Collapse in={this.state.isFollowersOpen} tomeout="auto">
+					<Typography variant="title">フォロワー</Typography>
+					<List>
+					{Object.keys(this.props.user.followers).map(id => {
+						return (
+								<ListItem>
+									<Link to={`/users/${id}`} variant="primary" className={classes.iconBox}>
+										<Avatar src={user.followers[id].avatar} />
+										<Typography variant="subhead">{user.followers[id].name}さん</Typography>
+									</Link>
+							</ListItem>
+						)
+						})}
+					</List>
+				</Collapse>
 			</Paper>
 		);
 	}

@@ -6,6 +6,7 @@ import (
 	"fmt"
 
 	"google.golang.org/appengine/datastore"
+	"google.golang.org/appengine/log"
 )
 
 const Kind = "Follow"
@@ -68,7 +69,7 @@ func getFollows(ctx context.Context, key string, userId int64) ([]int64, error) 
 	}
 
 	// do not use GetALL. Because it has 1000 limit.
-	ids := make([]int64, count)
+	ids := make([]int64, 0, count) // warn if size is not set zero, ids become [0,0,0,... newId, newId2..]
 	itr := query.Run(ctx)
 
 	for {
@@ -88,5 +89,6 @@ func getFollows(ctx context.Context, key string, userId int64) ([]int64, error) 
 		}
 	}
 
+	log.Infof(ctx, "%#v", ids)
 	return ids, nil
 }
