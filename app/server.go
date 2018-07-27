@@ -36,6 +36,9 @@ func init() {
 	r.HandleFunc("/api/users/{userId}/reviews", api.HandleUserReviews)
 	r.HandleFunc("/api/users/{userId}/affiliate", api.HandleUserAffiliate)
 	r.HandleFunc("/api/users/{userId}/timeline", api.HandleUserTimeline)
+	r.HandleFunc("/api/users/{userId}/follows", api.HandleUserFollows)
+	r.HandleFunc("/api/users/{userId}/followers", api.HandleUserFollowers)
+	r.HandleFunc("/api/users/{i}/follows/{u}", api.HandleUserFollows)
 
 	r.HandleFunc("/api/meta/{id:.+}", api.HandleMeta)
 	r.HandleFunc("/api/recommends", api.HandleRecommends)

@@ -19,6 +19,11 @@ export default function* userSaga() {
 	yield takeEvery("LOAD_USER_AFFILIATE_REQUEST", user.fetchAffiliate);
 	yield takeEvery("UPDATE_USER_AFFILIATE_REQUEST", user.updateAffiliate);
 
+	yield takeEvery("LOAD_USER_FOLLOWS_REQUEST", user.loadFollowIds);
+	yield takeEvery("LOAD_USER_FOLLOWERS_REQUEST", user.loadFollowerIds);
+	yield takeEvery("FOLLOW_USER_REQUEST", user.follow);
+	yield takeEvery("UNFOLLOW_USER_REQUEST", user.unfollow);
+
 	yield takeEvery("LOAD_USER_RECOMMEND_DATA_REQUEST", user.loadRecommendData);
 
 

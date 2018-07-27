@@ -1,5 +1,5 @@
 import { call, put } from 'redux-saga/effects'
-import { getAPI, patchAPI } from 'modules/utils/Request';
+import { getAPI, postAPI, patchAPI, deleteAPI } from 'modules/utils/Request';
 
 export function* fetch(action) {
 	const res = yield call(getAPI, `/api/users/${action.id}`);
@@ -57,6 +57,35 @@ export function* updateAffiliate(action) {
 	}
 }
 
+export function* loadFollowIds(action) {
+	const res = yield call(getAPI, `/api/users/${action.id}/follows`);
+
+	if (Array.isArray(res)) {
+		yield put({type: "LOAD_USER_FOLLOWS_SUCCEEDED", data: res});
+	} else {
+		yield put({type: "LOAD_USER_FOLLOWS_FAILED"});
+	}
+}
+
+export function* loadFollowerIds(action) {
+	const res = yield call(getAPI, `/api/users/${action.id}/followers`);
+
+	if (Array.isArray(res)) {
+		yield put({type: "LOAD_USER_FOLLOWERS_SUCCEEDED", data: res});
+	} else {
+		yield put({type: "LOAD_USER_FOLLOWERS_FAILED"});
+	}
+}
+
+export function* follow(action) {
+	yield call(postAPI, `/api/users/${action.i}/follows/${action.u}`, null, action.token)
+	yield put({type: "FOLLOW_USER_SUCCEEDED", id: action.i});
+}
+
+export function* unfollow(action) {
+	yield call(deleteAPI, `/api/users/${action.i}/follows/${action.u}`, action.token)
+	yield put({type: "UNFOLLOW_USER_SUCCEEDED", id: action.i});
+}
 
 export function* loadRecommendData(action) {
 	let recommendBranches, reviews, recommends;

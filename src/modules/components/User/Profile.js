@@ -13,6 +13,7 @@ import ExpandLess from '@material-ui/icons/ExpandLess';
 import ExpandMore from '@material-ui/icons/ExpandMore';
 import Timeline from '@material-ui/icons/Timeline';
 import Map from '@material-ui/icons/Map';
+import PersonAdd from '@material-ui/icons/PersonAdd';
 
 import Link from 'modules/components/Link';
 import My from 'modules/components/User/Profile/My';
@@ -27,9 +28,14 @@ const styleSheet = theme => ({
 		width: "100%",
 	},
 	icon: {
-		marginLeft: "auto",
 		width: '1.6em',
 		height: '1.6em',
+	},
+	number: {
+		fontSize: '24pt',
+		maxWidth: '1.6em',
+		maxHeight: '1.6em',
+		margin: theme.spacing.unit,
 	},
 	iconBox: {
 		display: "flex",
@@ -38,10 +44,15 @@ const styleSheet = theme => ({
 	iconBoxLink: {
 		margin: theme.spacing.unit,
 	},
+	follow: {
+		margin: theme.spacing.unit,
+	},
 	button: {
 		minWidth: "60pt",
 		display: "flex",
 		flexDirection: 'column',
+		justifyContent: 'center',
+		alignItems: 'center',
 	},
 	buttonText: {
 		fontSize: '0.6em',
@@ -55,6 +66,8 @@ class Profile extends React.Component {
 	};
 	componentDidMount() {
 		this.props.loadUser();
+		this.props.loadUserFollow();
+		this.props.loadUserFollower();
 	}
 	componentDidUpdate(prevProps, prevState) {
 		if (this.props.id !== prevProps.id) {
@@ -70,7 +83,7 @@ class Profile extends React.Component {
 
 	render() {
 		const { user, classes } = this.props;
-		if (!user || Object.keys(user).length === 0) return null; 
+		if (user.id === undefined || user.id.length <= 1) return (<p>{user.name}</p>); 
 
 		return (
 			<Paper>
@@ -124,6 +137,32 @@ class Profile extends React.Component {
 							</div>
 						</Button>
 					</Link>
+					{this.props.myUserId && !this.props.isMine &&
+						<Button
+							onClick={this.props.handleFollow}
+							variant={!this.props.isFollow ? "raised" : "outlined"}
+							color="primary"
+							size="small"
+							className={classes.follow}
+						>
+							<div className={classes.button}>
+								<PersonAdd className={classes.icon} />
+								<div className={classes.buttonText}>フォロー{this.props.isFollow ? '中' : 'する'}</div>
+							</div>
+						</Button>
+					}
+					<Button variant="outlined" color="primary" size="small" className={classes.follow} >
+						<div className={classes.button}>
+							<div className={classes.number}>{this.props.user.followIds.length}</div>
+							<div className={classes.buttonText}>フォロー</div>
+						</div>
+					</Button>
+					<Button variant="outlined" color="primary" size="small" className={classes.follow} >
+						<div className={classes.button}>
+							<div className={classes.number}>{this.props.user.followerIds.length}</div>
+							<div className={classes.buttonText}>フォロワー</div>
+						</div>
+					</Button>
 				</div>
 			</Paper>
 		);

@@ -51,4 +51,27 @@ export const clearUserRecommendData = () => ({
 	type: 'CLEAR_USER_RECOMMEND_DATA',
 });
 
+export const loadUserFollow = id => ({
+	type: 'LOAD_USER_FOLLOWS_REQUEST',
+	id,
+});
+
+export const loadUserFollower = id => ({
+	type: 'LOAD_USER_FOLLOWERS_REQUEST',
+	id,
+});
+
+export const followUser = (i,u, token) => ({
+	type: 'FOLLOW_USER_REQUEST',
+	i,
+	u,
+	token,
+});
+
+export const unfollowUser = (i, u, token) => ({
+	type: 'UNFOLLOW_USER_REQUEST',
+	i,
+	u,
+	token,
+});
 

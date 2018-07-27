@@ -25,7 +25,7 @@ function Header(props) {
 	return (
 		<div className={classes.root}>
 			<AppBar
-				position='fixed'
+				position='sticky'
 			>
 				<Toolbar>
 					<Typography variant="title" color="inherit" className={classes.flex} >

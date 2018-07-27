@@ -44,11 +44,11 @@ const styleSheet = theme => ({
 		alignItems: 'center', 
 		alignContent: 'center',
 	},
-	flexMain: {
+	timelineBox: {
 		display: 'flex',
+		flexWrap: 'no-wrap',
 		alignItems: 'center', 
 		alignContent: 'center',
-		flex: 1,
 	},
 	thumbnail: {
 		maxHeight: '4em',
@@ -63,7 +63,7 @@ function makeMessage(classes, data, users, reviews, recommends) {
 			const review = reviews[data.what];
 			const recommend = recommends[review.recommendId];
 			return (
-				<div className={classes.flexMain} >
+				<div className={classes.timelineBox}>
 					{recommend.image && <img src={recommend.image} className={classes.thumbnail} alt="iiyo" /> }
 					<div>
 						<Link to={`/users/${data.i}/recommend-branches/${review.recommendBranchId}`}>
@@ -79,7 +79,7 @@ function makeMessage(classes, data, users, reviews, recommends) {
 			const review = reviews[data.what];
 			const recommend = recommends[review.recommendId];
 			return (
-				<div className={classes.flexMain} >
+				<div className={classes.timelineBox}>
 					{recommend.image ? <img src={recommend.image} className={classes.thumbnail} alt="iiyo" /> : null}
 					<div>
 						{recommend.title}の"いいよ"に
@@ -92,7 +92,11 @@ function makeMessage(classes, data, users, reviews, recommends) {
 			);
 		}
 		case config.TIMELINE_FOLLOW:
-			return `${data.u}さんをフォローしました。`
+			return (
+				<div className={classes.timelineBox}>
+					`フォローしました。`
+				</div>
+			)
 		default:
 			throw new Error("no implement type "+data.event);
 	}
@@ -140,7 +144,7 @@ class Timeline extends React.Component {
 				<ListItem key={i}>
 					<Paper className={classes.timeline}>
 						{data.i !== this.props.userId &&
-							<div>
+							<div className={classes.timelineBox}>
 								<Link to={`/users/${data.i}`} >
 									<div className={classes.flex} >
 										<Avatar src={timeline.users[data.i].avatar} />
@@ -151,14 +155,14 @@ class Timeline extends React.Component {
 							</div>
 						}
 						{data.u !== "0" && data.u !== this.props.userId &&
-							<div>
+							<div className={classes.timelineBox}>
 								<Link to={`/users/${data.u}`} >
 									<div className={classes.flex} >
 										<Avatar src={timeline.users[data.u].avatar} />
 										<div>{`${timeline.users[data.u].name}`}</div>
 									</div>
 								</Link>
-								<div>さんの</div>
+								<div>さん</div>
 							</div>
 						}
 						{makeMessage(classes, data, timeline.users, timeline.reviews, timeline.recommends)}

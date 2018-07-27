@@ -23,13 +23,3 @@ type User struct {
 	CreatedAt  time.Time `json:"createdAt" datastore:",noindex"`
 	UpdatedAt  time.Time `json:"updatedAt" datastore:",noindex"`
 }
-
-type Follow struct {
-	I int64 `json:"i"`
-	U int64 `json:"u"`
-}
-
-type Ignore struct {
-	I int64 `json:"i"`
-	U int64 `json:"u"`
-}
