@@ -144,6 +144,22 @@ class Profile extends React.Component {
 							</div>
 						</Button>
 					</Link>
+					<Button variant="contained" color="primary" size="small" className={classes.follow} 
+						onClick={this.props.loadUser}
+					>
+						<div className={classes.button}>
+							<div className={classes.number}>{user.influCount}</div>
+							<div className={classes.buttonText}>インフル</div>
+						</div>
+						<div className={classes.button}>
+							<div className={classes.number}>{user.iiyoCount}</div>
+							<div className={classes.buttonText}>いいよ</div>
+						</div>
+						<div className={classes.button}>
+							<div className={classes.number}>{user.iineCount}</div>
+							<div className={classes.buttonText}>いいね</div>
+						</div>
+					</Button>
 					{this.props.myUserId && !this.props.isMine &&
 						<Button
 							onClick={this.props.handleFollow}
@@ -180,10 +196,10 @@ class Profile extends React.Component {
 					<List>
 					{Object.keys(this.props.user.follows).map(id => {
 						return (
-								<ListItem>
+								<ListItem key={id}>
 									<Link to={`/users/${id}`} variant="primary" className={classes.iconBox}>
 										<Avatar src={user.follows[id].avatar} />
-										<Typography variant="subhead">{user.follows[id].name}さん</Typography>
+										<Typography variant="subheading">{user.follows[id].name}さん</Typography>
 									</Link>
 							</ListItem>
 						)
@@ -195,10 +211,10 @@ class Profile extends React.Component {
 					<List>
 					{Object.keys(this.props.user.followers).map(id => {
 						return (
-								<ListItem>
+								<ListItem key={id}>
 									<Link to={`/users/${id}`} variant="primary" className={classes.iconBox}>
 										<Avatar src={user.followers[id].avatar} />
-										<Typography variant="subhead">{user.followers[id].name}さん</Typography>
+										<Typography variant="subheading">{user.followers[id].name}さん</Typography>
 									</Link>
 							</ListItem>
 						)

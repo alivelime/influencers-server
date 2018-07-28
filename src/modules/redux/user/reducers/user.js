@@ -40,6 +40,12 @@ export default (state = init, action) => {
 			let users = {...state};
 			delete users[action.id];
 			return users;
+		case 'ADD_REVIEW_SUCCEEDED':
+			if (action.review.iineId !== "0") {
+				return {...state, iineCount: Number(state.iineCount)+1};
+			} else {
+				return {...state, iiyoCount: Number(state.iiyoCount)+1};
+			}
 		default:
 			return state;
 	}

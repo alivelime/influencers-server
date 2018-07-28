@@ -68,3 +68,49 @@ func GetUserBySNSID(ctx context.Context, snsID int64, snsType string) (User, err
 
 	return ret, nil
 }
+
+func IncrementIiyo(ctx context.Context, id int64) error {
+	user, err := Get(ctx, id)
+	if err != nil {
+		return err
+	}
+
+	user.IiyoCount += 1
+
+	err = Put(ctx, &user)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+func IncrementIine(ctx context.Context, id int64) error {
+	user, err := Get(ctx, id)
+	if err != nil {
+		return err
+	}
+
+	user.IineCount += 1
+
+	err = Put(ctx, &user)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+func IncrementInflu(ctx context.Context, id int64) error {
+	user, err := Get(ctx, id)
+	if err != nil {
+		return err
+	}
+
+	user.InfluCount += 1
+
+	err = Put(ctx, &user)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}

@@ -9,6 +9,7 @@ import (
 	"github.com/alivelime/influs/auth"
 	"github.com/alivelime/influs/model/reviews"
 	"github.com/alivelime/influs/model/timelines"
+	"github.com/alivelime/influs/model/users"
 )
 
 func getReview(w http.ResponseWriter, r *http.Request) {
@@ -67,6 +68,10 @@ func postReview(w http.ResponseWriter, r *http.Request) {
 				respect.RecommendID, review.RecommendID),
 				http.StatusBadRequest)
 		}
+		_ = users.IncrementIine(ctx, review.UserID)
+		_ = users.IncrementInflu(ctx, respect.UserID)
+	} else {
+		_ = users.IncrementIiyo(ctx, review.UserID)
 	}
 
 	// put

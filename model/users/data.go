@@ -17,9 +17,9 @@ type User struct {
 	SNSType    string    `json:"snsType" datastore:",noindex"`
 	SNSPower   int       `json:"snsPower" datastore:",noindex"`
 	SNSURL     string    `json:"snsUrl" datastore:",noindex"`
-	InfluCount int       `json:"influCount" datastore:"-"` /* count of follower's iine */
-	IiyoCount  int       `json:"iiyoCount" datastore:"-"`  /* = cound of recommend */
-	IineCount  int       `json:"iinemmendCount" datastore:"-"`
+	InfluCount int       `json:"influCount" datastore:",noindex"` /* count of follower's iine */
+	IiyoCount  int       `json:"iiyoCount" datastore:",noindex"`  /* = cound of recommend */
+	IineCount  int       `json:"iineCount" datastore:",noindex"`
 	CreatedAt  time.Time `json:"createdAt" datastore:",noindex"`
 	UpdatedAt  time.Time `json:"updatedAt" datastore:",noindex"`
 }

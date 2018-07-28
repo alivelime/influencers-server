@@ -1,5 +1,5 @@
 
-export default (state = {isRecommend: false, recommendBranchId: "0"}, action) => {
+export default (state = {isRecommend: false, recommendBranchId: "0", iineComplete: false}, action) => {
 	switch (action.type) {
 		case 'CHECK_RECOMMEND':
 			// use form plugin to change url.
@@ -25,6 +25,9 @@ export default (state = {isRecommend: false, recommendBranchId: "0"}, action) =>
 
 		case 'CLEAR_REVIEW_FORM':
 			return {isRecommend: false, recommendBranchId: "0"};
+
+		case 'ADD_REVIEW_SUCCEEDED':
+			return {isRecommend: false, recommendBranchId: "0", iineComplete: action.iineComplete};
 
 		default:
 			return state;

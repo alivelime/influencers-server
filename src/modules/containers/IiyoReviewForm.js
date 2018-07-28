@@ -32,6 +32,7 @@ const mapStateToProps = state => ({
 
 	recommendBranchId: state.reviewForm.recommendBranchId,
 	isRecommend: state.reviewForm.isRecommend,
+	iineComplete: state.reviewForm.iineComplete,
 
 	url: selector(state, 'url'),
 	evidence: selector(state, 'evidence'),
@@ -106,16 +107,13 @@ const mergeProps = (state, {dispatch}, props) => ({
 
 		dispatch(actions.uncheckAll());
 		dispatch(reset('reviewForm')); 
-
-		if (props.iineId) {
-			props.history.push(`/users/${props.userId}`);
-		}
 	},
 
 	clearURL: () => dispatch(actions.clearURL()),
 	clearEvidence: () => dispatch(actions.clearEvidence()),
 	clearMemo: () => dispatch(actions.clearMemo()),
 	clearReviewForm: () => dispatch(actions.clearReviewForm()),
+	iineComplete: state.iineComplete,
 });
 
 export default connect(
