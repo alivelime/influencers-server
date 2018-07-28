@@ -127,6 +127,8 @@ class Timeline extends React.Component {
 	render() {
 		const { timeline, classes } = this.props;
 
+		if (timeline.state === "failed") return <p>no data</p>
+
 		// now loading...
 		if (timeline.state === "loading" || this.props.user.id === "0") {
 			return (

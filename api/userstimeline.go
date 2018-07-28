@@ -22,6 +22,12 @@ func getUserTimeline(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
+
+	if len(i) == 0 && len(me) == 0 {
+		http.Error(w, "", http.StatusNotFound)
+		return
+	}
+
 	ret := make(map[string][]timelines.Timeline)
 	if len(i) == 0 {
 		ret["i"] = make([]timelines.Timeline, 0)
