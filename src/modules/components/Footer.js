@@ -81,7 +81,7 @@ function Footer(props) {
         </Grid>
       </Typography>
       <Typography className={classes.version} gutterBottom noWrap>
-        Copyrights <Link to="">ときしらず LLC</Link>
+        Copyrights <Link to="http://www.tokishirazu.llc">ときしらず LLC</Link>
       </Typography>
     </footer>
 		</div>
