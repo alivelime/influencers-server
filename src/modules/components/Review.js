@@ -21,6 +21,7 @@ import { MY_PAGE } from 'config';
 const styleSheet = theme => ({
 	image: {
 		minWidth: 80,
+		minHeight: 80,
 		maxHeight: 240,
 	},
 	card: {
