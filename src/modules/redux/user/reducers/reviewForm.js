@@ -24,7 +24,7 @@ export default (state = {isRecommend: false, recommendBranchId: "0", iineComplet
 			return {isRecommend: false, recommendBranchId: "0"};
 
 		case 'CLEAR_REVIEW_FORM':
-			return {isRecommend: false, recommendBranchId: "0"};
+			return {isRecommend: false, recommendBranchId: "0", iineComplete: false};
 
 		case 'ADD_REVIEW_SUCCEEDED':
 			return {isRecommend: false, recommendBranchId: "0", iineComplete: action.iineComplete};

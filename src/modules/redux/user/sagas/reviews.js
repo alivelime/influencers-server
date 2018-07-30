@@ -48,7 +48,7 @@ export function* add(action) {
 		evidence: res.evidence,
 		addRecommendBranch: res.addRecommendBranch,
 		patch,
-		iineComplete: action.review.iineId,
+		iineComplete: (action.review.iineId !== undefined && action.review.iineId !== "0"),
 	});
 }
 

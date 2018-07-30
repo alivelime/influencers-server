@@ -76,6 +76,7 @@ class ReviewForm extends React.Component {
 		const { classes } = this.props;
 
 		if (this.props.iineComplete) {
+			this.props.clearReviewForm();
 			return <Redirect to={`/users/${this.props.userId}/`} />
 		}
 
