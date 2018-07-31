@@ -6,7 +6,6 @@ import (
 	"fmt"
 
 	"google.golang.org/appengine/datastore"
-	"google.golang.org/appengine/log"
 )
 
 const Kind = "Follow"
@@ -89,6 +88,5 @@ func getFollows(ctx context.Context, key string, userId int64) ([]int64, error) 
 		}
 	}
 
-	log.Infof(ctx, "%#v", ids)
 	return ids, nil
 }
