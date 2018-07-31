@@ -1,15 +1,15 @@
 package api
 
 type Community struct {
-	ID    int64 `json:"recommendBranchId" datastore:"-"` /* ID is RecommendBranch.ID */
-	Title int64 `json:"title" datastore:",noindex"`
-	Text  int64 `json:"text" datastore:",noindex"`
-	Price int64 `json:"price" datastore:",noindex"`
+	ID    int64  `json:"recommendBranchId,string" datastore:"-"` /* ID is RecommendBranch.ID */
+	Title string `json:"title" datastore:",noindex"`
+	Text  string `json:"text" datastore:",noindex"`
+	Price int    `json:"price" datastore:",noindex"`
 }
 
 type CommunityMember struct {
-	I  int64 `json:"i"`
-	ID int64 `json:"id"`
+	I  int64 `json:"i,string"`
+	ID int64 `json:"id,string"`
 }
 
 type NagesenInfo struct {
@@ -19,9 +19,9 @@ type NagesenInfo struct {
 }
 
 type NagesenMessage struct {
-	ID      int64   `json:"id" datastore:"-"`
-	I       int64   `json:"i"`
-	U       int64   `json:"u"`
+	ID      int64   `json:"id,string" datastore:"-"`
+	I       int64   `json:"i,string"`
+	U       int64   `json:"u,string"`
 	TxnId   string  `json:"txnId"`
 	Amount  float64 `json:"amount" datastore:",noindex"`
 	Message string  `json:"message" datastore:",noindex"`

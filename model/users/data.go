@@ -5,7 +5,7 @@ import (
 )
 
 type User struct {
-	ID         int64     `json:"id" datastore:"-"`
+	ID         int64     `json:"id,string" datastore:"-"`
 	Name       string    `json:"name" datastore:",noindex"`
 	Title      string    `json:"title" datastore:",noindex"`
 	Avatar     string    `json:"avatar" datastore:",noindex"`
@@ -13,7 +13,7 @@ type User struct {
 	Color      string    `json:"color" datastore:",noindex"`
 	Memo       string    `json:"memo" datastore:",noindex"`
 	Link       string    `json:"link" datastore:",noindex"`
-	SNSID      int64     `json:"snsId"`
+	SNSID      int64     `json:"snsId,string"`
 	SNSType    string    `json:"snsType" datastore:",noindex"`
 	SNSPower   int       `json:"snsPower" datastore:",noindex"`
 	SNSURL     string    `json:"snsUrl" datastore:",noindex"`

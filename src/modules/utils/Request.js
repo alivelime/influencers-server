@@ -52,12 +52,12 @@ export const requestAPI = (method, path, data = null, token = '') => {
 
 // strip "". ex "1234" => 1234
 function JSONstring2int64(data) {
-	return JSON.stringify(data).replace(/"([0-9]+)"/g, '$1');
+	return JSON.stringify(data); //.replace(/"([0-9]+)"/g, '$1');
 }
 // quote with "". ex "key":1234, => "key":"1234"
 function JSONint642string(data) {
-	const str = data.replace(/([0-9]+)([,}\]])/g, '"$1"$2')
-	return JSON.parse(str, (key, val) => {
+	// stop convertion, json int64 to string here. use instead output "int64" as a string on Go API.
+	return JSON.parse(data, (key, val) => {
 		// parse date
 		if (typeof(val) === "string" &&
 				val.match(/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d+Z$/)){

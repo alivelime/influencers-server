@@ -3,10 +3,10 @@ package timelines
 import "time"
 
 type Timeline struct {
-	I         int64     `json:"i"`
-	U         int64     `json:"u"`
-	Event     EventType `json:"event" datastore:",noindex"`
-	What      int64     `json:"what" datastore:",noindex"`
+	I         int64     `json:"i,string"`
+	U         int64     `json:"u,string"`
+	Event     EventType `json:"event,string" datastore:",noindex"`
+	What      int64     `json:"what,string" datastore:",noindex"`
 	CreatedAt time.Time `json:"createdAt"`
 }
 
