@@ -60,7 +60,7 @@ function JSONint642string(data) {
 	return JSON.parse(data, (key, val) => {
 		// parse date
 		if (typeof(val) === "string" &&
-				val.match(/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d+Z$/)){
+				val.match(/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(\.\d+)?Z$/)){
 				return new Date(Date.parse(val));
 		}
 		return val;

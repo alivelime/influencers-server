@@ -217,6 +217,7 @@ class ReviewForm extends React.Component {
 									name="date"
 									type="date"
 									label="日付"
+									validate={[validation.errorIfEmpty]}
 								/>
 								</FormControl>
 							</Grid>

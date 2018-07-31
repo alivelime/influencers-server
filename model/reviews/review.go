@@ -4,7 +4,6 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"time"
 
 	"google.golang.org/appengine/datastore"
 )
@@ -34,8 +33,6 @@ func Get(ctx context.Context, id int64) (review Review, err error) {
 
 func Put(ctx context.Context, review *Review) error {
 	key := datastore.NewKey(ctx, Kind, "", review.ID, nil)
-
-	review.CreatedAt = time.Now()
 
 	k, err := datastore.Put(ctx, key, review)
 	if err != nil {

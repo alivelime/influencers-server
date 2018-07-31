@@ -91,6 +91,7 @@ const mergeProps = (state, {dispatch}, props) => ({
 				memo: String(value.memo), // must string.
 				forMe: value.forMe,
 				forYou: value.forYou,
+				createdAt: (new Date(value.date)).toISOString(),
 			},
 			recommend: {
 				url: value.url,
