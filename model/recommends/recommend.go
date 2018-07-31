@@ -77,7 +77,7 @@ func GetUserRecommends(ctx context.Context, userId int64) (map[string]Recommend,
 			}
 
 			if e == datastore.ErrNoSuchEntity {
-				return ret, errors.New(fmt.Sprintf("no such id %s", e))
+				// return ret, errors.New(fmt.Sprintf("no such id %s", e))
 				// empty
 				continue
 			}
