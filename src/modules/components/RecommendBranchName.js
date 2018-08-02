@@ -4,14 +4,25 @@ import { withStyles } from '@material-ui/core/styles';
 
 import Typography from '@material-ui/core/Typography';
 import TextField from '@material-ui/core/TextField';
+import ButtonBase from '@material-ui/core/ButtonBase';
 
 import Recommend from 'modules/components/Recommend';
 
 const styleSheet = theme => ({
+	flex: {
+		display: 'flex',
+		width: '100%',
+	},
 	content: {
-		flex: 1,
 		padding: theme.spacing.unit * 2,
 	},
+  cardAction: {
+    display: 'block',
+    textAlign: 'initial',
+		margin: 0,
+		padding: 0,
+		flex: 1,
+  },
 });
 
 class RecommendBranchName extends React.Component {
@@ -38,7 +49,11 @@ class RecommendBranchName extends React.Component {
 		const { classes } = this.props;
 
 		if (this.props.recommend) {
-			return <Recommend data={this.props.recommend} enableLink />
+			return <Recommend
+				data={this.props.recommend}
+				enableLink
+				handleCollapse={this.props.handleCollapse}
+			/>
 		} else {
 			if (this.props.isMine) {
 				return <TextField
@@ -50,7 +65,15 @@ class RecommendBranchName extends React.Component {
 					onBlur={this.handleSubmit}
 				/>
 			} else {
-				return <div className={classes.content}><Typography variant="title">{this.props.name}</Typography></div>
+				return (
+					<div className={classes.flex}>
+						<div className={classes.content}><Typography variant="title">{this.props.name}</Typography></div>
+						<ButtonBase
+							className={classes.cardAction}
+							onClick={this.props.handleCollapse}
+						/>
+					</div>
+				)
 			}
 		}
 	}

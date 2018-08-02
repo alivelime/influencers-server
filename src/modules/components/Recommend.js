@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import { withStyles } from '@material-ui/core/styles';
 
 import Typography from '@material-ui/core/Typography';
+import ButtonBase from '@material-ui/core/ButtonBase';
 import Card from '@material-ui/core/Card';
 import CardContent from '@material-ui/core/CardContent';
 import CardMedia from '@material-ui/core/CardMedia';
@@ -25,6 +26,13 @@ const styleSheet = theme => ({
 		padding: 0,
 		paddingLeft: theme.spacing.unit * 2,
 	},
+  cardAction: {
+    display: 'block',
+    textAlign: 'initial',
+		margin: 0,
+		padding: 0,
+		flex: 1,
+  },
 });
 
 class Recommend extends React.Component {
@@ -52,11 +60,17 @@ class Recommend extends React.Component {
 						title={this.props.data.title}
 					/>
 					<CardContent className={classes.content}>
-						<Link to={this.props.data.link}>
-							<Typography variant="title">{this.props.data.title}</Typography>
-						</Link>
+						<div>
+							<Link to={this.props.data.link}>
+								<Typography variant="title">{this.props.data.title}</Typography>
+							</Link>
+						</div>
 						<Typography variant="body1">{description}</Typography>
 					</CardContent>
+					<ButtonBase
+						className={classes.cardAction}
+						onClick={this.props.handleCollapse}
+					/>
 				</Card>
 			);
 		} else {

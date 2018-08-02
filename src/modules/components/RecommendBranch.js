@@ -81,6 +81,7 @@ class RecommendBranch extends React.Component {
 						}
 						<RecommendBranchName
 							id={this.props.id}
+							handleCollapse={this.props.handleCollapse}
 							childLength={this.props.childIds.length}
 						/>
 						{(this.props.recommendId || this.props.childIds.length > 0) &&
