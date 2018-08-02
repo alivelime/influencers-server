@@ -17,6 +17,8 @@ const mergeProps = (state, {dispatch}, props) => ({
 
 	loadRecommendData: () => dispatch(actions.loadUserRecommendData(props.userId, state.token)),
 	clearRecommendData: () => dispatch(actions.clearUserRecommendData()),
+	openAll: () => dispatch(actions.openAllRecommendBranches()),
+	closeAll: () => dispatch(actions.closeAllRecommendBranches()),
 	dataLoaded: Object.keys(state.recommendBranches).length > 0,
 });
 

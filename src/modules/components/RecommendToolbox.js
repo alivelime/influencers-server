@@ -13,6 +13,8 @@ import SwapHorizIcon from '@material-ui/icons/SwapHoriz';
 import AddFolderIcon from '@material-ui/icons/CreateNewFolder';
 import SubdirectoryIcon from '@material-ui/icons/SubdirectoryArrowRight';
 import DeleteIcon from '@material-ui/icons/Delete';
+import ExpandMore from '@material-ui/icons/ExpandMore';
+import ExpandLess from '@material-ui/icons/ExpandLess';
 
 const styleSheet = theme => ({
 	icon: {
@@ -97,6 +99,22 @@ class RecommendToolbox extends React.Component {
 							<DeleteIcon
 								onClick={Function.prototype}
 								className={classNames(classes.icon, classes.disable)}
+							/>
+						</IconButton>
+					</Tooltip>
+					<Tooltip id="tooltip-top-start" title="全て開く">
+						<IconButton>
+							<ExpandMore
+								onClick={this.props.openAll}
+								className={classNames(classes.icon, classes.enable)}
+							/>
+						</IconButton>
+					</Tooltip>
+					<Tooltip id="tooltip-top-start" title="全て閉じる">
+						<IconButton>
+							<ExpandLess
+								onClick={this.props.closeAll}
+								className={classNames(classes.icon, classes.enable)}
 							/>
 						</IconButton>
 					</Tooltip>

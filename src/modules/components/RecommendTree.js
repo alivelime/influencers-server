@@ -1,7 +1,18 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { withStyles } from '@material-ui/core/styles';
+
 import CircularProgress from '@material-ui/core/CircularProgress';
+import AppBar from '@material-ui/core/AppBar';
+import Toolbar from '@material-ui/core/Toolbar';
+import Tooltip from '@material-ui/core/Tooltip';
+import TextField from '@material-ui/core/TextField';
+import Paper from '@material-ui/core/Paper';
+
+import IconButton from '@material-ui/core/IconButton';
+import ExpandMore from '@material-ui/icons/ExpandMore';
+import ExpandLess from '@material-ui/icons/ExpandLess';
+import IconSearch from '@material-ui/icons/Search';
 
 import ReviewForm from 'modules/containers/IiyoReviewForm';
 import RecommendBranch from 'modules/containers/RecommendBranch';
@@ -16,6 +27,19 @@ const styleSheet = theme => ({
 	},
 	progress: {
 		margin: theme.spacing.unit * 2,
+	},
+	icon: {
+		width: '1.6em',
+		height: '1.6em',
+		color: theme.palette.secondary.main,
+	},
+	searchBox: {
+		display: 'flex',
+		width: '100%',
+		padding: theme.spacing.unit * 2,
+	},
+	search: {
+		flex: 1,
 	},
 });
 
@@ -52,6 +76,37 @@ class RecommendTree extends React.Component {
 				{this.props.isMine &&
 					<RecommendToolbox userId={this.props.userId} />
 				}
+				{!this.props.isMine &&
+					<AppBar
+						position="static"
+						color="default"
+					>
+						<Toolbar>
+							<Tooltip id="tooltip-top-start" title="全て開く">
+								<IconButton>
+									<ExpandMore
+										onClick={this.props.openAll}
+										className={classes.icon}
+									/>
+								</IconButton>
+							</Tooltip>
+							<Tooltip id="tooltip-top-start" title="全て閉じる">
+								<IconButton>
+									<ExpandLess
+										onClick={this.props.closeAll}
+										className={classes.icon}
+									/>
+								</IconButton>
+							</Tooltip>
+						</Toolbar>
+					</AppBar>
+				}
+				<Paper className={classes.searchBox}>
+					<IconButton>
+						<IconSearch className={classes.icon} />
+					</IconButton>
+					<TextField type="search" placeholder="実装中" fullWidth className={classes.search} />
+				</Paper>
 				{this.props.dataLoaded
 					? (
 							<RecommendBranch

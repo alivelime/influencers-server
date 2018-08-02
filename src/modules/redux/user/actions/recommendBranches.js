@@ -189,11 +189,11 @@ export const closeRecommendBranch = id => ({
 	id,
 });
 
-export const openALLRecommendBranch = () => ({
+export const openAllRecommendBranches = () => ({
 	type: 'OPEN_ALL_RECOMMEND_BRANCHES',
 });
 
-export const closeAllRecommendBranch = () => ({
+export const closeAllRecommendBranches = () => ({
 	type: 'CLOSE_ALL_RECOMMEND_BRANCHES',
 });
 

@@ -135,11 +135,7 @@ export function* loadRecommendData(action) {
 
 	if (Object.keys(recommendBranches).length > 0) {
 		yield put({type: "LOAD_USER_RECOMMEND_DATA_SUCCEEDED", recommendBranches, recommends, reviews});
-		if (Object.keys(recommendBranches).length < 100) {
-			yield put({type: "OPEN_ALL_RECOMMEND_BRANCHES"});
-		} else {
-			yield put({type: "CLOSE_ALL_RECOMMEND_BRANCHES"});
-		}
+		yield put({type: "OPEN_ALL_RECOMMEND_BRANCHES"});
 	} else {
 		if (typeof action.token === "string" && action.token.length > 0) {
 			yield put({type: "ADD_RECOMMEND_BRANCH_REQUEST",

@@ -65,6 +65,8 @@ const mergeProps = (state, {dispatch}, props) => ({
 			}
 			: null
 	,
+	openAll: () => dispatch(actions.openAllRecommendBranches()),
+	closeAll: () => dispatch(actions.closeAllRecommendBranches()),
 
 });
 
