@@ -42,6 +42,29 @@ const styleSheet = theme => ({
 
 class RecommendBranch extends React.Component {
 
+	// if childIds is same, do not render.
+	shouldComponentUpdate(nextProps, nextState) {
+		if (this.props !== nextProps) {
+			if (this.props.id !== nextProps.id
+				|| this.props.parentIsChecked !== nextProps.parentIsChecked
+				|| this.props.isMine !== nextProps.isMine
+				|| this.props.isChecked !== nextProps.isChecked
+				|| this.props.isOpen !== nextProps.isOpen
+				|| this.props.recommendId !== nextProps.recommendId
+				|| this.props.childIds.length !== nextProps.childIds.length
+			) {
+				return true;
+			}
+
+			// check if children ids is same or not.
+			// different data. 1, 2, 3 <= 1, 3, 2
+			if (this.props.childIds.toString() !== nextProps.childIds.toString()) {
+				return true;
+			}
+		}
+		return false;
+	}
+
 	render() {
 		console.log('render recommendbranch '+this.props.id);
 
