@@ -17,7 +17,7 @@ const mapStateToProps = (state, props) => ({
 });
 const mapDispatchToProps = dispatch => ({ dispatch });
 const mergeProps = (state, {dispatch}, props) => {
-	console.log("RecommendBranch mergeProps "+props.id);
+	// console.log("RecommendBranch mergeProps "+props.id);
 	return {
 	...props,
 	isMine: state.isMine,
@@ -86,11 +86,18 @@ function getChildren(_recommendBranches, parentId, dispatch, token) {
 		let outOfLinks = {};
 		list.forEach(id => outOfLinks[id] = null);
 
-		let id, prevId;
+		let id, prevId = "0";
 		for (id = first;
 				list.indexOf(id) >= 0;
 				id = recommendBranches[id].nextId)
 		{
+			// check prevId
+			if (recommendBranches[id].prevId !== prevId) {
+				console.log("prevId is missed."+id);
+				recommendBranches[id].prevId = prevId;
+				patchIds.push(id);
+			}
+
 			// check out of link.
 			prevId = id;
 			delete outOfLinks[id];

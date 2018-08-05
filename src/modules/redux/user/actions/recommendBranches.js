@@ -118,6 +118,7 @@ export const moveRecommendBranches = (ids, to, recommendBranches, token) => {
 	});
 
 	ids.forEach((id) => {
+		if (id === "0") return;
 		if (last === id) { console.log("skip " + id + " is last."); return;}
 
 		if (last in recommendBranches) {
