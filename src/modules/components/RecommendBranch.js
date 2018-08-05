@@ -120,7 +120,7 @@ class RecommendBranch extends React.Component {
 					>
 						<List component='nav' className={classes.list}>
 							<Collapse in={this.props.isOpen} tomeout="auto" className={classes.container}>
-								{children}
+								{this.props.isOpen && children}
 								<ReviewList recommendBranchId={this.props.id} />
 							</Collapse>
 						</List>
