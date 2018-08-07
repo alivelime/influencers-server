@@ -101,6 +101,7 @@ func postReview(w http.ResponseWriter, r *http.Request) {
 	deleteUserCache(ctx, review.UserID, prefixUserTimeline)
 	deleteUserCache(ctx, review.UserID, prefixUserReviews)
 	deleteUserCache(ctx, review.UserID, prefixUserRecommends)
+	deleteCache(ctx, prefixUsers)
 	response(w, review)
 }
 

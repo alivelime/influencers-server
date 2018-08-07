@@ -20,6 +20,14 @@ func Get(ctx context.Context, id int64) (user User, err error) {
 	user.ID = id
 	return
 }
+func Gets(ctx context.Context) ([]User, error) {
+	var ret []User
+	// SELECT * FROM Users ORDER BY influCount
+	query := datastore.NewQuery(Kind).Order("-InfluCount").Limit(20)
+	_, err := query.GetAll(ctx, &ret)
+
+	return ret, err
+}
 
 func Put(ctx context.Context, user *User) error {
 	user.CreatedAt = time.Now()

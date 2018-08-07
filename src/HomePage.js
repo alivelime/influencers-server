@@ -6,6 +6,7 @@ import Button from '@material-ui/core/Button';
 import Divider from '@material-ui/core/Divider';
 
 import Login from 'modules/components/Login';
+import Ranking from 'modules/components/Ranking';
 
 const styles = theme => ({
   hero: {
@@ -116,6 +117,10 @@ class HomePage extends React.Component {
 						「この広告消せないかな?」<br />
 						そんなふとした想いからこのサイトは始まりました。<br />
 						</Typography>
+					</div>
+					<Divider />
+					<div className={classes.content}>
+						<Ranking />
 					</div>
 				</div>
 			</div>

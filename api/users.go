@@ -27,6 +27,24 @@ func getUser(w http.ResponseWriter, r *http.Request) {
 	response(w, user)
 }
 
+func getUsers(w http.ResponseWriter, r *http.Request) {
+	ctx := appengine.NewContext(r)
+	if getCache(ctx, w, prefixUsers) {
+		return
+	}
+
+	users, err := users.Gets(ctx)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusNotFound)
+		return
+	}
+
+	if !setCache(ctx, w, prefixUsers, users) {
+		return
+	}
+	response(w, users)
+}
+
 func postUser(w http.ResponseWriter, r *http.Request, id int64) {
 	if ok := auth.CheckAdmin(w, r); !ok {
 		return
@@ -90,6 +108,9 @@ func userLeave(w http.ResponseWriter, r *http.Request) {
 
 func HandleUsers(w http.ResponseWriter, r *http.Request) {
 	switch r.Method {
+	case "GET":
+		getUsers(w, r)
+
 	case "POST":
 		postUser(w, r, 0)
 
