@@ -5,6 +5,7 @@ import (
 	"net/http"
 
 	"google.golang.org/appengine"
+	"google.golang.org/appengine/log"
 
 	"github.com/alivelime/influs/auth"
 	"github.com/alivelime/influs/model/recommendbranches"
@@ -20,6 +21,7 @@ func getRecommendBranch(w http.ResponseWriter, r *http.Request) {
 
 	recommendBranch, err := recommendbranches.Get(ctx, id)
 	if err != nil {
+		log.Errorf(ctx, err.Error())
 		http.Error(w, err.Error(), http.StatusNotFound)
 		return
 	}
@@ -43,11 +45,14 @@ func postRecommendBranch(w http.ResponseWriter, r *http.Request, id int64) {
 
 	// validation
 	if recommendBranch.UserID == 0 {
+		log.Errorf(ctx, fmt.Sprintf("validation error: user id is required. "))
 		http.Error(w, fmt.Sprintf("validation error: user id is required. "), http.StatusBadRequest)
 		return
 	}
 	// is mine?
 	if session.User.ID != recommendBranch.UserID {
+		log.Errorf(ctx,
+			fmt.Sprintf("Not allow to post onother users .You %d, Param %d", session.User.ID, recommendBranch.UserID))
 		http.Error(w,
 			fmt.Sprintf("Not allow to post onother users .You %d, Param %d", session.User.ID, recommendBranch.UserID),
 			http.StatusBadRequest)
@@ -56,6 +61,7 @@ func postRecommendBranch(w http.ResponseWriter, r *http.Request, id int64) {
 
 	// put
 	if err := recommendbranches.Put(ctx, &recommendBranch); err != nil {
+		log.Errorf(ctx, err.Error())
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
@@ -78,11 +84,14 @@ func patchRecommendBranch(w http.ResponseWriter, r *http.Request) {
 	}
 	recommendBranch, err := recommendbranches.Get(ctx, id)
 	if err != nil {
+		log.Errorf(ctx, fmt.Sprintf("recommend branch %d is not found.", id))
 		http.Error(w, fmt.Sprintf("recommend branch %d is not found.", id), http.StatusNotFound)
 		return
 	}
 	// is mime?
 	if session.User.ID != recommendBranch.UserID {
+		log.Errorf(ctx,
+			fmt.Sprintf("user id is different form your. i %d d %d", recommendBranch.UserID, session.User.ID))
 		http.Error(w,
 			fmt.Sprintf("user id is different form your. i %d d %d", recommendBranch.UserID, session.User.ID),
 			http.StatusBadRequest)
@@ -94,6 +103,7 @@ func patchRecommendBranch(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	if err := recommendbranches.Put(ctx, &recommendBranch); err != nil {
+		log.Errorf(ctx, err.Error())
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
@@ -116,11 +126,14 @@ func deleteRecommendBranch(w http.ResponseWriter, r *http.Request) {
 	}
 	recommendBranch, err := recommendbranches.Get(ctx, id)
 	if err != nil {
+		log.Errorf(ctx, fmt.Sprintf("recommend branch %d is not found.", id))
 		http.Error(w, fmt.Sprintf("recommend branch %d is not found.", id), http.StatusNotFound)
 		return
 	}
 	// is mime?
 	if session.User.ID != recommendBranch.UserID {
+		log.Errorf(ctx,
+			fmt.Sprintf("user id is different form your. i %d d %d", recommendBranch.UserID, session.User.ID))
 		http.Error(w,
 			fmt.Sprintf("user id is different form your. i %d d %d", recommendBranch.UserID, session.User.ID),
 			http.StatusBadRequest)
@@ -128,6 +141,7 @@ func deleteRecommendBranch(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if err := recommendbranches.Delete(ctx, id); err != nil {
+		log.Errorf(ctx, err.Error())
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}

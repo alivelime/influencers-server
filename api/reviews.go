@@ -5,6 +5,7 @@ import (
 	"net/http"
 
 	"google.golang.org/appengine"
+	"google.golang.org/appengine/log"
 
 	"github.com/alivelime/influs/auth"
 	"github.com/alivelime/influs/model/reviews"
@@ -23,6 +24,7 @@ func getReview(w http.ResponseWriter, r *http.Request) {
 
 	review, err := reviews.Get(ctx, id)
 	if err != nil {
+		log.Errorf(ctx, err.Error())
 		http.Error(w, err.Error(), http.StatusNotFound)
 		return
 	}
@@ -45,11 +47,14 @@ func postReview(w http.ResponseWriter, r *http.Request) {
 
 	// validation
 	if review.UserID == 0 {
+		log.Errorf(ctx, fmt.Sprintf("validation error: user id is required. "))
 		http.Error(w, fmt.Sprintf("validation error: user id is required. "), http.StatusBadRequest)
 		return
 	}
 	// is mine?
 	if session.User.ID != review.UserID {
+		log.Errorf(ctx,
+			fmt.Sprintf("Not allow to post onother users .You %d, Param %d", session.User.ID, review.UserID))
 		http.Error(w,
 			fmt.Sprintf("Not allow to post onother users .You %d, Param %d", session.User.ID, review.UserID),
 			http.StatusBadRequest)
@@ -64,6 +69,8 @@ func postReview(w http.ResponseWriter, r *http.Request) {
 			http.Error(w, fmt.Sprintf("validation error: iine %d does not exist. ", review.IineID), http.StatusBadRequest)
 		}
 		if respect.RecommendID != review.RecommendID {
+			log.Errorf(ctx, fmt.Sprintf("validation error: difference from yours %s and iine %s. ",
+				respect.RecommendID, review.RecommendID))
 			http.Error(w, fmt.Sprintf("validation error: difference from yours %s and iine %s. ",
 				respect.RecommendID, review.RecommendID),
 				http.StatusBadRequest)
@@ -76,6 +83,7 @@ func postReview(w http.ResponseWriter, r *http.Request) {
 
 	// put
 	if err := reviews.Put(ctx, &review); err != nil {
+		log.Errorf(ctx, err.Error())
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
@@ -120,12 +128,15 @@ func deleteReview(w http.ResponseWriter, r *http.Request) {
 
 	review, err := reviews.Get(ctx, id)
 	if err != nil {
+		log.Errorf(ctx, err.Error())
 		http.Error(w, err.Error(), http.StatusNotFound)
 		return
 	}
 
 	// is mine?
 	if session.User.ID != review.UserID {
+		log.Errorf(ctx,
+			fmt.Sprintf("Not allow to delete onother users .You %d, Param %d", session.User.ID, review.UserID))
 		http.Error(w,
 			fmt.Sprintf("Not allow to delete onother users .You %d, Param %d", session.User.ID, review.UserID),
 			http.StatusBadRequest)
@@ -133,6 +144,7 @@ func deleteReview(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if err := reviews.Delete(ctx, id); err != nil {
+		log.Errorf(ctx, err.Error())
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}

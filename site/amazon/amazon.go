@@ -6,9 +6,11 @@ import (
 	"os"
 	"regexp"
 
-	"github.com/DDRBoxman/go-amazon-product-api"
 	"google.golang.org/appengine"
+	"google.golang.org/appengine/log"
 	"google.golang.org/appengine/urlfetch"
+
+	"github.com/DDRBoxman/go-amazon-product-api"
 
 	"github.com/alivelime/influs/affiliate"
 	"github.com/alivelime/influs/meta"
@@ -77,6 +79,13 @@ func (p *Amazon) GetMeta(w http.ResponseWriter, r *http.Request) (meta.Meta, err
 	if err != nil {
 		return data, err
 	}
+
+	defer func() {
+		err := recover()
+		if err != nil {
+			log.Errorf(ctx, "Amazon Error %s %s %s", p.url, result, err)
+		}
+	}()
 
 	//Parse result
 	aws := new(amazonproduct.ItemLookupResponse)

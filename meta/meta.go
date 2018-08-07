@@ -6,6 +6,7 @@ import (
 	"github.com/PuerkitoBio/goquery"
 
 	"google.golang.org/appengine"
+	"google.golang.org/appengine/log"
 	"google.golang.org/appengine/urlfetch"
 )
 
@@ -25,6 +26,7 @@ func Get(url string, w http.ResponseWriter, r *http.Request) (Meta, error) {
 	client := urlfetch.Client(ctx)
 	res, err := client.Get(url)
 	if err != nil {
+		log.Errorf(ctx, "%s %s", url, err)
 		data.Title = err.Error()
 		return data, err
 	}
@@ -32,6 +34,7 @@ func Get(url string, w http.ResponseWriter, r *http.Request) (Meta, error) {
 
 	doc, err := goquery.NewDocumentFromReader(res.Body)
 	if err != nil {
+		log.Errorf(ctx, "%s %s", url, err)
 		data.Title = err.Error()
 		return data, err
 	}

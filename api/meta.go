@@ -5,6 +5,7 @@ import (
 	"net/http"
 
 	"google.golang.org/appengine"
+	"google.golang.org/appengine/log"
 
 	"github.com/alivelime/influs/affiliate"
 	"github.com/alivelime/influs/meta"
@@ -28,6 +29,7 @@ func getMeta(w http.ResponseWriter, r *http.Request) {
 	if err != nil || recommend.Title == "" {
 		// no cache. get meta data.
 		if data, err = web.GetMeta(w, r); err != nil {
+			log.Errorf(ctx, fmt.Sprintf("Cannot Fetch API: %s", err))
 			http.Error(w, fmt.Sprintf("Cannot Fetch API: %s", err), http.StatusInternalServerError)
 			return
 		}
@@ -39,6 +41,7 @@ func getMeta(w http.ResponseWriter, r *http.Request) {
 		recommend.Image = data.Image
 		recommend.Description = data.Description
 		if err := recommends.Put(ctx, &recommend); err != nil {
+			log.Errorf(ctx, err.Error())
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}

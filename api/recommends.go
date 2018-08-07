@@ -5,6 +5,7 @@ import (
 	"net/http"
 
 	"google.golang.org/appengine"
+	"google.golang.org/appengine/log"
 
 	"github.com/alivelime/influs/affiliate"
 	"github.com/alivelime/influs/model/recommends"
@@ -23,6 +24,7 @@ func getRecommend(w http.ResponseWriter, r *http.Request) {
 
 	recommend, err := recommends.Get(ctx, url)
 	if err != nil {
+		log.Errorf(ctx, err.Error())
 		http.Error(w, err.Error(), http.StatusNotFound)
 		return
 	}
@@ -52,6 +54,7 @@ func postRecommend(w http.ResponseWriter, r *http.Request) {
 
 		// put
 		if err := recommends.Put(ctx, &recommend); err != nil {
+			log.Errorf(ctx, err.Error())
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
@@ -62,6 +65,7 @@ func postRecommend(w http.ResponseWriter, r *http.Request) {
 
 			// put
 			if err := recommends.Put(ctx, &recommend); err != nil {
+				log.Errorf(ctx, err.Error())
 				http.Error(w, err.Error(), http.StatusInternalServerError)
 				return
 			}
