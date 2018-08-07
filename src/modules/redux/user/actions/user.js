@@ -61,10 +61,11 @@ export const loadUserFollower = id => ({
 	id,
 });
 
-export const followUser = (i,u, token) => ({
+export const followUser = (i,u, user, token) => ({
 	type: 'FOLLOW_USER_REQUEST',
 	i,
 	u,
+	user,
 	token,
 });
 

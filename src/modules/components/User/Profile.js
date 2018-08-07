@@ -193,33 +193,37 @@ class Profile extends React.Component {
 				</div>
 				<Collapse in={this.state.isFollowsOpen} tomeout="auto">
 					<Typography variant="title">フォロー</Typography>
+					{this.state.isFollowsOpen &&
 					<List>
 					{Object.keys(this.props.user.follows).map(id => {
 						return (
 								<ListItem key={id}>
 									<Link to={`/users/${id}`} variant="primary" className={classes.iconBox}>
-										<Avatar src={user.follows[id].avatar} />
+										<Avatar src={this.props.user.follows[id].avatar} />
 										<Typography variant="subheading">{user.follows[id].name}さん</Typography>
 									</Link>
 							</ListItem>
 						)
 						})}
 					</List>
+					}
 				</Collapse>
 				<Collapse in={this.state.isFollowersOpen} tomeout="auto">
 					<Typography variant="title">フォロワー</Typography>
+					{this.state.isFollowersOpen &&
 					<List>
 					{Object.keys(this.props.user.followers).map(id => {
 						return (
 								<ListItem key={id}>
 									<Link to={`/users/${id}`} variant="primary" className={classes.iconBox}>
-										<Avatar src={user.followers[id].avatar} />
+										<Avatar src={this.props.user.followers[id].avatar} />
 										<Typography variant="subheading">{user.followers[id].name}さん</Typography>
 									</Link>
 							</ListItem>
 						)
 						})}
 					</List>
+					}
 				</Collapse>
 			</Paper>
 		);

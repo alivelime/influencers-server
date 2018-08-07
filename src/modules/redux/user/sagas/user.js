@@ -111,7 +111,7 @@ export function* loadFollowerIds(action) {
 
 export function* follow(action) {
 	yield call(postAPI, `/api/users/${action.i}/follows/${action.u}`, null, action.token)
-	yield put({type: "FOLLOW_USER_SUCCEEDED", id: action.i});
+	yield put({type: "FOLLOW_USER_SUCCEEDED", data: {id: action.i, ...action.user}});
 }
 
 export function* unfollow(action) {

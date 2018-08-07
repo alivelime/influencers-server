@@ -35,10 +35,12 @@ export default (state = init, action) => {
 		case 'LOAD_USER_FOLLOWERS_FAILED':
 			return {...state, followers: {}};
 		case 'FOLLOW_USER_SUCCEEDED':
-			return {...state, followers: [...state.followers, action.data]};
+			console.log({...state, followers: {...state.followers, [action.data.id]: action.data}});
+			return {...state, followers: {...state.followers, [action.data.id]: action.data}};
 		case 'UNFOLLOW_USER_SUCCEEDED':
 			let users = {...state};
-			delete users[action.id];
+			delete users.followers[action.id];
+			console.log(users);
 			return users;
 		case 'ADD_REVIEW_SUCCEEDED':
 			if (action.review.iineId !== "0") {

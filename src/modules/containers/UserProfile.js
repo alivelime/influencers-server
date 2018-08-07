@@ -6,6 +6,7 @@ import Profile from 'modules/components/User/Profile';
 const mapStateToProps = state => ({
 	user: state.user,
 	myUserId: state.session && state.session.user && state.session.user.id,
+	myUser: state.session && state.session.user,
 	token: state.session.token,
 	isMine: (state.session.user.id !== undefined && state.user.id === state.session.user.id),
 });
@@ -25,16 +26,16 @@ const mergeProps = (state, {dispatch}, props) => {
 	loadUserFollower: () => dispatch(actions.loadUserFollower(props.id)),
 	handleFollow: (state.myUserId && !state.isMine
 		? () => {
-				if (state.myUserId in state.user.followers) {
+				if (state.user.followers.hasOwnProperty(state.myUserId)) {
 					dispatch(actions.unfollowUser(state.myUserId, state.user.id, state.token));
 				} else {
-					dispatch(actions.followUser(state.myUserId, state.user.id, state.token));
+					dispatch(actions.followUser(state.myUserId, state.user.id, state.myUser, state.token));
 				}
 			}
 		: Function.prototype
 	),
 	isFollow: (state.myUserId
-		? state.myUserId in state.user.followers
+		? state.user.followers.hasOwnProperty(state.myUserId)
 		: false
 	),
 
