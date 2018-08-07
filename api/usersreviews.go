@@ -16,6 +16,9 @@ func getUserReviews(w http.ResponseWriter, r *http.Request) {
 	if !ok {
 		return
 	}
+	if getUserCache(ctx, w, userId, prefixUserReviews) {
+		return
+	}
 
 	ret, err := reviews.GetUserReviews(ctx, userId)
 	if err != nil {
@@ -28,6 +31,9 @@ func getUserReviews(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	if !setUserCache(ctx, w, userId, prefixUserReviews, ret) {
+		return
+	}
 	response(w, ret)
 }
 

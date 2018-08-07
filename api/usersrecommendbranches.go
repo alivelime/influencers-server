@@ -16,6 +16,10 @@ func getUserRecommendBranches(w http.ResponseWriter, r *http.Request) {
 	if !ok {
 		return
 	}
+	if getUserCache(ctx, w, userId, prefixUserRecommendBranches) {
+		return
+	}
+
 	recommendBranches, err := recommendbranches.GetUserRecommendBranches(ctx, userId)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -27,6 +31,9 @@ func getUserRecommendBranches(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	if !setUserCache(ctx, w, userId, prefixUserRecommendBranches, recommendBranches) {
+		return
+	}
 	response(w, recommendBranches)
 }
 

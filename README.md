@@ -1,6 +1,6 @@
 # influs
 This site is or some of stuff.
-https://asagakita-170822.appspot.com/
+https://influs.link
 
 ## for developing
 

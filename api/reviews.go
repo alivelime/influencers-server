@@ -88,6 +88,7 @@ func postReview(w http.ResponseWriter, r *http.Request) {
 			Event: timelines.Iine,
 			What:  review.ID,
 		})
+		deleteUserCache(ctx, respect.UserID, prefixUserTimeline)
 	} else {
 		_ = timelines.Put(ctx, &timelines.Timeline{
 			I:     review.UserID,
@@ -97,6 +98,9 @@ func postReview(w http.ResponseWriter, r *http.Request) {
 		})
 	}
 
+	deleteUserCache(ctx, review.UserID, prefixUserTimeline)
+	deleteUserCache(ctx, review.UserID, prefixUserReviews)
+	deleteUserCache(ctx, review.UserID, prefixUserRecommends)
 	response(w, review)
 }
 

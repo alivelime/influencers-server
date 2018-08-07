@@ -18,6 +18,9 @@ func getUserFollows(w http.ResponseWriter, r *http.Request) {
 	if !ok {
 		return
 	}
+	if getUserCache(ctx, w, userId, prefixUserFollows) {
+		return
+	}
 
 	followIds, err := follows.GetMyFollows(ctx, userId)
 	if err != nil {
@@ -30,6 +33,9 @@ func getUserFollows(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	if !setUserCache(ctx, w, userId, prefixUserFollows, followIds) {
+		return
+	}
 	response(w, followIds)
 }
 
@@ -38,6 +44,9 @@ func getUserFollowers(w http.ResponseWriter, r *http.Request) {
 
 	userId, ok := getPathParamInt64(w, r, "userId")
 	if !ok {
+		return
+	}
+	if getUserCache(ctx, w, userId, prefixUserFollowers) {
 		return
 	}
 
@@ -52,6 +61,9 @@ func getUserFollowers(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	if !setUserCache(ctx, w, userId, prefixUserFollowers, followerIds) {
+		return
+	}
 	response(w, followerIds)
 }
 
@@ -81,6 +93,8 @@ func postUserFollow(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
+	deleteUserCache(ctx, i, prefixUserFollows)
+	deleteUserCache(ctx, u, prefixUserFollowers)
 
 	// put timeline.
 	_ = timelines.Put(ctx, &timelines.Timeline{
@@ -88,6 +102,8 @@ func postUserFollow(w http.ResponseWriter, r *http.Request) {
 		U:     u,
 		Event: timelines.Follow,
 	})
+	deleteUserCache(ctx, i, prefixUserTimeline)
+	deleteUserCache(ctx, u, prefixUserTimeline)
 }
 
 func deleteUserFollow(w http.ResponseWriter, r *http.Request) {
@@ -116,6 +132,8 @@ func deleteUserFollow(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
+	deleteUserCache(ctx, i, prefixUserFollows)
+	deleteUserCache(ctx, u, prefixUserFollowers)
 }
 
 func HandleUserFollows(w http.ResponseWriter, r *http.Request) {

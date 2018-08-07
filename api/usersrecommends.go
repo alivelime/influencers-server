@@ -17,6 +17,9 @@ func getUserRecommends(w http.ResponseWriter, r *http.Request) {
 	if !ok {
 		return
 	}
+	if getUserCache(ctx, w, userId, prefixUserRecommends) {
+		return
+	}
 
 	ret, err := recommends.GetUserRecommends(ctx, userId)
 	if err != nil {
@@ -29,6 +32,9 @@ func getUserRecommends(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	if !setUserCache(ctx, w, userId, prefixUserRecommends, ret) {
+		return
+	}
 	response(w, ret)
 }
 

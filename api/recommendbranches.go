@@ -60,6 +60,7 @@ func postRecommendBranch(w http.ResponseWriter, r *http.Request, id int64) {
 		return
 	}
 
+	deleteUserCache(ctx, recommendBranch.UserID, prefixUserRecommendBranches)
 	response(w, recommendBranch)
 }
 
@@ -97,6 +98,7 @@ func patchRecommendBranch(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	deleteUserCache(ctx, recommendBranch.UserID, prefixUserRecommendBranches)
 	response(w, recommendBranch)
 }
 
@@ -130,6 +132,7 @@ func deleteRecommendBranch(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	deleteUserCache(ctx, recommendBranch.UserID, prefixUserRecommendBranches)
 	response(w, Empty{})
 }
 

@@ -56,6 +56,7 @@ func patchUserAffiliate(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	deleteUserCache(ctx, affiliate.UserID, prefixUserRecommends)
 	response(w, affiliate)
 }
 

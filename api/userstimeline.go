@@ -16,6 +16,9 @@ func getUserTimeline(w http.ResponseWriter, r *http.Request) {
 	if !ok {
 		return
 	}
+	if getUserCache(ctx, w, userId, prefixUserTimeline) {
+		return
+	}
 
 	i, me, err := timelines.GetUserTimeline(ctx, userId)
 	if err != nil {
@@ -40,6 +43,9 @@ func getUserTimeline(w http.ResponseWriter, r *http.Request) {
 		ret["me"] = me
 	}
 
+	if !setUserCache(ctx, w, userId, prefixUserTimeline, ret) {
+		return
+	}
 	response(w, ret)
 }
 

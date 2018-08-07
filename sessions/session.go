@@ -34,11 +34,14 @@ func Get(ctx context.Context, token string) (Session, error) {
 	return s, err
 }
 
+func DeleteCache(ctx context.Context, key string) {
+	memcache.Delete(ctx, key)
+}
 func SetCache(ctx context.Context, key string, value string) {
 	memcache.Set(ctx, &memcache.Item{
 		Key:        key,
 		Value:      []byte(value),
-		Expiration: time.Duration(5) * time.Minute,
+		Expiration: time.Duration(1440) * time.Minute,
 	})
 }
 func GetCache(ctx context.Context, key string) (string, error) {
