@@ -75,6 +75,7 @@ func postReview(w http.ResponseWriter, r *http.Request) {
 				respect.RecommendID, review.RecommendID),
 				http.StatusBadRequest)
 		}
+		_ = reviews.IncrementIine(ctx, review.IineID)
 		_ = users.IncrementIine(ctx, review.UserID)
 		_ = users.IncrementInflu(ctx, respect.UserID)
 	} else {

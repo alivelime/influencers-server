@@ -132,6 +132,13 @@ export function* loadRecommendData(action) {
 			recommends = await getAPI(`/api/users/${action.id}/recommends`);
 		})(),
 	]);
+	// get iine user id.
+	yield Promise.all(
+		Object.keys(reviews).filter(id => reviews[id].iineId !== "0")
+		.map(id => (async () => {
+			reviews[id].iineUserId = (await getAPI(`/api/reviews/${reviews[id].iineId}`)).userId;
+		})())
+	);
 
 	if (Object.keys(recommendBranches).length > 0) {
 		yield put({type: "LOAD_USER_RECOMMEND_DATA_SUCCEEDED", recommendBranches, recommends, reviews});

@@ -20,15 +20,8 @@ func get(ctx context.Context, id int64) (review Review, err error) {
 	review.ID = id
 	return
 }
-func Get(ctx context.Context, id int64) (review Review, err error) {
-	review, err = get(ctx, id)
-
-	// TODO temp implement. delete later. use REST API instead.
-	if review.IineID != 0 {
-		respect, _ := get(ctx, review.IineID)
-		review.IineUserID = respect.UserID
-	}
-	return
+func Get(ctx context.Context, id int64) (Review, error) {
+	return get(ctx, id)
 }
 
 func Put(ctx context.Context, review *Review) error {
@@ -37,12 +30,6 @@ func Put(ctx context.Context, review *Review) error {
 	k, err := datastore.Put(ctx, key, review)
 	if err != nil {
 		return err
-	}
-
-	// TODO temp implement. delete later. use REST API instead.
-	if review.IineID != 0 {
-		respect, _ := get(ctx, review.IineID)
-		review.IineUserID = respect.UserID
 	}
 
 	review.ID = k.IntID()
@@ -57,6 +44,21 @@ func Delete(ctx context.Context, id int64) error {
 	return nil
 }
 
+func IncrementIine(ctx context.Context, id int64) error {
+	review, err := Get(ctx, id)
+	if err != nil {
+		return err
+	}
+
+	review.IineCount += 1
+
+	err = Put(ctx, &review)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
 func GetUserReviews(ctx context.Context, userId int64) (map[int64]*Review, error) {
 	var ret map[int64]*Review
 
@@ -83,16 +85,6 @@ func GetUserReviews(ctx context.Context, userId int64) (map[int64]*Review, error
 
 		review.ID = key.IntID()
 		ret[review.ID] = &review
-	}
-
-	for id, review := range ret {
-		review.IineCount = getIineCount(ctx, id)
-
-		// TODO temp implement. delete later. use REST API instead.
-		if review.IineID != 0 {
-			respect, _ := get(ctx, review.IineID)
-			review.IineUserID = respect.UserID
-		}
 	}
 
 	return ret, nil
