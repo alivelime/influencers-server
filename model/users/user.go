@@ -24,7 +24,11 @@ func Gets(ctx context.Context) ([]User, error) {
 	var ret []User
 	// SELECT * FROM Users ORDER BY influCount
 	query := datastore.NewQuery(Kind).Order("-InfluCount").Limit(20)
-	_, err := query.GetAll(ctx, &ret)
+	keys, err := query.GetAll(ctx, &ret)
+
+	for i := 0; i < len(ret); i++ {
+		ret[i].ID = keys[i].IntID()
+	}
 
 	return ret, err
 }
