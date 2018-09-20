@@ -2,9 +2,9 @@ handlers:
 - url: /api/.*
   script: _go_app
 
-- url: /(.*\.(html|css|js))
+- url: /(.*\.(html|css|js|xml))
   static_files: build/\1
-  upload: build/(.*\.(html|css|js))
+  upload: build/(.*\.(html|css|js|xml))
 
 - url: /.*
   static_files: build/index.html
