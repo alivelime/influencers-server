@@ -63,37 +63,45 @@ func GetUserRecommends(ctx context.Context, userId int64) (map[string]Recommend,
 		}
 	}
 
-	tempRecommends := make([]Recommend, len(recommendIds))
-	if err := datastore.GetMulti(ctx, keys, tempRecommends); err != nil {
-		merr, ok := err.(appengine.MultiError)
-		if !ok {
-			return ret, errors.New(fmt.Sprintf("Unable to GetMulti Recommend A: %s", err))
-		}
-
-		for _, e := range merr {
-			if e == nil {
-				// exists
-				continue
-			}
-
-			if e == datastore.ErrNoSuchEntity {
-				// return ret, errors.New(fmt.Sprintf("no such id %s", e))
-				// empty
-				continue
-			}
-
-			return ret, errors.New(fmt.Sprintf("Unable to GetMulti Recommend: %s", e))
-		}
-
-	}
-
-	// id and affiliate tag.
+	// loop by 1000 keys. because GetMulit is limited by 1000.
 	affiliateTag := affiliate.GetUserTag(ctx, userId)
-	for k, v := range keys {
-		web := site.Factory(v.StringID(), affiliateTag)
-		tempRecommends[k].URL = v.StringID()
-		tempRecommends[k].Link = web.GetAffiliateLink()
-		ret[v.StringID()] = tempRecommends[k]
+	const Limit = 1000
+	for i := 0; len(keys) > i; i += Limit {
+		end := i + Limit
+		if len(keys) < end {
+			end = len(keys)
+		}
+		tempKeys := keys[i:end]
+		tempRecommends := make([]Recommend, end-i)
+		if err := datastore.GetMulti(ctx, tempKeys, tempRecommends); err != nil {
+			merr, ok := err.(appengine.MultiError)
+			if !ok {
+				return ret, errors.New(fmt.Sprintf("Unable to GetMulti Recommend A: %s", err))
+			}
+
+			for _, e := range merr {
+				if e == nil {
+					// exists
+					continue
+				}
+
+				if e == datastore.ErrNoSuchEntity {
+					// return ret, errors.New(fmt.Sprintf("no such id %s", e))
+					// empty
+					continue
+				}
+
+				return ret, errors.New(fmt.Sprintf("Unable to GetMulti Recommend: %s", e))
+			}
+		}
+		// id and affiliate tag.
+		for k, v := range tempKeys {
+			web := site.Factory(v.StringID(), affiliateTag)
+			tempRecommends[k].URL = v.StringID()
+			tempRecommends[k].Link = web.GetAffiliateLink()
+			ret[v.StringID()] = tempRecommends[k]
+		}
 	}
+
 	return ret, nil
 }
