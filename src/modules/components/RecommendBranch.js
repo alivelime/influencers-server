@@ -9,13 +9,17 @@ import Paper from '@material-ui/core/Paper';
 import Checkbox from '@material-ui/core/Checkbox';
 import Collapse from '@material-ui/core/Collapse';
 
-import IconButton from '@material-ui/core/IconButton';
-import ExpandLess from '@material-ui/icons/ExpandLess';
-import ExpandMore from '@material-ui/icons/ExpandMore';
+import { library } from '@fortawesome/fontawesome-svg-core'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { faFolderOpen } from '@fortawesome/free-solid-svg-icons'
+import { faFolder } from '@fortawesome/free-solid-svg-icons'
 
 import RecommendList from 'modules/containers/RecommendBranch';
 import RecommendBranchName from 'modules/containers/RecommendBranchName';
 import ReviewList from 'modules/containers/ReviewList';
+
+library.add(faFolderOpen);
+library.add(faFolder);
 
 const styleSheet = theme => ({
 	root: {
@@ -37,6 +41,10 @@ const styleSheet = theme => ({
 	content: {
 		padding:0,
 		backgroundColor: 'inherit',
+	},
+	icon: {
+		fontSize: '2em',
+		color: theme.palette.secondary.main,
 	},
 });
 
@@ -93,6 +101,14 @@ class RecommendBranch extends React.Component {
 					<ListItem
 						className={classNames(classes.root, (this.props.isChecked ? classes.checked : classes.unchecked))}
 					>
+						{(this.props.recommendId || this.props.childIds.length > 0) &&
+							<div onClick={this.props.handleCollapse}>
+								{this.props.isOpen 
+									? <FontAwesomeIcon icon="folder-open" className={classes.icon} /> 
+									: <FontAwesomeIcon icon="folder" className={classes.icon} />
+								}
+							</div>
+						}
 						{this.props.isMine &&
 							<Checkbox
 								checked={this.props.isChecked}
@@ -107,11 +123,6 @@ class RecommendBranch extends React.Component {
 							handleCollapse={this.props.handleCollapse}
 							childLength={this.props.childIds.length}
 						/>
-						{(this.props.recommendId || this.props.childIds.length > 0) &&
-							<IconButton onClick={this.props.handleCollapse}>
-								{this.props.isOpen ? <ExpandLess className={classes.icon}/> : <ExpandMore className={classes.icon}/>}
-							</IconButton>
-						}
 					</ListItem>
 				</Paper>
 				{(this.props.recommendId || this.props.childIds.length > 0) &&
