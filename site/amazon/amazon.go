@@ -16,7 +16,7 @@ import (
 	"github.com/alivelime/influs/meta"
 )
 
-var pattern = regexp.MustCompile(`^https://www\.amazon\.co\.jp/.*/([0-9a-zA-Z]{10})([/?][\s\S]*)?$`)
+var pattern = regexp.MustCompile(`^https://www\.amazon(\.co)?\.jp/.*/([0-9a-zA-Z]{10})([/?][\s\S]*)?$`)
 
 func Has(url string) bool {
 	return pattern.MatchString(url)
@@ -25,7 +25,7 @@ func Has(url string) bool {
 func GetASIN(url string) string {
 	ret := pattern.FindStringSubmatch(url)
 	if len(ret) > 0 {
-		return ret[1]
+		return ret[2]
 	} else {
 		return ""
 	}
