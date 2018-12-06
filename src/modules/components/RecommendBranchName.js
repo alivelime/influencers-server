@@ -67,11 +67,12 @@ class RecommendBranchName extends React.Component {
 			} else {
 				return (
 					<div className={classes.flex}>
-						<div className={classes.content}><Typography variant="title">{this.props.name}</Typography></div>
 						<ButtonBase
 							className={classes.cardAction}
 							onClick={this.props.handleCollapse}
-						/>
+						>
+							<div className={classes.content}><Typography variant="title">{this.props.name}</Typography></div>
+						</ButtonBase>
 					</div>
 				)
 			}
