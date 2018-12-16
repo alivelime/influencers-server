@@ -62,8 +62,6 @@ function getChildren(_recommendBranches, recommends, parentId, searchWord, dispa
 	let children = [];
 
 	// find parent id.
-	console.log("search word.");
-	console.log(searchWord);
 	const list = (parentId === "0" && searchWord !== "")
 		? // search recommend branch name or recommend
 			Object.keys(recommendBranches).filter((id) => {

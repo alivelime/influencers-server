@@ -1,4 +1,5 @@
 import { connect } from 'react-redux';
+import ReactGA from 'react-ga';
 
 import * as actions from 'modules/redux/user/actions';
 import SearchBox from 'modules/components/SearchBox';
@@ -10,7 +11,16 @@ const mapStateToProps = (state, props) => ({
 const mapDispatchToProps = dispatch => ({ dispatch });
 const mergeProps = (state, {dispatch}, props) => ({
 	...props,
-	handleChange: (e) => dispatch(actions.changeSearchWord(e.target.value)),
+	handleChange: (e) => {
+		dispatch(actions.changeSearchWord(e.target.value)); 
+		if (e.target.value) {
+			ReactGA.event({
+				category: 'site',
+				action: 'search',
+				value: e.target.value,
+			});
+		}
+	},
 	handleClear: () => dispatch(actions.clearSearchWord()),
 });
 
