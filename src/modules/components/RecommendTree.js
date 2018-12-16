@@ -6,17 +6,15 @@ import CircularProgress from '@material-ui/core/CircularProgress';
 import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
 import Tooltip from '@material-ui/core/Tooltip';
-import TextField from '@material-ui/core/TextField';
-import Paper from '@material-ui/core/Paper';
 
 import IconButton from '@material-ui/core/IconButton';
 import ExpandMore from '@material-ui/icons/ExpandMore';
 import ExpandLess from '@material-ui/icons/ExpandLess';
-import IconSearch from '@material-ui/icons/Search';
 
 import ReviewForm from 'modules/containers/IiyoReviewForm';
 import RecommendBranch from 'modules/containers/RecommendBranch';
 import RecommendToolbox from 'modules/containers/RecommendToolbox';
+import SearchBox from 'modules/containers/SearchBox';
 
 const styleSheet = theme => ({
 	root: {
@@ -32,14 +30,6 @@ const styleSheet = theme => ({
 		width: '1.6em',
 		height: '1.6em',
 		color: theme.palette.secondary.main,
-	},
-	searchBox: {
-		display: 'flex',
-		width: '100%',
-		padding: theme.spacing.unit * 2,
-	},
-	search: {
-		flex: 1,
 	},
 });
 
@@ -101,12 +91,7 @@ class RecommendTree extends React.Component {
 						</Toolbar>
 					</AppBar>
 				}
-				<Paper className={classes.searchBox}>
-					<IconButton>
-						<IconSearch className={classes.icon} />
-					</IconButton>
-					<TextField type="search" placeholder="実装中" fullWidth className={classes.search} />
-				</Paper>
+				<SearchBox />
 				{this.props.dataLoaded
 					? (
 							<RecommendBranch

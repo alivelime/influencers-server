@@ -12,8 +12,10 @@ const mapStateToProps = (state, props) => ({
 					|| state.checker.recommendBranchIds.includes(props.id),
 
 	recommendBranches: state.recommendBranches,
+	recommends: state.recommends,
 	recommendId: props.id !== "0" && state.recommendBranches[props.id].recommendId,
 	isOpen: props.id !== "0" && state.recommendBranches[props.id].isOpen,
+	searchWord: state.search.word,
 });
 const mapDispatchToProps = dispatch => ({ dispatch });
 const mergeProps = (state, {dispatch}, props) => {
@@ -24,8 +26,9 @@ const mergeProps = (state, {dispatch}, props) => {
 	isChecked: state.isChecked,
 	recommendId: state.recommendId,
 	isOpen: state.isOpen,
+	searchWord: state.searchWord,
 
-	childIds: getChildren(state.recommendBranches, props.id, dispatch, state.token),
+	childIds: getChildren(state.recommendBranches, state.recommends, props.id, state.searchWord, dispatch, state.token),
 
 	handleCollapse: state.isOpen
 		? () => {dispatch(actions.closeRecommendBranch(props.id))}
@@ -50,7 +53,7 @@ const mergeProps = (state, {dispatch}, props) => {
  * this.state.recommendBranches, recommends, reviews is one level list.
  * do not make complex as nested object.
  */
-function getChildren(_recommendBranches, parentId, dispatch, token) {
+function getChildren(_recommendBranches, recommends, parentId, searchWord, dispatch, token) {
 	// deep copy state.recommendBranches
 	let recommendBranches = {};
 	Object.keys(_recommendBranches).forEach((id) => {
@@ -59,9 +62,19 @@ function getChildren(_recommendBranches, parentId, dispatch, token) {
 	let children = [];
 
 	// find parent id.
-	const list = Object.keys(recommendBranches).filter((id) => {
-		return recommendBranches[id].parentId === parentId;
-	});
+	console.log("search word.");
+	console.log(searchWord);
+	const list = (parentId === "0" && searchWord !== "")
+		? // search recommend branch name or recommend
+			Object.keys(recommendBranches).filter((id) => {
+				return (!recommendBranches[id].recommendId
+							&& recommendBranches[id].name.includes(searchWord))
+					|| (recommends.hasOwnProperty(recommendBranches[id].recommendId)
+							&& recommends[recommendBranches[id].recommendId].title.includes(searchWord));
+			})
+		: Object.keys(recommendBranches).filter((id) => {
+				return recommendBranches[id].parentId === parentId;
+			});
 	if (list.length > 0) {
 		let patchIds = [];
 
