@@ -17,7 +17,7 @@ const mergeProps = (state, {dispatch}, props) => ({
 			ReactGA.event({
 				category: 'site',
 				action: 'search',
-				value: e.target.value,
+				label: e.target.value,
 			});
 		}
 	},

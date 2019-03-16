@@ -38,7 +38,7 @@ function Link(props) {
 		return (
 			<ReactGA.OutboundLink
 				className={classNames(classes.root, classes[variant])}
-        eventLabel="outbound"
+        eventLabel={to}
         to={to}
 				rel="noopener noreferrer"
         target="_blank"
