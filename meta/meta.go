@@ -1,9 +1,13 @@
 package meta
 
 import (
+	"bufio"
+	"golang.org/x/net/html/charset"
+	"io"
 	"net/http"
 
 	"github.com/PuerkitoBio/goquery"
+	"github.com/mattn/go-encoding"
 
 	"google.golang.org/appengine"
 	"google.golang.org/appengine/log"
@@ -32,7 +36,23 @@ func Get(url string, w http.ResponseWriter, r *http.Request) (Meta, error) {
 	}
 	defer res.Body.Close()
 
-	doc, err := goquery.NewDocumentFromReader(res.Body)
+	// convert encoding
+	br := bufio.NewReader(res.Body)
+	var reader io.Reader = br
+	{
+		if data, err := br.Peek(4096); err == nil {
+			enc, name, _ := charset.DetermineEncoding(data, res.Header.Get("content-type"))
+			if enc != nil {
+				reader = enc.NewDecoder().Reader(br)
+			} else if name != "" {
+				if enc := encoding.GetEncoding(name); enc != nil {
+					reader = enc.NewDecoder().Reader(br)
+				}
+			}
+		}
+	}
+
+	doc, err := goquery.NewDocumentFromReader(reader)
 	if err != nil {
 		log.Errorf(ctx, "%s %s", url, err)
 		data.Title = err.Error()
