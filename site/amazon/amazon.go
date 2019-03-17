@@ -16,7 +16,7 @@ import (
 	"github.com/alivelime/influs/meta"
 )
 
-var pattern = regexp.MustCompile(`^https://www\.amazon(\.co)?\.jp/.*/([0-9a-zA-Z]{10})([/?][\s\S]*)?$`)
+var pattern = regexp.MustCompile(`^https?://www\.amazon(\.co)?\.jp/.*/([0-9a-zA-Z]{10})([/?][\s\S]*)?$`)
 
 func Has(url string) bool {
 	return pattern.MatchString(url)
