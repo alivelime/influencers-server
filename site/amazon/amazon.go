@@ -100,12 +100,12 @@ func (p *Amazon) GetMeta(w http.ResponseWriter, r *http.Request) (meta.Meta, err
 		data.Title = ""
 		return data, err
 	}
-	item := aws.Items.Item
+	item := aws.Items.Item[0]
 
 	data.URL = p.url
 	data.Title = item.ItemAttributes.Title
 	data.Image = item.SmallImage.URL
-	data.Description = item.ItemAttributes.Author + " " + item.ItemAttributes.ProductGroup
+	data.Description = item.ItemAttributes.Author[0] + " " + item.ItemAttributes.ProductGroup
 
 	return data, nil
 }
