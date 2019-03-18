@@ -62,6 +62,7 @@ const mergeProps = (state, {dispatch}, props) => ({
 				let recommendIds = Object.assign([], state.checker.recommendIds);
 				const to = recommendBranchIds.pop();
 				dispatch(actions.moveRecommendBranches([...recommendBranchIds, ...recommendIds], to, state.recommendBranches, state.token)); 
+				dispatch(actions.uncheckAll());
 			}
 			: null
 	,
