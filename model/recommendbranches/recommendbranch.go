@@ -33,17 +33,9 @@ func Put(ctx context.Context, recommendBranch *RecommendBranch) error {
 }
 
 func GetUserRecommendBranches(ctx context.Context, userId int64) (map[int64]RecommendBranch, error) {
-	// SELECT * FROM RecommendBranches WHERE UserID = 'userId' ORDER BY Priority
-	// do not use 'priority prop and sort' but use link list. because link list is better than priotiry sort.
 	query := datastore.NewQuery(Kind).Filter("UserID =", userId)
-	count, err := query.Count(ctx)
-	if err != nil {
-		errors.New(fmt.Sprintf("unable query count  %s", err))
-		return nil, err
-	}
 
-	// do not use GetALL. Because it has 1000 limit.
-	recommendBranches := make(map[int64]RecommendBranch, count)
+	recommendBranches := make(map[int64]RecommendBranch)
 	itr := query.Run(ctx)
 
 	for {

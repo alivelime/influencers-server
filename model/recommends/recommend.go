@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"sync"
 
 	"google.golang.org/appengine"
 	"google.golang.org/appengine/datastore"
@@ -63,45 +64,69 @@ func GetUserRecommends(ctx context.Context, userId int64) (map[string]Recommend,
 		}
 	}
 
+	wg := sync.WaitGroup{}
+	mutex := &sync.Mutex{}
+
 	// loop by 1000 keys. because GetMulit is limited by 1000.
 	affiliateTag := affiliate.GetUserTag(ctx, userId)
-	const Limit = 1000
-	for i := 0; len(keys) > i; i += Limit {
-		end := i + Limit
+	const limit = 1000
+	for i := 0; len(keys) > i; i += limit {
+		end := i + limit
 		if len(keys) < end {
 			end = len(keys)
 		}
-		tempKeys := keys[i:end]
-		tempRecommends := make([]Recommend, end-i)
-		if err := datastore.GetMulti(ctx, tempKeys, tempRecommends); err != nil {
-			merr, ok := err.(appengine.MultiError)
-			if !ok {
-				return ret, errors.New(fmt.Sprintf("Unable to GetMulti Recommend A: %s", err))
-			}
 
-			for _, e := range merr {
-				if e == nil {
-					// exists
-					continue
+		wg.Add(1)
+		go func(tempKeys []*datastore.Key, count int) {
+			defer wg.Done()
+			tempRecommends := make([]Recommend, count)
+			if err := datastore.GetMulti(ctx, tempKeys, tempRecommends); err != nil {
+				merr, ok := err.(appengine.MultiError)
+				if !ok {
+					{
+						mutex.Lock()
+						defer mutex.Unlock()
+						err = errors.New(fmt.Sprintf("Unable to GetMulti Recommend A: %s", err))
+					}
+					return
 				}
 
-				if e == datastore.ErrNoSuchEntity {
-					// return ret, errors.New(fmt.Sprintf("no such id %s", e))
-					// empty
-					continue
-				}
+				for _, e := range merr {
+					if e == nil {
+						// exists
+						continue
+					}
 
-				return ret, errors.New(fmt.Sprintf("Unable to GetMulti Recommend: %s", e))
+					if e == datastore.ErrNoSuchEntity {
+						// return ret, errors.New(fmt.Sprintf("no such id %s", e))
+						// empty
+						continue
+					}
+
+					{
+						mutex.Lock()
+						defer mutex.Unlock()
+						err = errors.New(fmt.Sprintf("Unable to GetMulti Recommend: %s", e))
+					}
+					return
+				}
 			}
-		}
-		// id and affiliate tag.
-		for k, v := range tempKeys {
-			web := site.Factory(v.StringID(), affiliateTag)
-			tempRecommends[k].URL = v.StringID()
-			tempRecommends[k].Link = web.GetAffiliateLink()
-			ret[v.StringID()] = tempRecommends[k]
-		}
+			// id and affiliate tag.
+			{
+				mutex.Lock()
+				defer mutex.Unlock()
+				for k, v := range tempKeys {
+					web := site.Factory(v.StringID(), affiliateTag)
+					tempRecommends[k].URL = v.StringID()
+					tempRecommends[k].Link = web.GetAffiliateLink()
+					ret[v.StringID()] = tempRecommends[k]
+				}
+			}
+		}(keys[i:end], end-i)
+	}
+	if len(keys) > 0 {
+		wg.Wait()
 	}
 
-	return ret, nil
+	return ret, err
 }
