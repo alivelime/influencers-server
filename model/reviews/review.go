@@ -60,9 +60,9 @@ func IncrementIine(ctx context.Context, id int64) error {
 	return nil
 }
 func GetUserReviews(ctx context.Context, userId int64) (map[int64]*Review, error) {
-	query := datastore.NewQuery(Kind).Filter("UserID =", userId)
+	query := datastore.NewQuery(Kind).Filter("UserID =", userId).BatchSize(1000)
 
-	// do not use GetALL. Because it has 1000 limit.
+	// do not use GetALL. Because it's not efficiently.
 	ret := make(map[int64]*Review)
 	itr := query.Run(ctx)
 

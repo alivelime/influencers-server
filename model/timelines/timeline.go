@@ -3,6 +3,7 @@ package timelines
 import (
 	"context"
 	"errors"
+	"time"
 
 	"google.golang.org/appengine/datastore"
 )
@@ -13,6 +14,7 @@ func Put(ctx context.Context, timeline *Timeline) error {
 	if timeline.I == 0 {
 		return errors.New("validation error. timeline needs UserID")
 	}
+	timeline.CreatedAt = time.Now()
 
 	key := datastore.NewIncompleteKey(ctx, Kind, nil)
 	_, err := datastore.Put(ctx, key, timeline)

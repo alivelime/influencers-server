@@ -33,7 +33,7 @@ func Put(ctx context.Context, recommendBranch *RecommendBranch) error {
 }
 
 func GetUserRecommendBranches(ctx context.Context, userId int64) (map[int64]RecommendBranch, error) {
-	query := datastore.NewQuery(Kind).Filter("UserID =", userId)
+	query := datastore.NewQuery(Kind).Filter("UserID =", userId).BatchSize(1000)
 
 	recommendBranches := make(map[int64]RecommendBranch)
 	itr := query.Run(ctx)

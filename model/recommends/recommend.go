@@ -69,7 +69,7 @@ func GetUserRecommends(ctx context.Context, userId int64) (map[string]Recommend,
 
 	// loop by 1000 keys. because GetMulit is limited by 1000.
 	affiliateTag := affiliate.GetUserTag(ctx, userId)
-	const limit = 1000
+	const limit = 100
 	for i := 0; len(keys) > i; i += limit {
 		end := i + limit
 		if len(keys) < end {
