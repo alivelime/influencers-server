@@ -105,7 +105,12 @@ func (p *Amazon) GetMeta(w http.ResponseWriter, r *http.Request) (meta.Meta, err
 	data.URL = p.url
 	data.Title = item.ItemAttributes.Title
 	data.Image = item.SmallImage.URL
-	data.Description = item.ItemAttributes.Author[0] + " " + item.ItemAttributes.ProductGroup
+	if len(item.ItemAttributes.Author) > 0 {
+
+		data.Description = item.ItemAttributes.Author[0] + " " + item.ItemAttributes.ProductGroup
+	} else if len(item.ItemAttributes.Creator) > 0 {
+		data.Description = item.ItemAttributes.Creator[0] + " " + item.ItemAttributes.ProductGroup
+	}
 
 	return data, nil
 }
