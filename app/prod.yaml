@@ -12,3 +12,6 @@ automatic_scaling:
 includes:
 - handler.yaml
 - secret_prod.yaml
+
+skip_files:
+- node_modules/

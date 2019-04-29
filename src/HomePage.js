@@ -93,8 +93,11 @@ class HomePage extends React.Component {
 							gutterBottom
 							className={classes.headline}
 						>
-							{"誰もがインフルエンサーである時代へ"}
+							{"無責任な広告のない時代へ"}
 						</Typography>
+					</div>
+					<div className={classes.content}>
+						<Ranking />
 					</div>
 					<div className={classes.buttons}>
 						<Login>
@@ -106,21 +109,6 @@ class HomePage extends React.Component {
 								{'SIGN IN/LOG IN'}
 							</Button>
 						</Login>
-					</div>
-					<Divider />
-					<div className={classes.content}>
-						<Typography
-							variant="headline"
-							gutterBottom
-							className={classes.headline}
-						>
-						「この広告消せないかな?」<br />
-						そんなふとした想いからこのサイトは始まりました。<br />
-						</Typography>
-					</div>
-					<Divider />
-					<div className={classes.content}>
-						<Ranking />
 					</div>
 				</div>
 			</div>

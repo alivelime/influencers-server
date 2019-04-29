@@ -58,6 +58,9 @@ class Ranking extends React.Component {
 	state = {nowLoading: true, users: []};
 	async componentDidMount() {
 		const users = await getAPI('/api/users');
+		users.sort((x, y) => {
+			return y.iiyoCount - x.iiyoCount;
+		});
 		this.setState({nowLoading: false, users});
 	}
 
@@ -81,12 +84,12 @@ class Ranking extends React.Component {
 
 		return (
 			<Paper className={classes.paper}>
-				<Typography variant="display1">話題のインフルエンサーず</Typography>
+				<Typography variant="display1">みんなの「これいいよ!」</Typography>
 				<List component="nav">
 					{this.state.users.map(user => (
 						<ListItem key={user.id} className={classes.item}>
 							<div className={classes.root}>
-								<Typography variant="display1">{user.influCount}</Typography>
+								<Typography variant="display1">{user.iiyoCount}</Typography>
 								<Avatar src={user.avatar} className={classes.avatar}/>
 								<div className={classes.user}>
 									<div className={classes.flex} >
