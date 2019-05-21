@@ -86,7 +86,7 @@ class Ranking extends React.Component {
 			<Paper className={classes.paper}>
 				<Typography variant="display1">みんなの「これいいよ!」</Typography>
 				<List component="nav">
-					{this.state.users.map(user => (
+					{this.state.users.sort((a, b) => b.IiyoCount - a.IiyoCount).map(user => (
 						<ListItem key={user.id} className={classes.item}>
 							<div className={classes.root}>
 								<Typography variant="display1">{user.iiyoCount}</Typography>

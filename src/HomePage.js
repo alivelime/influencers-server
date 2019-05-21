@@ -93,7 +93,7 @@ class HomePage extends React.Component {
 							gutterBottom
 							className={classes.headline}
 						>
-							{"無責任な広告のない時代へ"}
+							{"私の「いいよ!」のまとめと、「いいよ!」されたモノやサービスの広がりの図"}
 						</Typography>
 					</div>
 					<div className={classes.content}>
