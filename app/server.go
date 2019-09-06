@@ -13,13 +13,13 @@
 package main
 
 import (
-	"fmt"
 	"log"
 	"net/http"
 	"os"
 
 	"github.com/gorilla/handlers"
 	"github.com/gorilla/mux"
+	"google.golang.org/appengine"
 
 	"github.com/alivelime/influs/api"
 )
@@ -55,20 +55,18 @@ func main() {
 	r.HandleFunc("/api/twitter/callback", api.HandleTwitterCallback)
 	r.HandleFunc("/api/twitter/verify", api.HandleTwitterVerify)
 	r.HandleFunc("/api/twitter/register", api.HandleTwitterRegister)
-	http.Handle("/", r)
+	http.Handle("/", handlers.CORS(
+		handlers.AllowCredentials(),
+		handlers.AllowedHeaders([]string{"X-Requested-With", "Content-Type", "Content-Length", "Authenticate"}),
+		handlers.AllowedMethods([]string{"GET", "HEAD", "POST", "PUT", "DELETE"}),
+		handlers.AllowedOriginValidator(func(_ string) bool { return true }),
+	)(r))
+
+	appengine.Main()
 
 	port := os.Getenv("PORT")
 	if port == "" {
 		port = "8080"
 		log.Printf("Defaulting to port %s", port)
 	}
-
-	log.Printf("Listening on port %s", port)
-
-	log.Fatal(http.ListenAndServe(fmt.Sprintf(":%s", port), handlers.CORS(
-		handlers.AllowCredentials(),
-		handlers.AllowedHeaders([]string{"X-Requested-With", "Content-Type", "Content-Length", "Authenticate"}),
-		handlers.AllowedMethods([]string{"GET", "HEAD", "POST", "PUT", "DELETE"}),
-		handlers.AllowedOriginValidator(func(_ string) bool { return true }),
-	)(r)))
 }
