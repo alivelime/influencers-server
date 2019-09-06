@@ -13,15 +13,18 @@
 package main
 
 import (
+	"fmt"
 	"log"
 	"net/http"
+	"os"
 
+	"github.com/gorilla/handlers"
 	"github.com/gorilla/mux"
 
 	"github.com/alivelime/influs/api"
 )
 
-func init() {
+func main() {
 	r := mux.NewRouter()
 
 	r.HandleFunc("/api/users", api.HandleUsers)
@@ -54,5 +57,18 @@ func init() {
 	r.HandleFunc("/api/twitter/register", api.HandleTwitterRegister)
 	http.Handle("/", r)
 
-	log.Println("Server started: http://localhost:")
+	port := os.Getenv("PORT")
+	if port == "" {
+		port = "8080"
+		log.Printf("Defaulting to port %s", port)
+	}
+
+	log.Printf("Listening on port %s", port)
+
+	log.Fatal(http.ListenAndServe(fmt.Sprintf(":%s", port), handlers.CORS(
+		handlers.AllowCredentials(),
+		handlers.AllowedHeaders([]string{"X-Requested-With", "Content-Type", "Content-Length", "Authenticate"}),
+		handlers.AllowedMethods([]string{"GET", "HEAD", "POST", "PUT", "DELETE"}),
+		handlers.AllowedOriginValidator(func(_ string) bool { return true }),
+	)(r)))
 }

@@ -27,7 +27,7 @@ export const requestAPI = (method, path, data = null, token = '') => {
 	if (token && token.length > 0) {
 		myHeaders.append('Authenticate', `Bearer ${token}`);
 	}
-	return fetch(path, {
+	return fetch(process.env.REACT_APP_API_HOSTNAME + path, {
 		method: method,
 		headers: myHeaders,
 		body: (data ? JSONstring2int64(data) : undefined),

@@ -1,16 +1,4 @@
 handlers:
 - url: /api/.*
-  script: _go_app
-
-- url: /(.*\.(html|css|js|xml))
-  static_files: build/\1
-  upload: build/(.*\.(html|css|js|xml))
-
-- url: /.*
-  static_files: build/index.html
-  upload: build/index.html
-
-skip_files:
-- ^src/(.*/)?
-- ^node_modules/(.*/)?
+  script: auto
 

@@ -1,5 +1,4 @@
-runtime: go
-api_version: go1.9
+runtime: go111
 
 instance_class: F1
 automatic_scaling:
@@ -12,6 +11,3 @@ automatic_scaling:
 includes:
 - handler.yaml
 - secret_prod.yaml
-
-skip_files:
-- node_modules/

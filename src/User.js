@@ -11,7 +11,8 @@ const styleSheet = theme => ({
 	},
 	content: {
     paddingBottom: theme.spacing.unit * 2,
-    maxWidth: "1024pt",
+    minWidth: "640pt",
+    maxWidth: "1280pt",
     margin: 'auto',
 	},
 	margin: {
