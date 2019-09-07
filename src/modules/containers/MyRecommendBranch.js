@@ -1,15 +1,20 @@
 import { connect } from 'react-redux';
 
 import * as actions from 'modules/redux/user/actions';
-import RecommendBranch from 'modules/components/RecommendBranch';
+import RecommendBranch from 'modules/components/MyRecommendBranch';
 
 // for performance reference http://anect.hatenablog.com/entry/2018/04/05/124654
 const mapStateToProps = (state, props) => ({
 	token: state.session.token,
+	isMine: (state.session.user.id !== undefined && state.user.id === state.session.user.id),
+
+	isChecked: state.checker.recommendIds.includes(props.id)
+					|| state.checker.recommendBranchIds.includes(props.id),
 
 	recommendBranches: state.recommendBranches,
 	recommends: state.recommends,
 	recommendId: props.id !== "0" && state.recommendBranches[props.id].recommendId,
+	isOpen: props.id !== "0" && state.recommendBranches[props.id].isOpen,
 	searchWord: state.search.word,
 });
 const mapDispatchToProps = dispatch => ({ dispatch });
@@ -17,26 +22,32 @@ const mergeProps = (state, {dispatch}, props) => {
 	// console.log("RecommendBranch mergeProps "+props.id);
 	return {
 	...props,
+	isMine: state.isMine,
+	isChecked: state.isChecked,
 	recommendId: state.recommendId,
+	isOpen: state.isOpen,
 	searchWord: state.searchWord,
 
-	ancestore: getAncestore(props.id, state.recommendBranches),
-	parentId: props.id === "0" ? "0" : state.recommendBranches[props.id].parentId,
 	childIds: getChildren(state.recommendBranches, state.recommends, props.id, state.searchWord, dispatch, state.token),
 
-	handleCollapse: () => {},
-	handleCheck: () => {},
+	handleCollapse: state.isOpen
+		? () => {dispatch(actions.closeRecommendBranch(props.id))}
+		: () => {dispatch(actions.openRecommendBranch(props.id))}
+	,
+	handleCheck: props.parentIsChecked 
+		? () => {}
+		: () => {
+			state.recommendId
+				? (state.isChecked
+					? dispatch(actions.uncheckRecommend(props.id)) 
+					: dispatch(actions.checkRecommend(props.id, state.recommendId)))
+				: (state.isChecked 
+					? dispatch(actions.uncheckRecommendBranch(props.id)) 
+					: dispatch(actions.checkRecommendBranch(props.id)))
+			}
+	,
 	};
 };
-
-function getAncestore(_id, _recommendBranches) {
-	let ancestore = [];
-	for (let id = _id; id !== "0"; id = _recommendBranches[id].parentId) {
-		ancestore.unshift({id: id,name: _recommendBranches[id].name});
-	}
-	ancestore.unshift({id: "0", name: "トップ"});
-	return ancestore;
-}
 
 /*
  * this.state.recommendBranches, recommends, reviews is one level list.

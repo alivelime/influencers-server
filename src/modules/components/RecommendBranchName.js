@@ -6,6 +6,7 @@ import Typography from '@material-ui/core/Typography';
 import TextField from '@material-ui/core/TextField';
 import ButtonBase from '@material-ui/core/ButtonBase';
 
+import Link from 'modules/components/Link';
 import Recommend from 'modules/components/Recommend';
 
 const styleSheet = theme => ({
@@ -66,14 +67,16 @@ class RecommendBranchName extends React.Component {
 				/>
 			} else {
 				return (
-					<div className={classes.flex}>
-						<ButtonBase
-							className={classes.cardAction}
-							onClick={this.props.handleCollapse}
-						>
-							<div className={classes.content}><Typography variant="title">{this.props.name}</Typography></div>
-						</ButtonBase>
-					</div>
+						<div className={classes.flex}>
+					<Link to={`/users/${this.props.userId}/recommend-branches/${this.props.id}`} >
+							<ButtonBase
+								className={classes.cardAction}
+								onClick={this.props.handleCollapse}
+							>
+								<div className={classes.content}><Typography variant="title">{this.props.name}</Typography></div>
+							</ButtonBase>
+					</Link>
+						</div>
 				)
 			}
 		}

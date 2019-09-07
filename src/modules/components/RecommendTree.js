@@ -3,15 +3,9 @@ import PropTypes from 'prop-types';
 import { withStyles } from '@material-ui/core/styles';
 
 import CircularProgress from '@material-ui/core/CircularProgress';
-import AppBar from '@material-ui/core/AppBar';
-import Toolbar from '@material-ui/core/Toolbar';
-import Tooltip from '@material-ui/core/Tooltip';
-
-import IconButton from '@material-ui/core/IconButton';
-import ExpandMore from '@material-ui/icons/ExpandMore';
-import ExpandLess from '@material-ui/icons/ExpandLess';
 
 import ReviewForm from 'modules/containers/IiyoReviewForm';
+import MyRecommendBranch from 'modules/containers/MyRecommendBranch';
 import RecommendBranch from 'modules/containers/RecommendBranch';
 import RecommendToolbox from 'modules/containers/RecommendToolbox';
 import SearchBox from 'modules/containers/SearchBox';
@@ -66,37 +60,21 @@ class RecommendTree extends React.Component {
 				{this.props.isMine &&
 					<RecommendToolbox userId={this.props.userId} />
 				}
-				{!this.props.isMine &&
-					<AppBar
-						position="static"
-						color="default"
-					>
-						<Toolbar>
-							<Tooltip id="tooltip-top-start" title="全て開く">
-								<IconButton>
-									<ExpandMore
-										onClick={this.props.openAll}
-										className={classes.icon}
-									/>
-								</IconButton>
-							</Tooltip>
-							<Tooltip id="tooltip-top-start" title="全て閉じる">
-								<IconButton>
-									<ExpandLess
-										onClick={this.props.closeAll}
-										className={classes.icon}
-									/>
-								</IconButton>
-							</Tooltip>
-						</Toolbar>
-					</AppBar>
-				}
 				<SearchBox />
 				{this.props.dataLoaded
 					? (
-							<RecommendBranch
-								id={this.props.recommendBranchId}
-							/>
+							this.props.isMine
+							? (
+								<MyRecommendBranch
+									id={this.props.recommendBranchId}
+								/>
+							)
+							: (
+								<RecommendBranch
+									id={this.props.recommendBranchId}
+									userId={this.props.userId}
+								/>
+							)
 						)
 					: (
 							<div className={classes.progressDiv}>
@@ -123,7 +101,7 @@ class RecommendTree extends React.Component {
 }
 
 RecommendTree.propTypes = {
-  classes: PropTypes.object.isRequired,
+	classes: PropTypes.object.isRequired,
 };
 
 export default withStyles(styleSheet)(RecommendTree);

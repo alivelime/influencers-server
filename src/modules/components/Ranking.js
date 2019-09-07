@@ -58,7 +58,7 @@ class Ranking extends React.Component {
 	state = {nowLoading: true, users: []};
 	async componentDidMount() {
 		const users = await getAPI('/api/users');
-		users.sort((x, y) => {
+		 users != null && users.sort((x, y) => {
 			return y.iiyoCount - x.iiyoCount;
 		});
 		this.setState({nowLoading: false, users});
