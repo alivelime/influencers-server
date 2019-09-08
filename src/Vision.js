@@ -1,4 +1,5 @@
 import React from 'react';
+import {Helmet} from "react-helmet";
 import PropTypes from 'prop-types';
 import { withStyles } from '@material-ui/core/styles';
 
@@ -23,8 +24,23 @@ class Vision extends React.Component {
 	render() {
 		const { classes } = this.props;
 
+		const title = "インフルず　ビジョン"
+		const description = "インフルずは「邪魔な広告を消したい!」その為には広告よりも良いオススメまとめサイトを作れば良いんだ! という発想から生まれたサイトです。本当に人にオススメできる情報だけ集まるサイトを目指しています。"
+
 		return (
 			<div className={classes.root}>
+				<Helmet>
+					<title>{title}</title>
+					<meta name="description" content={description} />
+					<meta name="og:image" content="http://www.tokishirazu.llc/img/influs.png" />
+					<meta name="og:url" content={this.props.location} />
+					<meta name="og:type" content="website" />
+					<meta name="og:title" content={title}/>
+					<meta name="og:description" content={description}/>
+					<meta name="og:site_name" content="「これいいよ!」でつながるオススメまとめサイト インフルず(β)" />
+					<meta name="twitter:card" content="summary" />
+					<meta name="fragment" content="1" />
+				</Helmet>
 				<div className={classes.content}>
 					<Typography
 						variant="headline"

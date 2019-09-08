@@ -1,4 +1,5 @@
 import React from 'react';
+import {Helmet} from "react-helmet";
 import PropTypes from 'prop-types';
 import { withStyles } from '@material-ui/core/styles';
 import Typography from '@material-ui/core/Typography';
@@ -65,6 +66,18 @@ class HomePage extends React.Component {
 		const { classes } = this.props;
 		return (
 			<div className={classes.hero}>
+				<Helmet>
+					<title>インフルず トップページ</title>
+					<meta name="description" content="オススメまとめサイトインフルず　トップページです" />
+					<meta name="og:image" content="http://www.tokishirazu.llc/img/influs.png" />
+					<meta name="og:url" content={this.props.location} />
+					<meta name="og:type" content="website" />
+					<meta name="og:title" content="インフルず(β) トップページ" />
+					<meta name="og:description" content="オススメまとめサイトインフルず　トップページです" />
+					<meta name="og:site_name" content="「これいいよ!」でつながるオススメまとめサイト インフルず(β)" />
+					<meta name="twitter:card" content="summary" />
+					<meta name="fragment" content="1" />
+				</Helmet>
 				<div className={classes.content}>
 					<div className={classes.text}>
 						<Typography

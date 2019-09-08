@@ -1,4 +1,5 @@
 import React from 'react';
+import {Helmet} from "react-helmet";
 import PropTypes from 'prop-types';
 import { withStyles } from '@material-ui/core/styles';
 
@@ -125,6 +126,7 @@ class RecommendBranch extends React.Component {
 			return (
 				<Paper className={classes.content}>
 					<ListItem className={classes.root} >
+						<FontAwesomeIcon icon="chevron-right" className={classes.icon} /> 
 						<RecommendBranchName
 							id={id}
 							userId={this.props.userId}
@@ -135,8 +137,24 @@ class RecommendBranch extends React.Component {
 			);
 		});
 
+		const ancestorePath = this.props.ancestore.map((a) => a.name).join(" -> ");
+		const title = "インフルず　" + ancestorePath;
+		const description = this.props.user.name + "さんのオススメまとめ　" + ancestorePath;
+
 		return (
 			<List component='nav' className={classes.list}>
+				<Helmet>
+					<title>{title}</title>
+					<meta name="description" content={description} />
+					<meta name="og:image" content="http://www.tokishirazu.llc/img/influs.png" />
+					<meta name="og:url" content={this.props.location} />
+					<meta name="og:type" content="website" />
+					<meta name="og:title" content={title}/>
+					<meta name="og:description" content={description}/>
+					<meta name="og:site_name" content="「これいいよ!」でつながるオススメまとめサイト インフルず(β)" />
+					<meta name="twitter:card" content="summary" />
+					<meta name="fragment" content="1" />
+				</Helmet>
 				<Paper>
 					<ListItem className={classes.root}>
 						<ul className={classes.bread}>{ancestore}</ul>

@@ -11,6 +11,8 @@ const mapStateToProps = (state, props) => ({
 	recommends: state.recommends,
 	recommendId: props.id !== "0" && state.recommendBranches[props.id].recommendId,
 	searchWord: state.search.word,
+
+	user: state.user,
 });
 const mapDispatchToProps = dispatch => ({ dispatch });
 const mergeProps = (state, {dispatch}, props) => {
@@ -26,6 +28,8 @@ const mergeProps = (state, {dispatch}, props) => {
 
 	handleCollapse: () => {},
 	handleCheck: () => {},
+
+	user: state.user,
 	};
 };
 
