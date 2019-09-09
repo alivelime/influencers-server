@@ -58,7 +58,7 @@ func main() {
 	http.Handle("/", handlers.CORS(
 		handlers.AllowCredentials(),
 		handlers.AllowedHeaders([]string{"X-Requested-With", "Content-Type", "Content-Length", "Authenticate"}),
-		handlers.AllowedMethods([]string{"GET", "HEAD", "POST", "PUT", "DELETE"}),
+		handlers.AllowedMethods([]string{"GET", "HEAD", "POST", "PUT", "PATCH", "DELETE"}),
 		handlers.AllowedOriginValidator(func(_ string) bool { return true }),
 	)(r))
 
