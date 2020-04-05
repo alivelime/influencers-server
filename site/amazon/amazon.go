@@ -1,7 +1,6 @@
 package amazon
 
 import (
-	"encoding/xml"
 	"net/http"
 	"os"
 	"regexp"
@@ -10,7 +9,8 @@ import (
 	"google.golang.org/appengine/log"
 	"google.golang.org/appengine/urlfetch"
 
-	"github.com/DDRBoxman/go-amazon-product-api"
+	"github.com/utekaravinash/gopaapi5"
+	"github.com/utekaravinash/gopaapi5/api"
 
 	"github.com/alivelime/influs/affiliate"
 	"github.com/alivelime/influs/meta"
@@ -68,49 +68,47 @@ func (p *Amazon) GetMeta(w http.ResponseWriter, r *http.Request) (meta.Meta, err
 	var data meta.Meta
 	ctx := appengine.NewContext(r)
 
-	var api amazonproduct.AmazonProductAPI
-	api.AccessKey = os.Getenv("AWS_ACCESS_KEY_ID")
-	api.SecretKey = os.Getenv("AWS_SECRET_ACCESS_KEY")
-	api.Host = "webservices.amazon.co.jp"
-	api.AssociateTag = os.Getenv("AWS_ASSOCIATE_TAG")
-	api.Client = urlfetch.Client(ctx)
-
-	result, err := api.ItemLookup(p.asin)
+	client, err := gopaapi5.NewClient(os.Getenv("PA_ACCESS_KEY_ID"), os.Getenv("PA_SECRET_ACCESS_KEY"), os.Getenv("PA_ASSOCIATE_TAG"), api.Japan)
 	if err != nil {
+		return data, err
+	}
+	if err := client.SetHttpClient(urlfetch.Client(ctx)); err != nil {
+		return data, err
+	}
+
+	params := api.GetItemsParams{
+		Condition:            api.Any,
+		CurrencyOfPreference: api.JapaneseYen,
+		Merchant:             api.AllMerchants,
+		ItemIds: []string{
+			p.asin,
+		},
+		Resources: []api.Resource{
+			api.ImagesPrimarySmall,
+			api.ItemInfoTitle,
+			api.ItemInfoByLineInfo,
+			api.ItemInfoClassifications,
+		},
+	}
+	response, err := client.GetItems(ctx, &params)
+	if err != nil {
+		data.URL = p.url
+		data.Title = "error " + err.Error()
 		return data, err
 	}
 
 	defer func() {
 		err := recover()
 		if err != nil {
-			log.Errorf(ctx, "Amazon Error %s %s %s", p.url, result, err)
+			log.Errorf(ctx, "Amazon Error %s %s %s", p.url, response, err)
 		}
 	}()
 
-	//Parse result
-	aws := new(amazonproduct.ItemLookupResponse)
-	err = xml.Unmarshal([]byte(result), aws)
-	if err != nil {
-		data.URL = p.url
-		data.Title = "error " + err.Error()
-		return data, err
-	}
-	if !aws.Items.Request.IsValid {
-		data.URL = p.url
-		data.Title = ""
-		return data, err
-	}
-	item := aws.Items.Item[0]
-
+	item := response.ItemsResult.Items[0]
 	data.URL = p.url
-	data.Title = item.ItemAttributes.Title
-	data.Image = item.SmallImage.URL
-	if len(item.ItemAttributes.Author) > 0 {
-
-		data.Description = item.ItemAttributes.Author[0] + " " + item.ItemAttributes.ProductGroup
-	} else if len(item.ItemAttributes.Creator) > 0 {
-		data.Description = item.ItemAttributes.Creator[0].Value + " " + item.ItemAttributes.ProductGroup
-	}
+	data.Title = item.ItemInfo.Title.DisplayValue
+	data.Image = item.Images.Primary.Small.URL
+	data.Description = item.ItemInfo.ByLineInfo.Contributors[0].Name + " " + item.ItemInfo.Classifications.ProductGroup.DisplayValue
 
 	return data, nil
 }
